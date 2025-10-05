@@ -1,5 +1,6 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
+	"root": false,
+	"$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
 	"vcs": {
 		"enabled": false,
 		"clientKind": "git",
@@ -24,7 +25,15 @@
 			"!**/.alchemy",
 			"!**/.svelte-kit",
 			"!**/wrangler.jsonc",
-			"!**/.source"
+			"!**/.source",
+			"!**/node_modules",
+			"!**/.git",
+			"!**/coverage",
+			"!**/build",
+			"!**/.cache",
+			"!**/.env*",
+			"!**/drizzle",
+			"!**/migrations"
 		]
 	},
 	"formatter": {

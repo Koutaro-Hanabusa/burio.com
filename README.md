@@ -86,12 +86,32 @@ burio.com/
 
 ## Available Scripts
 
+### Development
 - `bun dev`: Start all applications in development mode
 - `bun build`: Build all applications
 - `bun dev:web`: Start only the web application
 - `bun dev:server`: Start only the server
 - `bun check-types`: Check TypeScript types across all apps
+- `bun check`: Run Biome formatting and linting
+
+### Database Management
 - `bun db:push`: Push schema changes to database
 - `bun db:studio`: Open database studio UI
-- `cd apps/server && bun db:local`: Start the local SQLite database
-- `bun check`: Run Biome formatting and linting
+- `bun db:generate`: Generate new migrations
+
+#### Database Inspection Commands
+- `bun run db:dev:tables`: Show tables in development database
+- `bun run db:dev:users`: Show users in development database
+- `bun run db:dev:posts`: Show posts in development database
+- `bun run db:dev:local:tables`: Show tables in local development database
+- `bun run db:prod:tables`: Show tables in production database
+- `bun run db:prod:users`: Show users in production database
+- `bun run db:prod:posts`: Show posts in production database
+
+#### Database Setup Commands
+- `bun run db:dev:setup`: Create tables in development database
+- `bun run db:prod:setup`: Create tables in production database
+
+### Deployment
+- `bun run deploy:dev`: Deploy to development environment
+- `bun run deploy:prod`: Deploy to production environment
