@@ -12,8 +12,14 @@ app.use(logger());
 app.use(
 	"/*",
 	cors({
-		origin: env.CORS_ORIGIN || "",
+		origin: [
+			env.CORS_ORIGIN || "",
+			"https://burio-com.koutarouhanabusa.workers.dev",
+			"http://localhost:3001",
+		].filter(Boolean),
 		allowMethods: ["GET", "POST", "OPTIONS"],
+		allowHeaders: ["Content-Type", "Authorization"],
+		credentials: true,
 	}),
 );
 
