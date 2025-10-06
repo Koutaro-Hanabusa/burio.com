@@ -1,9 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Github, Instagram, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/")({
 	component: HomeComponent,
@@ -19,14 +17,48 @@ function Hero() {
 		>
 			<div className="max-w-4xl w-full">
 				<div className="space-y-6">
-					<motion.h1
-						className="text-5xl md:text-7xl font-bold tracking-tight text-balance"
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.2, duration: 0.8 }}
+					<motion.div
+						className="text-5xl md:text-7xl font-bold tracking-tight text-balance inline-block"
+						initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
+						animate={{
+							opacity: 1,
+							scale: 1,
+							rotate: 0,
+						}}
+						whileHover={{
+							scale: 1.1,
+							rotate: [0, -5, 5, -5, 0],
+							transition: { duration: 0.5 },
+						}}
+						transition={{
+							delay: 0.2,
+							duration: 0.8,
+							type: "spring",
+							stiffness: 200,
+							damping: 10,
+						}}
 					>
-						ぶりお
-					</motion.h1>
+						{["ぶ", "り", "お"].map((char, i) => (
+							<motion.span
+								key={char}
+								className="inline-block"
+								initial={{ opacity: 0, y: 50 }}
+								animate={{ opacity: 1, y: 0 }}
+								whileHover={{
+									y: -10,
+									color: "#3b82f6",
+									transition: { duration: 0.2 },
+								}}
+								transition={{
+									delay: 0.4 + i * 0.1,
+									type: "spring",
+									stiffness: 100,
+								}}
+							>
+								{char}
+							</motion.span>
+						))}
+					</motion.div>
 					<motion.p
 						className="text-xl md:text-2xl text-muted-foreground"
 						initial={{ opacity: 0, y: 20 }}
@@ -41,7 +73,9 @@ function Hero() {
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ delay: 0.6, duration: 0.8 }}
 					>
-						文系学部からほぼ未経験でエンジニアとして新卒入社
+						文系学部からほぼ未経験でエンジニアとして
+						<a href="https://sencorp.co.jp/">千株式会社</a>
+						に新卒入社
 						<br />
 						最近はフロントエンドエンジニアを志し日々勉強中
 					</motion.p>
