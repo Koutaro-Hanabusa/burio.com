@@ -10,7 +10,7 @@
 		"start": "vite",
 		"check-types": "tsc --noEmit",
 		"wrangler:dev": "wrangler dev --port=3001",
-		"deploy": "bun run build && wrangler deploy"
+		"deploy": "echo 'Static site built for Cloudflare Pages deployment'"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.1.1",
@@ -23,12 +23,15 @@
 		"@trpc/tanstack-react-query": "^11.5.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
+		"dompurify": "^3.2.7",
 		"framer-motion": "^12.23.22",
 		"lucide-react": "^0.544.0",
+		"marked": "^16.4.0",
 		"next-themes": "^0.4.6",
 		"radix-ui": "^1.4.2",
 		"react": "19.1.0",
 		"react-dom": "19.1.0",
+		"react-icons": "^5.5.0",
 		"sonner": "^2.0.5",
 		"tailwind-merge": "^3.3.1",
 		"tw-animate-css": "^1.2.5",
@@ -37,6 +40,8 @@
 	"devDependencies": {
 		"@tanstack/react-router-devtools": "^1.114.27",
 		"@tanstack/router-plugin": "^1.114.27",
+		"@types/dompurify": "^3.2.0",
+		"@types/marked": "^6.0.0",
 		"@types/node": "^22.13.13",
 		"@types/react": "~19.1.10",
 		"@types/react-dom": "^19.0.4",
@@ -45,8 +50,6 @@
 		"typescript": "^5.8.3",
 		"tailwindcss": "^4.0.15",
 		"vite": "^6.2.2",
-		"@tanstack/react-query-devtools": "^5.85.5",
-		"@cloudflare/vite-plugin": "^1.13.8",
-		"wrangler": "^4.40.3"
+		"@tanstack/react-query-devtools": "^5.85.5"
 	}
 }
