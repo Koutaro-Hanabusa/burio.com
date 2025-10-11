@@ -22,9 +22,14 @@ export const posts = sqliteTable("posts", {
 		.primaryKey()
 		.$defaultFn(() => createId()),
 	title: text("title").notNull(),
+	slug: text("slug").notNull().unique(),
 	content: text("content"),
+	excerpt: text("excerpt"),
+	coverImage: text("cover_image"),
+	tags: text("tags"),
+	views: integer("views").default(0),
 	authorId: text("author_id").references(() => users.id),
-	published: integer("published", { mode: "boolean" }).default(false),
+	published: integer("published").default(0),
 	createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
 		() => new Date(),
 	),
