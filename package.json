@@ -31,9 +31,16 @@
 		"db:dev:setup": "cd apps/server && bunx wrangler d1 execute burio-com-dev --remote --file=\"src/db/migrations/0000_clumsy_the_call.sql\"",
 		"db:prod:setup": "cd apps/server && bunx wrangler d1 execute burio-com-db --remote --file=\"src/db/migrations/0000_clumsy_the_call.sql\"",
 		"deploy:dev": "cd apps/server && bunx wrangler deploy --env dev && cd ../web && bun run deploy",
-		"deploy:prod": "cd apps/server && bun run deploy && cd ../web && bun run deploy"
+		"deploy:prod": "cd apps/server && bun run deploy && cd ../web && bun run deploy",
+		"r2:upload": "bun run scripts/r2-uploader.js upload",
+		"r2:list": "bun run scripts/r2-uploader.js list",
+		"r2:delete": "bun run scripts/r2-uploader.js delete",
+		"blog:create": "bun run scripts/create-post.js"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.908.0",
+		"@paralleldrive/cuid2": "^2.2.2"
+	},
 	"devDependencies": {
 		"turbo": "^2.5.4",
 		"@biomejs/biome": "^2.2.0",
