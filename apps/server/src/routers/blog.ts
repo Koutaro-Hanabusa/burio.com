@@ -5,12 +5,21 @@ import { posts } from "../db/schema";
 import { publicProcedure, router } from "../lib/trpc";
 
 const createSlug = (title: string): string => {
-	return title
+	// 日本語を含むタイトルに対応するため、日本語文字をローマ字に変換するか、
+	// タイムスタンプベースのslugを生成
+	const baseSlug = title
 		.toLowerCase()
-		.replace(/[^a-z0-9\s-]/g, "")
+		.replace(/[^\p{L}\p{N}\s-]/gu, "") // Unicode文字とハイフンを残す
 		.replace(/\s+/g, "-")
 		.replace(/-+/g, "-")
 		.trim();
+
+	// slugが空の場合（日本語のみのタイトルなど）は、タイムスタンプベースのslugを生成
+	if (!baseSlug) {
+		return `post-${Date.now()}`;
+	}
+
+	return baseSlug;
 };
 
 export const blogRouter = router({
@@ -242,6 +251,8 @@ export const blogRouter = router({
 	delete: publicProcedure
 		.input(z.object({ id: z.string() }))
 		.mutation(async ({ input, ctx }) => {
+			console.log(`🗑️ Attempting to delete post with ID: ${input.id}`);
+
 			// Get post to delete R2 content
 			const postToDelete = await db
 				.select()
@@ -249,20 +260,34 @@ export const blogRouter = router({
 				.where(eq(posts.id, input.id))
 				.limit(1);
 
+			console.log(`📊 Found ${postToDelete.length} posts to delete`);
+
 			if (postToDelete.length === 0) {
+				console.error(`❌ Post not found with ID: ${input.id}`);
 				throw new Error("Post not found");
 			}
+
+			console.log(
+				`📝 Deleting post: ${postToDelete[0].title} (${postToDelete[0].slug})`,
+			);
 
 			// Delete from R2
 			if (ctx.env?.R2_BUCKET) {
 				try {
+					console.log(
+						`📁 Deleting R2 content: blog/${postToDelete[0].slug}.md`,
+					);
 					await ctx.env.R2_BUCKET.delete(`blog/${postToDelete[0].slug}.md`);
 				} catch (error) {
 					console.error("Error deleting content from R2:", error);
 				}
 			}
 
-			await db.delete(posts).where(eq(posts.id, input.id));
+			// Delete from database
+			console.log(`🗄️ Deleting from database...`);
+			const deleteResult = await db.delete(posts).where(eq(posts.id, input.id));
+			console.log(`✅ Delete completed successfully`);
+
 			return { success: true };
 		}),
 

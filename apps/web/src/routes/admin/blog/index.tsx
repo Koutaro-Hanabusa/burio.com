@@ -27,10 +27,12 @@ function BlogAdmin() {
 
 	const deletePost = trpc.blog.delete.useMutation({
 		onSuccess: () => {
+			console.log("Delete successful");
 			toast.success("記事を削除しました");
 			refetch();
 		},
 		onError: (error) => {
+			console.error("Delete error:", error);
 			toast.error(`エラー: ${error.message}`);
 		},
 	});
@@ -46,8 +48,12 @@ function BlogAdmin() {
 	});
 
 	const handleDelete = (id: string, title: string) => {
+		console.log(`Attempting to delete post: ${id} - ${title}`);
 		if (confirm(`「${title}」を削除してよろしいですか？`)) {
+			console.log(`User confirmed deletion for: ${id}`);
 			deletePost.mutate({ id });
+		} else {
+			console.log(`User cancelled deletion for: ${id}`);
 		}
 	};
 
