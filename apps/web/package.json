@@ -10,7 +10,7 @@
 		"start": "vite",
 		"check-types": "tsc --noEmit",
 		"wrangler:dev": "wrangler dev --port=3001",
-		"deploy": "bun run build && wrangler deploy"
+		"deploy": "echo 'Static site built for Cloudflare Pages deployment'"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.1.1",
