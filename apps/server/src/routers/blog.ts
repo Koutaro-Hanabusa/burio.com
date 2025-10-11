@@ -160,10 +160,13 @@ export const blogRouter = router({
 				.values({
 					title: input.title,
 					slug,
-					content: input.content,
-					excerpt: input.excerpt,
-					coverImage: input.coverImage,
-					tags: input.tags ? JSON.stringify(input.tags) : null,
+					content: input.content || null,
+					excerpt: input.excerpt || null,
+					coverImage: input.coverImage || null,
+					tags:
+						input.tags && input.tags.length > 0
+							? JSON.stringify(input.tags)
+							: null,
 					published: input.published ? 1 : 0,
 				})
 				.returning();
