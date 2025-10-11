@@ -30,6 +30,12 @@
 			"migrations_dir": "./src/db/migrations"
 		}
 	],
+	"r2_buckets": [
+		{
+			"binding": "R2_BUCKET",
+			"bucket_name": "burio-com-blog"
+		}
+	],
 	"env": {
 		"dev": {
 			"d1_databases": [
@@ -39,6 +45,12 @@
 					"database_id": "02de547d-2aa5-4183-933a-25503971e540",
 					"preview_database_id": "02de547d-2aa5-4183-933a-25503971e540",
 					"migrations_dir": "./src/db/migrations"
+				}
+			],
+			"r2_buckets": [
+				{
+					"binding": "R2_BUCKET",
+					"bucket_name": "burio-com-blog-dev"
 				}
 			],
 			"vars": {
