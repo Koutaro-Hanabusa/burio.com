@@ -1,9 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Github, Linkedin, Mail, Twitter } from "lucide-react";
+import { Github, Instagram, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/")({
 	component: HomeComponent,
@@ -19,21 +17,55 @@ function Hero() {
 		>
 			<div className="max-w-4xl w-full">
 				<div className="space-y-6">
-					<motion.h1
-						className="text-5xl md:text-7xl font-bold tracking-tight text-balance"
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.2, duration: 0.8 }}
+					<motion.div
+						className="text-5xl md:text-7xl font-bold tracking-tight text-balance inline-block"
+						initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
+						animate={{
+							opacity: 1,
+							scale: 1,
+							rotate: 0,
+						}}
+						whileHover={{
+							scale: 1.1,
+							rotate: [0, -5, 5, -5, 0],
+							transition: { duration: 0.5 },
+						}}
+						transition={{
+							delay: 0.2,
+							duration: 0.8,
+							type: "spring",
+							stiffness: 200,
+							damping: 10,
+						}}
 					>
-						Buri
-					</motion.h1>
+						{["ぶ", "り", "お"].map((char, i) => (
+							<motion.span
+								key={char}
+								className="inline-block"
+								initial={{ opacity: 0, y: 50 }}
+								animate={{ opacity: 1, y: 0 }}
+								whileHover={{
+									y: -10,
+									color: "#3b82f6",
+									transition: { duration: 0.2 },
+								}}
+								transition={{
+									delay: 0.4 + i * 0.1,
+									type: "spring",
+									stiffness: 100,
+								}}
+							>
+								{char}
+							</motion.span>
+						))}
+					</motion.div>
 					<motion.p
 						className="text-xl md:text-2xl text-muted-foreground"
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ delay: 0.4, duration: 0.8 }}
 					>
-						フルスタックエンジニア
+						WEBエンジニア
 					</motion.p>
 					<motion.p
 						className="text-lg text-muted-foreground max-w-2xl leading-relaxed"
@@ -41,8 +73,11 @@ function Hero() {
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ delay: 0.6, duration: 0.8 }}
 					>
-						アクセシブルで、ピクセルパーフェクトなデジタル体験を構築しています。
-						モダンなWeb技術を使用してユーザーフレンドリーなアプリケーションを開発することに情熱を注いでいます。
+						文系学部からほぼ未経験でエンジニアとして
+						<a href="https://sencorp.co.jp/">千株式会社</a>
+						に新卒入社
+						<br />
+						最近はフロントエンドエンジニアを志し日々勉強中
 					</motion.p>
 					<motion.div
 						className="flex gap-4 pt-4"
@@ -51,17 +86,20 @@ function Hero() {
 						transition={{ delay: 0.8, duration: 0.8 }}
 					>
 						{[
-							{ icon: Github, href: "https://github.com", label: "GitHub" },
 							{
-								icon: Linkedin,
-								href: "https://linkedin.com",
-								label: "LinkedIn",
+								icon: Github,
+								href: "https://github.com/Koutaro-Hanabusa?tab=repositories",
+								label: "GitHub",
 							},
-							{ icon: Twitter, href: "https://twitter.com", label: "Twitter" },
 							{
-								icon: Mail,
-								href: "mailto:contact@burio16.com",
-								label: "Email",
+								icon: Twitter,
+								href: "https://x.com/buri16_koutaro",
+								label: "Twitter",
+							},
+							{
+								icon: Instagram,
+								href: "https://www.instagram.com/buri_yellowtail?igsh=b2wyaTBpZ3dicmd0&utm_source=qr",
+								label: "Instagram",
 							},
 						].map((social, index) => (
 							<motion.div
@@ -94,79 +132,65 @@ function Hero() {
 	);
 }
 
-function About() {
-	return (
-		<motion.section
-			className="px-6 py-20"
-			initial={{ opacity: 0 }}
-			whileInView={{ opacity: 1 }}
-			transition={{ duration: 0.8 }}
-			viewport={{ once: true }}
-		>
-			<div className="max-w-4xl mx-auto">
-				<motion.h2
-					className="text-3xl md:text-4xl font-bold mb-8"
-					initial={{ opacity: 0, y: 20 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.6 }}
-					viewport={{ once: true }}
-				>
-					About
-				</motion.h2>
-				<div className="space-y-6 text-lg leading-relaxed text-muted-foreground">
-					<motion.p
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.2, duration: 0.6 }}
-						viewport={{ once: true }}
-					>
-						私は、思慮深いデザインと堅牢なエンジニアリングを融合させた、アクセシブルでピクセルパーフェクトなユーザーインターフェースの作成に情熱を注いでいる開発者です。
-						私の好きな仕事は、デザインと開発の交差点にあり、見た目が美しいだけでなく、パフォーマンスとユーザビリティのために細心の注意を払って構築された体験を生み出すことです。
-					</motion.p>
-					<motion.p
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.4, duration: 0.6 }}
-						viewport={{ once: true }}
-					>
-						現在、私は
-						<span className="text-foreground font-medium">フリーランス</span>
-						でフルスタックエンジニアとして働いており、
-						モダンなWeb技術を専門としています。React、TypeScript、Next.js、Cloudflare
-						Workersなどの技術を使用して、
-						スケーラブルで高パフォーマンスなWebアプリケーションを開発しています。
-					</motion.p>
-					<motion.p
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.6, duration: 0.6 }}
-						viewport={{ once: true }}
-					>
-						過去には、様々な規模のプロジェクトに携わり、スタートアップから大企業まで、多様な環境でソフトウェア開発の経験を積んできました。
-					</motion.p>
-				</div>
-			</div>
-		</motion.section>
-	);
-}
+// function About() {
+//   return (
+//     <motion.section
+//       className="px-6 py-20"
+//       initial={{ opacity: 0 }}
+//       whileInView={{ opacity: 1 }}
+//       transition={{ duration: 0.8 }}
+//       viewport={{ once: true }}
+//     >
+//       <div className="max-w-4xl mx-auto">
+//         <motion.h2
+//           className="text-3xl md:text-4xl font-bold mb-8"
+//           initial={{ opacity: 0, y: 20 }}
+//           whileInView={{ opacity: 1, y: 0 }}
+//           transition={{ duration: 0.6 }}
+//           viewport={{ once: true }}
+//         >
+//           About
+//         </motion.h2>
+//         <div className="space-y-6 text-lg leading-relaxed text-muted-foreground">
+//           <motion.p
+//             initial={{ opacity: 0, y: 20 }}
+//             whileInView={{ opacity: 1, y: 0 }}
+//             transition={{ delay: 0.2, duration: 0.6 }}
+//             viewport={{ once: true }}
+//           >
+//             WIP
+//           </motion.p>
+//           <motion.p
+//             initial={{ opacity: 0, y: 20 }}
+//             whileInView={{ opacity: 1, y: 0 }}
+//             transition={{ delay: 0.4, duration: 0.6 }}
+//             viewport={{ once: true }}
+//           >
+//             WIP
+//           </motion.p>
+//           <motion.p
+//             initial={{ opacity: 0, y: 20 }}
+//             whileInView={{ opacity: 1, y: 0 }}
+//             transition={{ delay: 0.6, duration: 0.6 }}
+//             viewport={{ once: true }}
+//           >
+//             WIP
+//           </motion.p>
+//         </div>
+//       </div>
+//     </motion.section>
+//   );
+// }
 
 function Favorites() {
 	const favorites = [
 		{
-			category: "音楽",
-			items: ["ジャズ", "クラシック", "エレクトロニカ"],
-		},
-		{
-			category: "本",
-			items: ["SF小説", "技術書", "デザイン"],
+			category: "Tottenham Hotspur FC",
+			items: ["Son Heung-Min", "Harry Kane"],
 		},
 		{
 			category: "食べ物",
-			items: ["ラーメン", "コーヒー", "寿司"],
-		},
-		{
-			category: "趣味",
-			items: ["写真", "旅行", "プログラミング"],
+			items: ["タコス", "ラーメン", "ハンバーガー"],
 		},
 	];
 
@@ -228,255 +252,253 @@ function Favorites() {
 	);
 }
 
-function Interests() {
-	const interests = [
-		{
-			title: "Web開発",
-			description:
-				"最新技術とベストプラクティスを使用して、モダンで高性能なWebアプリケーションを構築しています。",
-			tags: ["React", "TypeScript", "Cloudflare Workers"],
-		},
-		{
-			title: "ユーザーエクスペリエンス",
-			description:
-				"思慮深いデザインとインタラクションを通じて、直感的で魅力的なユーザー体験を創造しています。",
-			tags: ["UI/UX", "デザインシステム", "アクセシビリティ"],
-		},
-		{
-			title: "サーバーレス技術",
-			description:
-				"クラウドネイティブなアーキテクチャを活用して、スケーラブルで効率的なソリューションを開発しています。",
-			tags: ["Serverless", "Edge Computing", "APIs"],
-		},
-		{
-			title: "オープンソース",
-			description:
-				"オープンソースコミュニティへの貢献を通じて、より良いソフトウェアを共に構築しています。",
-			tags: ["GitHub", "コラボレーション", "コミュニティ"],
-		},
-	];
+// function Interests() {
+// 	const interests = [
+// 		{
+// 			title: "Web開発",
+// 			description:
+// 				"最新技術とベストプラクティスを使用して、モダンで高性能なWebアプリケーションを構築しています。",
+// 			tags: ["React", "TypeScript", "Cloudflare Workers"],
+// 		},
+// 		{
+// 			title: "ユーザーエクスペリエンス",
+// 			description:
+// 				"思慮深いデザインとインタラクションを通じて、直感的で魅力的なユーザー体験を創造しています。",
+// 			tags: ["UI/UX", "デザインシステム", "アクセシビリティ"],
+// 		},
+// 		{
+// 			title: "サーバーレス技術",
+// 			description:
+// 				"クラウドネイティブなアーキテクチャを活用して、スケーラブルで効率的なソリューションを開発しています。",
+// 			tags: ["Serverless", "Edge Computing", "APIs"],
+// 		},
+// 		{
+// 			title: "オープンソース",
+// 			description:
+// 				"オープンソースコミュニティへの貢献を通じて、より良いソフトウェアを共に構築しています。",
+// 			tags: ["GitHub", "コラボレーション", "コミュニティ"],
+// 		},
+// 	];
 
-	return (
-		<motion.section
-			className="py-20 px-6 md:px-12 lg:px-24 bg-muted/30"
-			initial={{ opacity: 0 }}
-			whileInView={{ opacity: 1 }}
-			transition={{ duration: 0.8 }}
-			viewport={{ once: true }}
-		>
-			<div className="max-w-4xl mx-auto">
-				<motion.h2
-					className="text-3xl md:text-4xl font-bold mb-12 text-balance"
-					initial={{ opacity: 0, y: 20 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.6 }}
-					viewport={{ once: true }}
-				>
-					興味関心
-				</motion.h2>
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					{interests.map((interest, index) => (
-						<motion.div
-							key={interest.title}
-							className="p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors"
-							initial={{ opacity: 0, y: 20 }}
-							whileInView={{ opacity: 1, y: 0 }}
-							transition={{ delay: index * 0.1, duration: 0.6 }}
-							viewport={{ once: true }}
-							whileHover={{ y: -4, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
-						>
-							<h3 className="text-xl font-semibold mb-3">{interest.title}</h3>
-							<p className="text-muted-foreground mb-4 leading-relaxed">
-								{interest.description}
-							</p>
-							<div className="flex flex-wrap gap-2">
-								{interest.tags.map((tag, tagIndex) => (
-									<motion.span
-										key={tag}
-										className="px-3 py-1 text-sm rounded-full bg-accent/20 text-accent-foreground"
-										initial={{ opacity: 0, scale: 0.8 }}
-										whileInView={{ opacity: 1, scale: 1 }}
-										transition={{
-											delay: index * 0.1 + tagIndex * 0.05,
-											duration: 0.3,
-										}}
-										viewport={{ once: true }}
-										whileHover={{ scale: 1.05 }}
-									>
-										{tag}
-									</motion.span>
-								))}
-							</div>
-						</motion.div>
-					))}
-				</div>
-			</div>
-		</motion.section>
-	);
-}
+// 	return (
+// 		<motion.section
+// 			className="py-20 px-6 md:px-12 lg:px-24 bg-muted/30"
+// 			initial={{ opacity: 0 }}
+// 			whileInView={{ opacity: 1 }}
+// 			transition={{ duration: 0.8 }}
+// 			viewport={{ once: true }}
+// 		>
+// 			<div className="max-w-4xl mx-auto">
+// 				<motion.h2
+// 					className="text-3xl md:text-4xl font-bold mb-12 text-balance"
+// 					initial={{ opacity: 0, y: 20 }}
+// 					whileInView={{ opacity: 1, y: 0 }}
+// 					transition={{ duration: 0.6 }}
+// 					viewport={{ once: true }}
+// 				>
+// 					興味関心
+// 				</motion.h2>
+// 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+// 					{interests.map((interest, index) => (
+// 						<motion.div
+// 							key={interest.title}
+// 							className="p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors"
+// 							initial={{ opacity: 0, y: 20 }}
+// 							whileInView={{ opacity: 1, y: 0 }}
+// 							transition={{ delay: index * 0.1, duration: 0.6 }}
+// 							viewport={{ once: true }}
+// 							whileHover={{ y: -4, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
+// 						>
+// 							<h3 className="text-xl font-semibold mb-3">{interest.title}</h3>
+// 							<p className="text-muted-foreground mb-4 leading-relaxed">
+// 								{interest.description}
+// 							</p>
+// 							<div className="flex flex-wrap gap-2">
+// 								{interest.tags.map((tag, tagIndex) => (
+// 									<motion.span
+// 										key={tag}
+// 										className="px-3 py-1 text-sm rounded-full bg-accent/20 text-accent-foreground"
+// 										initial={{ opacity: 0, scale: 0.8 }}
+// 										whileInView={{ opacity: 1, scale: 1 }}
+// 										transition={{
+// 											delay: index * 0.1 + tagIndex * 0.05,
+// 											duration: 0.3,
+// 										}}
+// 										viewport={{ once: true }}
+// 										whileHover={{ scale: 1.05 }}
+// 									>
+// 										{tag}
+// 									</motion.span>
+// 								))}
+// 							</div>
+// 						</motion.div>
+// 					))}
+// 				</div>
+// 			</div>
+// 		</motion.section>
+// 	);
+// }
 
-function Blog() {
-	const posts = [
-		{
-			title: "Cloudflare WorkersでサーバーレスAPI開発",
-			date: "2024-01-15",
-			excerpt:
-				"モダンなサーバーレス技術を使用したAPI開発のベストプラクティスについて解説します。",
-			slug: "cloudflare-workers-api-development",
-		},
-		{
-			title: "TanStack Routerで型安全なルーティング",
-			date: "2024-01-01",
-			excerpt:
-				"Next.jsに代わる新しい選択肢として注目されるTanStack Routerの活用方法をご紹介。",
-			slug: "tanstack-router-type-safe-routing",
-		},
-		{
-			title: "Framer Motionでリッチなアニメーション",
-			date: "2023-12-15",
-			excerpt:
-				"Webサイトに動きを加えるFramer Motionライブラリの効果的な使い方を学びます。",
-			slug: "framer-motion-rich-animations",
-		},
-	];
+// function Blog() {
+//   const posts = [
+//     {
+//       title: "Cloudflare WorkersでサーバーレスAPI開発",
+//       date: "2024-01-15",
+//       excerpt:
+//         "モダンなサーバーレス技術を使用したAPI開発のベストプラクティスについて解説します。",
+//       slug: "cloudflare-workers-api-development",
+//     },
+//     {
+//       title: "TanStack Routerで型安全なルーティング",
+//       date: "2024-01-01",
+//       excerpt:
+//         "Next.jsに代わる新しい選択肢として注目されるTanStack Routerの活用方法をご紹介。",
+//       slug: "tanstack-router-type-safe-routing",
+//     },
+//     {
+//       title: "Framer Motionでリッチなアニメーション",
+//       date: "2023-12-15",
+//       excerpt:
+//         "Webサイトに動きを加えるFramer Motionライブラリの効果的な使い方を学びます。",
+//       slug: "framer-motion-rich-animations",
+//     },
+//   ];
 
-	return (
-		<motion.section
-			className="py-20 px-6 md:px-12 lg:px-24"
-			initial={{ opacity: 0 }}
-			whileInView={{ opacity: 1 }}
-			transition={{ duration: 0.8 }}
-			viewport={{ once: true }}
-		>
-			<div className="max-w-4xl mx-auto">
-				<div className="flex items-center justify-between mb-12">
-					<motion.h2
-						className="text-3xl md:text-4xl font-bold text-balance"
-						initial={{ opacity: 0, y: 20 }}
-						whileInView={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.6 }}
-						viewport={{ once: true }}
-					>
-						Latest Blog Posts
-					</motion.h2>
-					<motion.div
-						initial={{ opacity: 0, x: 20 }}
-						whileInView={{ opacity: 1, x: 0 }}
-						transition={{ duration: 0.6 }}
-						viewport={{ once: true }}
-					>
-						<Link
-							to="/blog"
-							className="text-primary hover:text-primary/80 transition-colors font-medium"
-						>
-							View all →
-						</Link>
-					</motion.div>
-				</div>
-				<div className="space-y-6">
-					{posts.map((post, index) => (
-						<motion.article
-							key={post.slug}
-							className="p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors group"
-							initial={{ opacity: 0, y: 20 }}
-							whileInView={{ opacity: 1, y: 0 }}
-							transition={{ delay: index * 0.1, duration: 0.6 }}
-							viewport={{ once: true }}
-							whileHover={{ y: -4, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
-						>
-							<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-3">
-								<h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
-									<Link to={`/blog/${post.slug}`}>{post.title}</Link>
-								</h3>
-								<time className="text-sm text-muted-foreground">
-									{new Date(post.date).toLocaleDateString("ja-JP", {
-										year: "numeric",
-										month: "long",
-										day: "numeric",
-									})}
-								</time>
-							</div>
-							<p className="text-muted-foreground leading-relaxed">
-								{post.excerpt}
-							</p>
-						</motion.article>
-					))}
-				</div>
-			</div>
-		</motion.section>
-	);
-}
+//   return (
+//     <motion.section
+//       className="py-20 px-6 md:px-12 lg:px-24"
+//       initial={{ opacity: 0 }}
+//       whileInView={{ opacity: 1 }}
+//       transition={{ duration: 0.8 }}
+//       viewport={{ once: true }}
+//     >
+//       <div className="max-w-4xl mx-auto">
+//         <div className="flex items-center justify-between mb-12">
+//           <motion.h2
+//             className="text-3xl md:text-4xl font-bold text-balance"
+//             initial={{ opacity: 0, y: 20 }}
+//             whileInView={{ opacity: 1, y: 0 }}
+//             transition={{ duration: 0.6 }}
+//             viewport={{ once: true }}
+//           >
+//             Latest Blog Posts
+//           </motion.h2>
+//           <motion.div
+//             initial={{ opacity: 0, x: 20 }}
+//             whileInView={{ opacity: 1, x: 0 }}
+//             transition={{ duration: 0.6 }}
+//             viewport={{ once: true }}
+//           >
+//             <Link
+//               to="/blog"
+//               className="text-primary hover:text-primary/80 transition-colors font-medium"
+//             >
+//               View all →
+//             </Link>
+//           </motion.div>
+//         </div>
+//         <div className="space-y-6">
+//           {posts.map((post, index) => (
+//             <motion.article
+//               key={post.slug}
+//               className="p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors group"
+//               initial={{ opacity: 0, y: 20 }}
+//               whileInView={{ opacity: 1, y: 0 }}
+//               transition={{ delay: index * 0.1, duration: 0.6 }}
+//               viewport={{ once: true }}
+//               whileHover={{ y: -4, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
+//             >
+//               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-3">
+//                 <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
+//                   <Link to={`/blog/${post.slug}`}>{post.title}</Link>
+//                 </h3>
+//                 <time className="text-sm text-muted-foreground">
+//                   {new Date(post.date).toLocaleDateString("ja-JP", {
+//                     year: "numeric",
+//                     month: "long",
+//                     day: "numeric",
+//                   })}
+//                 </time>
+//               </div>
+//               <p className="text-muted-foreground leading-relaxed">
+//                 {post.excerpt}
+//               </p>
+//             </motion.article>
+//           ))}
+//         </div>
+//       </div>
+//     </motion.section>
+//   );
+// }
 
-function Contact() {
-	const healthCheck = useQuery(trpc.healthCheck.queryOptions());
+// function Contact() {
+//   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
 
-	return (
-		<motion.section
-			className="py-20 px-6"
-			initial={{ opacity: 0 }}
-			whileInView={{ opacity: 1 }}
-			transition={{ duration: 0.8 }}
-			viewport={{ once: true }}
-		>
-			<div className="max-w-4xl mx-auto">
-				<motion.h2
-					className="text-3xl md:text-4xl font-bold mb-8"
-					initial={{ opacity: 0, y: 20 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.6 }}
-					viewport={{ once: true }}
-				>
-					Contact
-				</motion.h2>
-				<motion.div
-					className="rounded-lg border p-8 text-center space-y-6"
-					initial={{ opacity: 0, y: 20 }}
-					whileInView={{ opacity: 1, y: 0 }}
-					transition={{ delay: 0.2, duration: 0.6 }}
-					viewport={{ once: true }}
-					whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
-				>
-					<p className="text-lg text-muted-foreground leading-relaxed">
-						プロジェクトのご相談やお仕事のご依頼はお気軽にご連絡ください。
-						新しい挑戦や面白いプロジェクトのお話をお待ちしています。
-					</p>
-					<div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-						<span>サイトステータス:</span>
-						<div className="flex items-center gap-2">
-							<motion.div
-								className={`h-2 w-2 rounded-full ${healthCheck.data ? "bg-green-500" : "bg-red-500"}`}
-								animate={healthCheck.data ? { scale: [1, 1.2, 1] } : {}}
-								transition={{ repeat: Infinity, duration: 2 }}
-							/>
-							<span>
-								{healthCheck.isLoading
-									? "Checking..."
-									: healthCheck.data
-										? "Online"
-										: "Offline"}
-							</span>
-						</div>
-					</div>
-					<motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-						<Button asChild size="lg">
-							<a href="mailto:contact@burio16.com">Get in Touch</a>
-						</Button>
-					</motion.div>
-				</motion.div>
-			</div>
-		</motion.section>
-	);
-}
+//   return (
+//     <motion.section
+//       className="py-20 px-6"
+//       initial={{ opacity: 0 }}
+//       whileInView={{ opacity: 1 }}
+//       transition={{ duration: 0.8 }}
+//       viewport={{ once: true }}
+//     >
+//       <div className="max-w-4xl mx-auto">
+//         <motion.h2
+//           className="text-3xl md:text-4xl font-bold mb-8"
+//           initial={{ opacity: 0, y: 20 }}
+//           whileInView={{ opacity: 1, y: 0 }}
+//           transition={{ duration: 0.6 }}
+//           viewport={{ once: true }}
+//         >
+//           Contact
+//         </motion.h2>
+//         <motion.div
+//           className="rounded-lg border p-8 text-center space-y-6"
+//           initial={{ opacity: 0, y: 20 }}
+//           whileInView={{ opacity: 1, y: 0 }}
+//           transition={{ delay: 0.2, duration: 0.6 }}
+//           viewport={{ once: true }}
+//           whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
+//         >
+//           <p className="text-lg text-muted-foreground leading-relaxed">
+//             プロジェクトのご相談やお仕事のご依頼はお気軽にご連絡ください。
+//             新しい挑戦や面白いプロジェクトのお話をお待ちしています。
+//           </p>
+//           <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+//             <span>サイトステータス:</span>
+//             <div className="flex items-center gap-2">
+//               <motion.div
+//                 className={`h-2 w-2 rounded-full ${
+//                   healthCheck.data ? "bg-green-500" : "bg-red-500"
+//                 }`}
+//                 animate={healthCheck.data ? { scale: [1, 1.2, 1] } : {}}
+//                 transition={{ repeat: Infinity, duration: 2 }}
+//               />
+//               <span>
+//                 {healthCheck.isLoading
+//                   ? "Checking..."
+//                   : healthCheck.data
+//                   ? "Online"
+//                   : "Offline"}
+//               </span>
+//             </div>
+//           </div>
+//           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+//             <Button asChild size="lg">
+//               <a href="mailto:contact@burio16.com">Get in Touch</a>
+//             </Button>
+//           </motion.div>
+//         </motion.div>
+//       </div>
+//     </motion.section>
+//   );
+// }
 
 function HomeComponent() {
 	return (
 		<main className="min-h-screen">
 			<Hero />
-			<About />
 			<Favorites />
-			<Interests />
-			<Blog />
-			<Contact />
 		</main>
 	);
 }
