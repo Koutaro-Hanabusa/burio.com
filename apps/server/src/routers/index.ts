@@ -1,4 +1,5 @@
 import { publicProcedure, router } from "../lib/trpc";
+import { adminRouter } from "./admin";
 import { blogRouter } from "./blog";
 
 export const appRouter = router({
@@ -6,5 +7,6 @@ export const appRouter = router({
 		return "OK";
 	}),
 	blog: blogRouter,
+	admin: adminRouter,
 });
 export type AppRouter = typeof appRouter;

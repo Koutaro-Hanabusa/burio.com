@@ -399,6 +399,7 @@ function Blog() {
 						最新のブログ記事
 					</motion.h2>
 					<motion.div
+						className="flex gap-4"
 						initial={{ opacity: 0, x: 20 }}
 						whileInView={{ opacity: 1, x: 0 }}
 						transition={{ duration: 0.6 }}
@@ -409,6 +410,12 @@ function Blog() {
 							className="text-primary hover:text-primary/80 transition-colors font-medium"
 						>
 							すべて見る →
+						</Link>
+						<Link
+							to="/admin"
+							className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm"
+						>
+							管理画面
 						</Link>
 					</motion.div>
 				</div>

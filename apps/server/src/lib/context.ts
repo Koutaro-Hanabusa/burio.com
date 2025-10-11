@@ -5,9 +5,10 @@ export type CreateContextOptions = {
 };
 
 export async function createContext({ context }: CreateContextOptions) {
-	// No auth configured
 	return {
 		session: null,
+		env: context.env, // Cloudflare環境変数とバインディング
+		req: context.req.raw, // 元のRequestオブジェクト
 	};
 }
 
