@@ -105,16 +105,50 @@ function BlogListPage() {
 						</div>
 					) : filteredPosts.length === 0 ? (
 						<motion.div
-							className="text-center py-12"
+							className="text-center py-16 space-y-6"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ duration: 0.5 }}
 						>
-							<p className="text-muted-foreground text-lg">
-								{searchQuery
-									? "検索条件に一致する記事が見つかりません"
-									: "まだ記事がありません"}
-							</p>
+							<div className="text-6xl">📝</div>
+							{searchQuery ? (
+								<>
+									<h2 className="text-2xl font-semibold">
+										記事が見つかりませんでした
+									</h2>
+									<p className="text-muted-foreground text-lg max-w-md mx-auto">
+										「{searchQuery}」に一致する記事がありませんでした。
+										<br />
+										別のキーワードで検索してみてください。
+									</p>
+									<Button
+										variant="outline"
+										onClick={() => setSearchQuery("")}
+										className="mt-4"
+									>
+										検索をクリア
+									</Button>
+								</>
+							) : (
+								<>
+									<h2 className="text-2xl font-semibold">
+										記事はまだありません
+									</h2>
+									<p className="text-muted-foreground text-lg max-w-md mx-auto">
+										現在ブログ記事を準備中です。
+										<br />
+										近日中に技術記事や開発に関する投稿をお届けします。
+									</p>
+									<div className="flex gap-4 justify-center mt-6">
+										<Button asChild variant="outline">
+											<Link to="/">ホームに戻る</Link>
+										</Button>
+										<Button asChild>
+											<Link to="/contact">お問い合わせ</Link>
+										</Button>
+									</div>
+								</>
+							)}
 						</motion.div>
 					) : (
 						<div className="space-y-6">

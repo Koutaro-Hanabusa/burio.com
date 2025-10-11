@@ -65,7 +65,7 @@ function AdminPostsList() {
 							<p className="text-muted-foreground">ブログ記事の管理と編集</p>
 						</div>
 						<Button asChild>
-							<Link to="/admin/posts/new">
+							<Link to="/admin/blog/new">
 								<RiAddLine className="h-4 w-4 mr-2" />
 								新規作成
 							</Link>
@@ -154,7 +154,7 @@ function AdminPostsList() {
 												</Link>
 											</Button>
 											<Button variant="outline" size="sm" asChild>
-												<Link to={`/admin/posts/${post.id}/edit`}>
+												<Link to={`/admin/blog/${post.id}/edit`}>
 													<RiEditLine className="h-4 w-4" />
 												</Link>
 											</Button>
