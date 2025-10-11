@@ -164,7 +164,7 @@ export const blogRouter = router({
 					excerpt: input.excerpt,
 					coverImage: input.coverImage,
 					tags: input.tags ? JSON.stringify(input.tags) : null,
-					published: input.published,
+					published: input.published ? 1 : 0,
 				})
 				.returning();
 
@@ -194,7 +194,8 @@ export const blogRouter = router({
 				updateData.coverImage = input.coverImage;
 			if (input.tags !== undefined)
 				updateData.tags = JSON.stringify(input.tags);
-			if (input.published !== undefined) updateData.published = input.published;
+			if (input.published !== undefined)
+				updateData.published = input.published ? 1 : 0;
 
 			// Get current post to check slug
 			const currentPost = await db
@@ -276,7 +277,7 @@ export const blogRouter = router({
 				.from(posts)
 				.where(
 					and(
-						eq(posts.published, true),
+						eq(posts.published, 1),
 						sql`lower(${posts.title}) LIKE lower(${`%${input.query}%`}) OR lower(${posts.excerpt}) LIKE lower(${`%${input.query}%`})`,
 					),
 				)
