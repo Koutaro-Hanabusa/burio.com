@@ -15,6 +15,8 @@ app.use(
 		origin: [
 			env.CORS_ORIGIN || "",
 			"https://burio-com.koutarouhanabusa.workers.dev",
+			"https://burio-com.pages.dev",
+			"https://*.burio-com.pages.dev",
 			"http://localhost:3001",
 			"http://localhost:3002",
 		].filter(Boolean),

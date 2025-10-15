@@ -10,7 +10,8 @@
 		"start": "vite",
 		"check-types": "tsc --noEmit",
 		"wrangler:dev": "wrangler dev --port=3001",
-		"deploy": "echo 'Static site built for Cloudflare Pages deployment'"
+		"deploy": "bun run build && bunx wrangler pages deploy dist --project-name=burio-com",
+		"deploy:preview": "bun run build && bunx wrangler pages deploy dist --project-name=burio-com --branch=preview"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.1.1",
