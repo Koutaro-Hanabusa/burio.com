@@ -5,14 +5,14 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite --port=3001",
-		"build": "vite build --mode production",
-		"build:dev": "vite build",
+		"build": "vite build",
+		"build:production": "vite build --mode production",
 		"serve": "vite preview",
 		"start": "vite",
 		"check-types": "tsc --noEmit",
 		"wrangler:dev": "wrangler dev --port=3001",
-		"deploy": "bun run build && bunx wrangler pages deploy dist --project-name=burio-com",
-		"deploy:preview": "bun run build:dev && bunx wrangler pages deploy dist --project-name=burio-com --branch=preview"
+		"deploy": "bun run build:production && wrangler pages deploy dist --project-name=burio-com",
+		"deploy:preview": "bun run build && wrangler pages deploy dist --project-name=burio-com --branch=preview"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.1.1",
