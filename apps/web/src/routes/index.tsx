@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Github, Instagram, Twitter } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAdminAccess } from "@/hooks/use-admin-access";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/")({
@@ -350,6 +351,8 @@ function Blog() {
 		published: true,
 	});
 
+	const { isAdmin } = useAdminAccess();
+
 	const formatDate = (date: Date | string) => {
 		return new Date(date).toLocaleDateString("ja-JP", {
 			year: "numeric",
@@ -411,12 +414,14 @@ function Blog() {
 						>
 							すべて見る →
 						</Link>
-						<Link
-							to="/admin"
-							className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm"
-						>
-							管理画面
-						</Link>
+						{isAdmin && (
+							<Link
+								to="/admin"
+								className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm"
+							>
+								管理画面
+							</Link>
+						)}
 					</motion.div>
 				</div>
 				<div className="space-y-6">
