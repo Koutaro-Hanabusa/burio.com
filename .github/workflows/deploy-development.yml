@@ -24,8 +24,18 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Deploy to Development
+      - name: Deploy Server (Development)
+        working-directory: apps/server
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: bun run deploy:dev
+        run: bunx wrangler deploy --env dev
+
+      - name: Deploy Web (Development)
+        working-directory: apps/web
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          bun run build
+          bunx wrangler pages deploy dist --project-name=burio-com
