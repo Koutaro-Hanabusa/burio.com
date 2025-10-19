@@ -7,7 +7,7 @@ workers_dev = true
 [vars]
 NODE_ENV = "production"
 CORS_ORIGIN = "https://burio16.com"
-BETTER_AUTH_URL = "https://api.burio16.com"
+BETTER_AUTH_URL = "https://burio-com-server.koutarouhanabusa.workers.dev"
 
 # D1 Database Configuration
 # Database IDs are intentionally omitted for security
