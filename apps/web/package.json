@@ -9,6 +9,10 @@
 		"serve": "vite preview",
 		"start": "vite",
 		"check-types": "tsc --noEmit",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"test:ui": "vitest --ui",
+		"test:coverage": "vitest --coverage",
 		"wrangler:dev": "wrangler dev --port=3001",
 		"deploy": "bun run build && bunx wrangler pages deploy dist --project-name=burio-com",
 		"deploy:preview": "bun run build && bunx wrangler pages deploy dist --project-name=burio-com --branch=preview"
@@ -42,18 +46,24 @@
 		"zod": "^4.0.2"
 	},
 	"devDependencies": {
+		"@tanstack/react-query-devtools": "^5.85.5",
 		"@tanstack/react-router-devtools": "^1.114.27",
 		"@tanstack/router-plugin": "^1.114.27",
+		"@testing-library/jest-dom": "^6.9.1",
+		"@testing-library/react": "^16.3.0",
+		"@testing-library/user-event": "^14.6.1",
 		"@types/dompurify": "^3.2.0",
 		"@types/marked": "^6.0.0",
 		"@types/node": "^22.13.13",
 		"@types/react": "~19.1.10",
 		"@types/react-dom": "^19.0.4",
 		"@vitejs/plugin-react": "^4.3.4",
+		"happy-dom": "^20.0.5",
+		"jsdom": "^27.0.1",
 		"postcss": "^8.5.3",
-		"typescript": "^5.8.3",
 		"tailwindcss": "^4.0.15",
+		"typescript": "^5.8.3",
 		"vite": "^6.2.2",
-		"@tanstack/react-query-devtools": "^5.85.5"
+		"vitest": "^3.2.4"
 	}
 }
