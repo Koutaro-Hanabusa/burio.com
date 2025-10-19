@@ -17,6 +17,7 @@
 			"!**/.zed",
 			"!**/.vscode",
 			"!**/routeTree.gen.ts",
+			"!**/worker-configuration.d.ts",
 			"!**/src-tauri",
 			"!**/.nuxt",
 			"!bts.jsonc",
@@ -74,6 +75,27 @@
 			}
 		}
 	},
+	"css": {
+		"linter": {
+			"enabled": true
+		},
+		"parser": {
+			"cssModules": false,
+			"allowWrongLineComments": false
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["**/*.css"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noUnknownAtRules": "off"
+					}
+				}
+			}
+		}
+	],
 	"javascript": {
 		"formatter": {
 			"quoteStyle": "double"

@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import DOMPurify from "dompurify";
 import { motion } from "framer-motion";
 import { marked } from "marked";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { RiArrowLeftLine, RiEyeLine, RiSaveLine } from "react-icons/ri";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -26,6 +26,14 @@ function EditBlogPost() {
 	const [published, setPublished] = useState(false);
 	const [preview, setPreview] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
+
+	// Generate unique IDs for form elements
+	const titleId = useId();
+	const excerptId = useId();
+	const contentId = useId();
+	const coverImageId = useId();
+	const tagsId = useId();
+	const publishedId = useId();
 
 	// 既存記事データを取得
 	const { data: posts, isLoading } = trpc.blog.getAll.useQuery({
@@ -145,9 +153,9 @@ function EditBlogPost() {
 				{!preview ? (
 					<form onSubmit={handleSubmit} className="space-y-6">
 						<div>
-							<Label htmlFor="title">タイトル *</Label>
+							<Label htmlFor={titleId}>タイトル *</Label>
 							<Input
-								id="title"
+								id={titleId}
 								value={title}
 								onChange={(e) => setTitle(e.target.value)}
 								required
@@ -156,9 +164,9 @@ function EditBlogPost() {
 						</div>
 
 						<div>
-							<Label htmlFor="excerpt">概要</Label>
+							<Label htmlFor={excerptId}>概要</Label>
 							<Input
-								id="excerpt"
+								id={excerptId}
 								value={excerpt}
 								onChange={(e) => setExcerpt(e.target.value)}
 								placeholder="記事の概要（一覧ページに表示されます）"
@@ -166,9 +174,9 @@ function EditBlogPost() {
 						</div>
 
 						<div>
-							<Label htmlFor="content">本文（Markdown）</Label>
+							<Label htmlFor={contentId}>本文（Markdown）</Label>
 							<textarea
-								id="content"
+								id={contentId}
 								value={content}
 								onChange={(e) => setContent(e.target.value)}
 								className="h-96 w-full resize-y rounded-md border bg-background p-3 text-foreground"
@@ -177,9 +185,9 @@ function EditBlogPost() {
 						</div>
 
 						<div>
-							<Label htmlFor="coverImage">カバー画像URL</Label>
+							<Label htmlFor={coverImageId}>カバー画像URL</Label>
 							<Input
-								id="coverImage"
+								id={coverImageId}
 								value={coverImage}
 								onChange={(e) => setCoverImage(e.target.value)}
 								placeholder="https://example.com/image.jpg"
@@ -188,9 +196,9 @@ function EditBlogPost() {
 						</div>
 
 						<div>
-							<Label htmlFor="tags">タグ（カンマ区切り）</Label>
+							<Label htmlFor={tagsId}>タグ（カンマ区切り）</Label>
 							<Input
-								id="tags"
+								id={tagsId}
 								value={tags}
 								onChange={(e) => setTags(e.target.value)}
 								placeholder="React, TypeScript, Web開発"
@@ -199,13 +207,13 @@ function EditBlogPost() {
 
 						<div className="flex items-center gap-2">
 							<input
-								id="published"
+								id={publishedId}
 								type="checkbox"
 								checked={published}
 								onChange={(e) => setPublished(e.target.checked)}
 								className="h-4 w-4"
 							/>
-							<Label htmlFor="published" className="cursor-pointer">
+							<Label htmlFor={publishedId} className="cursor-pointer">
 								公開する
 							</Label>
 						</div>
@@ -239,14 +247,17 @@ function EditBlogPost() {
 							/>
 							{tags && (
 								<div className="mt-6 flex flex-wrap gap-2">
-									{tags.split(",").map((tag, index) => (
-										<span
-											key={index}
-											className="rounded-full bg-accent/20 px-3 py-1 text-accent-foreground text-sm"
-										>
-											{tag.trim()}
-										</span>
-									))}
+									{tags.split(",").map((tag) => {
+										const trimmedTag = tag.trim();
+										return (
+											<span
+												key={trimmedTag}
+												className="rounded-full bg-accent/20 px-3 py-1 text-accent-foreground text-sm"
+											>
+												{trimmedTag}
+											</span>
+										);
+									})}
 								</div>
 							)}
 						</div>
