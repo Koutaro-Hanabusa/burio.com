@@ -137,10 +137,6 @@ export function Blog() {
 		return <BlogLoading />;
 	}
 
-	if (error || !posts || posts.length === 0) {
-		return null;
-	}
-
 	return (
 		<motion.section
 			className="bg-muted/30 px-6 py-20 md:px-12 lg:px-24"
@@ -152,19 +148,29 @@ export function Blog() {
 		>
 			<div className="mx-auto max-w-4xl">
 				<BlogHeader isAdmin={isAdmin} />
-				<div className="space-y-6">
-					{posts.map((post, index) => (
-						<BlogPost
-							key={post.id}
-							id={post.id}
-							title={post.title}
-							excerpt={post.excerpt}
-							createdAt={post.createdAt ?? new Date()}
-							views={post.views ?? 0}
-							index={index}
-						/>
-					))}
-				</div>
+				{error ? (
+					<div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6 text-center text-destructive">
+						ブログ記事の読み込みに失敗しました
+					</div>
+				) : !posts || posts.length === 0 ? (
+					<div className="rounded-lg border border-border bg-card p-6 text-center text-muted-foreground">
+						まだブログ記事がありません
+					</div>
+				) : (
+					<div className="space-y-6">
+						{posts.map((post, index) => (
+							<BlogPost
+								key={post.id}
+								id={post.id}
+								title={post.title}
+								excerpt={post.excerpt}
+								createdAt={post.createdAt ?? new Date()}
+								views={post.views ?? 0}
+								index={index}
+							/>
+						))}
+					</div>
+				)}
 			</div>
 		</motion.section>
 	);

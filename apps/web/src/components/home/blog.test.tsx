@@ -140,37 +140,39 @@ describe("Blogコンポーネント", () => {
 	});
 
 	describe("エラー状態", () => {
-		it("エラー時はnullを返す（何も表示しない）", () => {
+		it("エラー時はエラーメッセージを表示する", () => {
 			mockUseQuery.mockReturnValue({
 				data: undefined,
 				isLoading: false,
 				error: new Error("Failed to fetch"),
 			});
 
-			const { container } = render(<Blog />);
-			expect(container.firstChild).toBeNull();
+			const { getByText } = render(<Blog />);
+			expect(
+				getByText("ブログ記事の読み込みに失敗しました"),
+			).toBeInTheDocument();
 		});
 
-		it("記事が空配列の場合はnullを返す", () => {
+		it("記事が空配列の場合は空状態メッセージを表示する", () => {
 			mockUseQuery.mockReturnValue({
 				data: [],
 				isLoading: false,
 				error: null,
 			});
 
-			const { container } = render(<Blog />);
-			expect(container.firstChild).toBeNull();
+			const { getByText } = render(<Blog />);
+			expect(getByText("まだブログ記事がありません")).toBeInTheDocument();
 		});
 
-		it("dataがnullの場合はnullを返す", () => {
+		it("dataがnullの場合は空状態メッセージを表示する", () => {
 			mockUseQuery.mockReturnValue({
 				data: undefined,
 				isLoading: false,
 				error: null,
 			});
 
-			const { container } = render(<Blog />);
-			expect(container.firstChild).toBeNull();
+			const { getByText } = render(<Blog />);
+			expect(getByText("まだブログ記事がありません")).toBeInTheDocument();
 		});
 	});
 
