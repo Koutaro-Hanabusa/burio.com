@@ -134,56 +134,6 @@ function Hero() {
 	);
 }
 
-// function About() {
-//   return (
-//     <motion.section
-//       className="px-6 py-20"
-//       initial={{ opacity: 0 }}
-//       whileInView={{ opacity: 1 }}
-//       transition={{ duration: 0.8 }}
-//       viewport={{ once: true }}
-//     >
-//       <div className="max-w-4xl mx-auto">
-//         <motion.h2
-//           className="text-3xl md:text-4xl font-bold mb-8"
-//           initial={{ opacity: 0, y: 20 }}
-//           whileInView={{ opacity: 1, y: 0 }}
-//           transition={{ duration: 0.6 }}
-//           viewport={{ once: true }}
-//         >
-//           About
-//         </motion.h2>
-//         <div className="space-y-6 text-lg leading-relaxed text-muted-foreground">
-//           <motion.p
-//             initial={{ opacity: 0, y: 20 }}
-//             whileInView={{ opacity: 1, y: 0 }}
-//             transition={{ delay: 0.2, duration: 0.6 }}
-//             viewport={{ once: true }}
-//           >
-//             WIP
-//           </motion.p>
-//           <motion.p
-//             initial={{ opacity: 0, y: 20 }}
-//             whileInView={{ opacity: 1, y: 0 }}
-//             transition={{ delay: 0.4, duration: 0.6 }}
-//             viewport={{ once: true }}
-//           >
-//             WIP
-//           </motion.p>
-//           <motion.p
-//             initial={{ opacity: 0, y: 20 }}
-//             whileInView={{ opacity: 1, y: 0 }}
-//             transition={{ delay: 0.6, duration: 0.6 }}
-//             viewport={{ once: true }}
-//           >
-//             WIP
-//           </motion.p>
-//         </div>
-//       </div>
-//     </motion.section>
-//   );
-// }
-
 function Favorites() {
 	const favorites = [
 		{
@@ -253,93 +203,6 @@ function Favorites() {
 		</motion.section>
 	);
 }
-
-// function Interests() {
-// 	const interests = [
-// 		{
-// 			title: "Web開発",
-// 			description:
-// 				"最新技術とベストプラクティスを使用して、モダンで高性能なWebアプリケーションを構築しています。",
-// 			tags: ["React", "TypeScript", "Cloudflare Workers"],
-// 		},
-// 		{
-// 			title: "ユーザーエクスペリエンス",
-// 			description:
-// 				"思慮深いデザインとインタラクションを通じて、直感的で魅力的なユーザー体験を創造しています。",
-// 			tags: ["UI/UX", "デザインシステム", "アクセシビリティ"],
-// 		},
-// 		{
-// 			title: "サーバーレス技術",
-// 			description:
-// 				"クラウドネイティブなアーキテクチャを活用して、スケーラブルで効率的なソリューションを開発しています。",
-// 			tags: ["Serverless", "Edge Computing", "APIs"],
-// 		},
-// 		{
-// 			title: "オープンソース",
-// 			description:
-// 				"オープンソースコミュニティへの貢献を通じて、より良いソフトウェアを共に構築しています。",
-// 			tags: ["GitHub", "コラボレーション", "コミュニティ"],
-// 		},
-// 	];
-
-// 	return (
-// 		<motion.section
-// 			className="py-20 px-6 md:px-12 lg:px-24 bg-muted/30"
-// 			initial={{ opacity: 0 }}
-// 			whileInView={{ opacity: 1 }}
-// 			transition={{ duration: 0.8 }}
-// 			viewport={{ once: true }}
-// 		>
-// 			<div className="max-w-4xl mx-auto">
-// 				<motion.h2
-// 					className="text-3xl md:text-4xl font-bold mb-12 text-balance"
-// 					initial={{ opacity: 0, y: 20 }}
-// 					whileInView={{ opacity: 1, y: 0 }}
-// 					transition={{ duration: 0.6 }}
-// 					viewport={{ once: true }}
-// 				>
-// 					興味関心
-// 				</motion.h2>
-// 				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-// 					{interests.map((interest, index) => (
-// 						<motion.div
-// 							key={interest.title}
-// 							className="p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors"
-// 							initial={{ opacity: 0, y: 20 }}
-// 							whileInView={{ opacity: 1, y: 0 }}
-// 							transition={{ delay: index * 0.1, duration: 0.6 }}
-// 							viewport={{ once: true }}
-// 							whileHover={{ y: -4, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
-// 						>
-// 							<h3 className="text-xl font-semibold mb-3">{interest.title}</h3>
-// 							<p className="text-muted-foreground mb-4 leading-relaxed">
-// 								{interest.description}
-// 							</p>
-// 							<div className="flex flex-wrap gap-2">
-// 								{interest.tags.map((tag, tagIndex) => (
-// 									<motion.span
-// 										key={tag}
-// 										className="px-3 py-1 text-sm rounded-full bg-accent/20 text-accent-foreground"
-// 										initial={{ opacity: 0, scale: 0.8 }}
-// 										whileInView={{ opacity: 1, scale: 1 }}
-// 										transition={{
-// 											delay: index * 0.1 + tagIndex * 0.05,
-// 											duration: 0.3,
-// 										}}
-// 										viewport={{ once: true }}
-// 										whileHover={{ scale: 1.05 }}
-// 									>
-// 										{tag}
-// 									</motion.span>
-// 								))}
-// 							</div>
-// 						</motion.div>
-// 					))}
-// 				</div>
-// 			</div>
-// 		</motion.section>
-// 	);
-// }
 
 function Blog() {
 	const {
@@ -417,7 +280,7 @@ function Blog() {
 						{isAdmin && (
 							<Link
 								to="/admin"
-								className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm"
+								className="text-primary hover:text-primary/80 transition-colors font-medium"
 							>
 								管理画面
 							</Link>
@@ -460,69 +323,6 @@ function Blog() {
 		</motion.section>
 	);
 }
-
-// function Contact() {
-//   const healthCheck = useQuery(trpc.healthCheck.queryOptions());
-
-//   return (
-//     <motion.section
-//       className="py-20 px-6"
-//       initial={{ opacity: 0 }}
-//       whileInView={{ opacity: 1 }}
-//       transition={{ duration: 0.8 }}
-//       viewport={{ once: true }}
-//     >
-//       <div className="max-w-4xl mx-auto">
-//         <motion.h2
-//           className="text-3xl md:text-4xl font-bold mb-8"
-//           initial={{ opacity: 0, y: 20 }}
-//           whileInView={{ opacity: 1, y: 0 }}
-//           transition={{ duration: 0.6 }}
-//           viewport={{ once: true }}
-//         >
-//           Contact
-//         </motion.h2>
-//         <motion.div
-//           className="rounded-lg border p-8 text-center space-y-6"
-//           initial={{ opacity: 0, y: 20 }}
-//           whileInView={{ opacity: 1, y: 0 }}
-//           transition={{ delay: 0.2, duration: 0.6 }}
-//           viewport={{ once: true }}
-//           whileHover={{ y: -5, boxShadow: "0 10px 25px rgba(0,0,0,0.1)" }}
-//         >
-//           <p className="text-lg text-muted-foreground leading-relaxed">
-//             プロジェクトのご相談やお仕事のご依頼はお気軽にご連絡ください。
-//             新しい挑戦や面白いプロジェクトのお話をお待ちしています。
-//           </p>
-//           <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
-//             <span>サイトステータス:</span>
-//             <div className="flex items-center gap-2">
-//               <motion.div
-//                 className={`h-2 w-2 rounded-full ${
-//                   healthCheck.data ? "bg-green-500" : "bg-red-500"
-//                 }`}
-//                 animate={healthCheck.data ? { scale: [1, 1.2, 1] } : {}}
-//                 transition={{ repeat: Infinity, duration: 2 }}
-//               />
-//               <span>
-//                 {healthCheck.isLoading
-//                   ? "Checking..."
-//                   : healthCheck.data
-//                   ? "Online"
-//                   : "Offline"}
-//               </span>
-//             </div>
-//           </div>
-//           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-//             <Button asChild size="lg">
-//               <a href="mailto:contact@burio16.com">Get in Touch</a>
-//             </Button>
-//           </motion.div>
-//         </motion.div>
-//       </div>
-//     </motion.section>
-//   );
-// }
 
 function HomeComponent() {
 	return (
