@@ -10,12 +10,10 @@ CORS_ORIGIN = "https://burio16.com"
 BETTER_AUTH_URL = "https://api.burio16.com"
 
 # D1 Database Configuration
-# Database IDs are intentionally omitted for security
-# Set these using wrangler CLI or Cloudflare Dashboard
 [[d1_databases]]
 binding = "DB"
 database_name = "burio-com-db"
-# database_id will be read from wrangler.secret or environment
+database_id = "7390edad-195a-4da4-80a8-90209083afcc"
 migrations_dir = "./src/db/migrations"
 
 # R2 Bucket Configuration
@@ -38,6 +36,7 @@ BETTER_AUTH_URL = "http://localhost:3000"
 [[env.dev.d1_databases]]
 binding = "DB"
 database_name = "burio-com-dev"
+database_id = "02de547d-2aa5-4183-933a-25503971e540"
 migrations_dir = "./src/db/migrations"
 
 [[env.dev.r2_buckets]]
