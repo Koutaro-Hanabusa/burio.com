@@ -32,8 +32,8 @@ export const blogRouter = router({
 			}),
 		)
 		.query(async ({ input, ctx }) => {
-			console.log(`📊 getAll called with input:`, input);
-			console.log(`🗄️ Database available:`, !!ctx.env?.DB);
+			console.log("📊 getAll called with input:", input);
+			console.log("🗄️ Database available:", !!ctx.env?.DB);
 
 			const conditions = [];
 			if (input.published !== undefined) {
@@ -46,7 +46,7 @@ export const blogRouter = router({
 			}
 
 			// Temporary: Use raw SQL to debug
-			console.log(`🔍 Executing query with conditions:`, conditions.length);
+			console.log("🔍 Executing query with conditions:", conditions.length);
 
 			const result = await db
 				.select()
@@ -58,33 +58,33 @@ export const blogRouter = router({
 
 			// Try raw SQL as fallback for debugging
 			if (result.length === 0) {
-				console.log(`🆘 Drizzle returned 0 results, trying raw SQL...`);
+				console.log("🆘 Drizzle returned 0 results, trying raw SQL...");
 				const rawResult = await ctx.env.DB.prepare(
 					"SELECT * FROM posts ORDER BY created_at DESC LIMIT ?",
 				)
 					.bind(input.limit)
 					.all();
-				console.log(`🔍 Raw SQL result:`, rawResult);
+				console.log("🔍 Raw SQL result:", rawResult);
 			}
 
 			console.log(`📝 Query returned ${result.length} results`);
 			if (result.length > 0) {
-				console.log(`🔍 First result:`, result[0]);
+				console.log("🔍 First result:", result[0]);
 			}
 
 			return result;
 		}),
 
-	getBySlug: publicProcedure
-		.input(z.object({ slug: z.string() }))
+	getById: publicProcedure
+		.input(z.object({ id: z.string() }))
 		.query(async ({ input, ctx }) => {
-			console.log(`🔍 getBySlug called with slug: ${input.slug}`);
+			console.log(`🔍 getById called with id: ${input.id}`);
 
 			try {
 				const post = await db
 					.select()
 					.from(posts)
-					.where(eq(posts.slug, input.slug))
+					.where(eq(posts.id, input.id))
 					.limit(1);
 
 				console.log(`📊 Query result: found ${post.length} posts`);
@@ -97,17 +97,15 @@ export const blogRouter = router({
 				await db
 					.update(posts)
 					.set({ views: sql`${posts.views} + 1` })
-					.where(eq(posts.slug, input.slug));
+					.where(eq(posts.id, input.id));
 
 				// Fetch markdown content from R2 if needed
 				const postData = post[0];
-				console.log(
-					`🔍 Attempting to fetch R2 content for slug: ${postData.slug}`,
-				);
+				console.log(`🔍 Attempting to fetch R2 content for id: ${postData.id}`);
 
 				if (ctx.env?.R2_BUCKET) {
 					try {
-						const r2Key = `blog/${postData.slug}.md`;
+						const r2Key = `blog/${postData.id}.md`;
 						console.log(`📁 R2 Key: ${r2Key}`);
 
 						const object = await ctx.env.R2_BUCKET.get(r2Key);
@@ -132,7 +130,7 @@ export const blogRouter = router({
 
 				return postData;
 			} catch (error) {
-				console.error(`❌ Error in getBySlug for slug ${input.slug}:`, error);
+				console.error(`❌ Error in getById for id ${input.id}:`, error);
 				throw error;
 			}
 		}),
@@ -151,19 +149,6 @@ export const blogRouter = router({
 		.mutation(async ({ input, ctx }) => {
 			const slug = createSlug(input.title);
 
-			// Save markdown content to R2 if available
-			if (ctx.env?.R2_BUCKET && input.content) {
-				try {
-					await ctx.env.R2_BUCKET.put(`blog/${slug}.md`, input.content, {
-						httpMetadata: {
-							contentType: "text/markdown",
-						},
-					});
-				} catch (error) {
-					console.error("Error saving content to R2:", error);
-				}
-			}
-
 			const result = await db
 				.insert(posts)
 				.values({
@@ -179,6 +164,23 @@ export const blogRouter = router({
 					published: input.published ? 1 : 0,
 				})
 				.returning();
+
+			// Save markdown content to R2 if available (using post ID)
+			if (ctx.env?.R2_BUCKET && input.content && result[0]) {
+				try {
+					await ctx.env.R2_BUCKET.put(
+						`blog/${result[0].id}.md`,
+						input.content,
+						{
+							httpMetadata: {
+								contentType: "text/markdown",
+							},
+						},
+					);
+				} catch (error) {
+					console.error("Error saving content to R2:", error);
+				}
+			}
 
 			return result[0];
 		}),
@@ -227,9 +229,8 @@ export const blogRouter = router({
 
 			// Update markdown content in R2
 			if (ctx.env?.R2_BUCKET && input.content !== undefined) {
-				const slug = updateData.slug || currentPost[0].slug;
 				try {
-					await ctx.env.R2_BUCKET.put(`blog/${slug}.md`, input.content, {
+					await ctx.env.R2_BUCKET.put(`blog/${input.id}.md`, input.content, {
 						httpMetadata: {
 							contentType: "text/markdown",
 						},
@@ -274,19 +275,19 @@ export const blogRouter = router({
 			// Delete from R2
 			if (ctx.env?.R2_BUCKET) {
 				try {
-					console.log(
-						`📁 Deleting R2 content: blog/${postToDelete[0].slug}.md`,
-					);
-					await ctx.env.R2_BUCKET.delete(`blog/${postToDelete[0].slug}.md`);
+					console.log(`📁 Deleting R2 content: blog/${postToDelete[0].id}.md`);
+					await ctx.env.R2_BUCKET.delete(`blog/${postToDelete[0].id}.md`);
 				} catch (error) {
 					console.error("Error deleting content from R2:", error);
 				}
 			}
 
 			// Delete from database
-			console.log(`🗄️ Deleting from database...`);
-			const deleteResult = await db.delete(posts).where(eq(posts.id, input.id));
-			console.log(`✅ Delete completed successfully`);
+			console.log("🗄️ Deleting from database...");
+			const _deleteResult = await db
+				.delete(posts)
+				.where(eq(posts.id, input.id));
+			console.log("✅ Delete completed successfully");
 
 			return { success: true };
 		}),

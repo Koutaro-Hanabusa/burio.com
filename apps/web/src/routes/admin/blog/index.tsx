@@ -75,13 +75,13 @@ function BlogAdmin() {
 	return (
 		<main className="min-h-screen px-6 py-20 md:px-12 lg:px-24">
 			<motion.div
-				className="max-w-6xl mx-auto"
+				className="mx-auto max-w-6xl"
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.8 }}
 			>
-				<div className="flex items-center justify-between mb-8">
-					<h1 className="text-3xl font-bold">ブログ管理</h1>
+				<div className="mb-8 flex items-center justify-between">
+					<h1 className="font-bold text-3xl">ブログ管理</h1>
 					<Button asChild>
 						<Link to="/admin/blog/new">
 							<RiAddLine className="mr-2 h-4 w-4" />
@@ -93,8 +93,8 @@ function BlogAdmin() {
 				{isLoading ? (
 					<div className="space-y-4">
 						{[1, 2, 3].map((i) => (
-							<div key={i} className="p-4 border rounded-lg">
-								<Skeleton className="h-6 w-3/4 mb-2" />
+							<div key={i} className="rounded-lg border p-4">
+								<Skeleton className="mb-2 h-6 w-3/4" />
 								<Skeleton className="h-4 w-1/2" />
 							</div>
 						))}
@@ -104,12 +104,12 @@ function BlogAdmin() {
 						<table className="w-full border-collapse">
 							<thead>
 								<tr className="border-b">
-									<th className="text-left p-4">タイトル</th>
-									<th className="text-left p-4">スラッグ</th>
-									<th className="text-center p-4">公開</th>
-									<th className="text-center p-4">閲覧数</th>
-									<th className="text-left p-4">作成日</th>
-									<th className="text-center p-4">操作</th>
+									<th className="p-4 text-left">タイトル</th>
+									<th className="p-4 text-left">スラッグ</th>
+									<th className="p-4 text-center">公開</th>
+									<th className="p-4 text-center">閲覧数</th>
+									<th className="p-4 text-left">作成日</th>
+									<th className="p-4 text-center">操作</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -123,13 +123,13 @@ function BlogAdmin() {
 									>
 										<td className="p-4">
 											<Link
-												to={`/blog/${post.slug}`}
+												to={`/blog/${post.id}`}
 												className="font-medium hover:text-primary"
 											>
 												{post.title}
 											</Link>
 										</td>
-										<td className="p-4 text-sm text-muted-foreground">
+										<td className="p-4 text-muted-foreground text-sm">
 											{post.slug}
 										</td>
 										<td className="p-4 text-center">
@@ -152,7 +152,7 @@ function BlogAdmin() {
 											{formatDate(post.createdAt)}
 										</td>
 										<td className="p-4">
-											<div className="flex gap-2 justify-center">
+											<div className="flex justify-center gap-2">
 												<Button variant="ghost" size="sm" asChild>
 													<Link to={`/admin/blog/${post.id}/edit`}>
 														<RiEditLine className="h-4 w-4" />
@@ -174,8 +174,8 @@ function BlogAdmin() {
 						</table>
 					</div>
 				) : (
-					<div className="text-center py-12">
-						<p className="text-muted-foreground mb-4">まだ記事がありません</p>
+					<div className="py-12 text-center">
+						<p className="mb-4 text-muted-foreground">まだ記事がありません</p>
 						<Button asChild>
 							<Link to="/admin/blog/new">
 								<RiAddLine className="mr-2 h-4 w-4" />
