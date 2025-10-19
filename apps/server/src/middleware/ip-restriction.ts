@@ -77,10 +77,18 @@ export function isIPAllowed(ip: string): boolean {
 		return true;
 	}
 
-	// プレフィックス一致チェック
+	// プレフィックス一致チェック (IPv4とIPv6の両方に対応)
 	for (const allowedIP of allowedIPs) {
+		// IPv4プレフィックス (例: "192.168.")
 		if (allowedIP.endsWith(".") && ip.startsWith(allowedIP)) {
 			console.log(`✅ IP allowed (prefix match): ${ip} matches ${allowedIP}`);
+			return true;
+		}
+		// IPv6プレフィックス (例: "2400:4051:")
+		if (allowedIP.endsWith(":") && ip.startsWith(allowedIP)) {
+			console.log(
+				`✅ IP allowed (IPv6 prefix match): ${ip} matches ${allowedIP}`,
+			);
 			return true;
 		}
 	}
