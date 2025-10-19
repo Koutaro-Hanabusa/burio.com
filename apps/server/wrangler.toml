@@ -8,7 +8,6 @@ workers_dev = true
 NODE_ENV = "production"
 CORS_ORIGIN = "https://burio16.com"
 BETTER_AUTH_URL = "https://api.burio16.com"
-ADMIN_ALLOWED_IPS = "2400:4051:1e01:4500:24e4:d64b:ba6a:5d0a"
 
 # D1 Database Configuration
 # Database IDs are intentionally omitted for security
