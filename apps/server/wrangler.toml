@@ -27,6 +27,7 @@ bucket_name = "burio-com-blog"
 
 # Development Environment
 [env.dev]
+name = "burio-com-server-dev"
 workers_dev = true
 
 [env.dev.vars]
