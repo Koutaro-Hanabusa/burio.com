@@ -12,16 +12,16 @@ import { FAVORITES } from "@/constants/favorites";
 export function Favorites() {
 	return (
 		<motion.section
-			className="py-20 px-6 md:px-12 lg:px-24"
+			className="px-6 py-20 md:px-12 lg:px-24"
 			initial="hidden"
 			whileInView="visible"
 			variants={fadeInVariants}
 			transition={smoothTransition}
 			viewport={{ once: true }}
 		>
-			<div className="max-w-4xl mx-auto">
+			<div className="mx-auto max-w-4xl">
 				<motion.h2
-					className="text-3xl md:text-4xl font-bold mb-12 text-balance"
+					className="mb-12 text-balance font-bold text-3xl md:text-4xl"
 					initial="hidden"
 					whileInView="visible"
 					variants={fadeInUpVariants}
@@ -31,11 +31,11 @@ export function Favorites() {
 					好きなもの
 				</motion.h2>
 
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+				<div className="grid grid-cols-1 gap-8 md:grid-cols-2">
 					{FAVORITES.map((favorite, index) => (
 						<motion.div
 							key={favorite.category}
-							className="p-6 rounded-lg bg-card border border-border"
+							className="rounded-lg border border-border bg-card p-6"
 							initial="hidden"
 							whileInView="visible"
 							whileHover="hover"
@@ -47,14 +47,14 @@ export function Favorites() {
 							transition={{ delay: getStaggerDelay(index), duration: 0.6 }}
 							viewport={{ once: true }}
 						>
-							<h3 className="text-xl font-semibold mb-4 text-primary">
+							<h3 className="mb-4 font-semibold text-primary text-xl">
 								{favorite.category}
 							</h3>
 							<div className="space-y-2">
 								{favorite.items.map((item, itemIndex) => (
 									<motion.div
 										key={item}
-										className="text-muted-foreground flex items-center gap-2"
+										className="flex items-center gap-2 text-muted-foreground"
 										initial="hidden"
 										whileInView="visible"
 										variants={fadeInLeftVariants}
@@ -64,7 +64,7 @@ export function Favorites() {
 										}}
 										viewport={{ once: true }}
 									>
-										<span className="w-1.5 h-1.5 rounded-full bg-accent" />
+										<span className="h-1.5 w-1.5 rounded-full bg-accent" />
 										<span>{item}</span>
 									</motion.div>
 								))}

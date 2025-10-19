@@ -1,8 +1,7 @@
 import { vi } from "vitest";
-import type { posts } from "../../db/schema";
 
 export interface MockPost {
-	id: string;
+	id: number;
 	title: string;
 	slug: string;
 	content: string | null;
@@ -10,7 +9,7 @@ export interface MockPost {
 	coverImage: string | null;
 	tags: string | null;
 	views: number;
-	authorId: string | null;
+	authorId: number | null;
 	published: number;
 	createdAt: Date;
 	updatedAt: Date;
@@ -78,7 +77,7 @@ export const createMockDb = () => {
 			builder.from.mockImplementation(() => {
 				const fromBuilder = { ...builder };
 
-				fromBuilder.where.mockImplementation((condition?: unknown) => {
+				fromBuilder.where.mockImplementation((_condition?: unknown) => {
 					const whereBuilder = { ...fromBuilder };
 
 					whereBuilder.orderBy.mockImplementation(() => {
@@ -150,7 +149,7 @@ export const createMockDb = () => {
 
 				valuesBuilder.returning.mockImplementation(() => {
 					const newPost: MockPost = {
-						id: `post-${Date.now()}`,
+						id: mockPosts.length + 1,
 						title: data.title || "",
 						slug: data.slug || "",
 						content: data.content || null,
@@ -180,7 +179,7 @@ export const createMockDb = () => {
 			builder.set.mockImplementation((data: Partial<MockPost>) => {
 				const setBuilder = { ...builder };
 
-				setBuilder.where.mockImplementation((condition: unknown) => {
+				setBuilder.where.mockImplementation((_condition: unknown) => {
 					const whereBuilder = { ...setBuilder };
 
 					whereBuilder.returning.mockImplementation(() => {
@@ -209,8 +208,8 @@ export const createMockDb = () => {
 		delete: vi.fn(() => {
 			const builder = createMockDbQuery();
 
-			builder.where.mockImplementation((condition: unknown) => {
-				const whereBuilder = { ...builder };
+			builder.where.mockImplementation((_condition: unknown) => {
+				const _whereBuilder = { ...builder };
 
 				// deleteは返り値がないので、直接Promise.resolveを返す
 				return Promise.resolve({ success: true });
@@ -255,7 +254,7 @@ export const createMockR2Bucket = () => {
 // D1データベースのモック
 export const createMockD1Database = () => {
 	return {
-		prepare: vi.fn((query: string) => {
+		prepare: vi.fn((_query: string) => {
 			return {
 				bind: vi.fn().mockReturnThis(),
 				all: vi.fn(async () => ({

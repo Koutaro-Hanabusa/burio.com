@@ -1,11 +1,8 @@
-import { createId } from "@paralleldrive/cuid2";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 // Users table
 export const users = sqliteTable("users", {
-	id: text("id")
-		.primaryKey()
-		.$defaultFn(() => createId()),
+	id: integer("id").primaryKey({ autoIncrement: true }),
 	email: text("email").notNull().unique(),
 	name: text("name"),
 	createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
@@ -18,9 +15,7 @@ export const users = sqliteTable("users", {
 
 // Posts table
 export const posts = sqliteTable("posts", {
-	id: text("id")
-		.primaryKey()
-		.$defaultFn(() => createId()),
+	id: integer("id").primaryKey({ autoIncrement: true }),
 	title: text("title").notNull(),
 	slug: text("slug").notNull().unique(),
 	content: text("content"),
@@ -28,7 +23,7 @@ export const posts = sqliteTable("posts", {
 	coverImage: text("cover_image"),
 	tags: text("tags"),
 	views: integer("views").default(0),
-	authorId: text("author_id").references(() => users.id),
+	authorId: integer("author_id").references(() => users.id),
 	published: integer("published").default(0),
 	createdAt: integer("created_at", { mode: "timestamp" }).$defaultFn(
 		() => new Date(),

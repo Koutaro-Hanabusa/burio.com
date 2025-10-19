@@ -1,5 +1,11 @@
 import { type RenderOptions, render } from "@testing-library/react";
-import type { ReactElement } from "react";
+import React, { type ReactElement } from "react";
+
+// framer-motionのモック用の型定義
+interface MotionComponentProps {
+	children?: React.ReactNode;
+	[key: string]: unknown;
+}
 
 // framer-motionのモック
 export const mockFramerMotion = () => {
@@ -9,10 +15,10 @@ export const mockFramerMotion = () => {
 			{
 				get:
 					(_target, prop) =>
-					({ children, ...props }: any) => {
+					({ children, ...props }: MotionComponentProps) => {
 						// motion.divなどのコンポーネントを通常のHTML要素として扱う
-						const Component = prop as keyof JSX.IntrinsicElements;
-						return <Component {...props}>{children}</Component>;
+						const Component = prop as keyof React.JSX.IntrinsicElements;
+						return React.createElement(Component as string, props, children);
 					},
 			},
 		),

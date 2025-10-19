@@ -1,11 +1,9 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
-	characterHoverTransition,
 	characterVariants,
 	fadeInUpVariants,
 	getStaggerDelay,
-	heroTitleHoverTransition,
 	heroTitleTransition,
 	heroTitleVariants,
 	sectionVariants,
@@ -20,16 +18,16 @@ const NAME_CHARACTERS = ["ぶ", "り", "お"] as const;
 export function Hero() {
 	return (
 		<motion.section
-			className="min-h-screen flex items-center justify-center px-6 py-20"
+			className="flex min-h-screen items-center justify-center px-6 py-20"
 			initial="hidden"
 			animate="visible"
 			variants={sectionVariants}
 			transition={smoothTransition}
 		>
-			<div className="max-w-4xl w-full">
+			<div className="w-full max-w-4xl">
 				<div className="space-y-6">
 					<motion.div
-						className="text-5xl md:text-7xl font-bold tracking-tight text-balance inline-block"
+						className="inline-block text-balance font-bold text-5xl tracking-tight md:text-7xl"
 						initial="hidden"
 						animate="visible"
 						whileHover="hover"
@@ -55,7 +53,7 @@ export function Hero() {
 					</motion.div>
 
 					<motion.p
-						className="text-xl md:text-2xl text-muted-foreground"
+						className="text-muted-foreground text-xl md:text-2xl"
 						initial="hidden"
 						animate="visible"
 						variants={fadeInUpVariants}
@@ -65,7 +63,7 @@ export function Hero() {
 					</motion.p>
 
 					<motion.p
-						className="text-lg text-muted-foreground max-w-2xl leading-relaxed"
+						className="max-w-2xl text-lg text-muted-foreground leading-relaxed"
 						initial="hidden"
 						animate="visible"
 						variants={fadeInUpVariants}
@@ -100,7 +98,7 @@ export function Hero() {
 									variant="ghost"
 									size="icon"
 									asChild
-									className="hover:scale-110 transition-transform"
+									className="transition-transform hover:scale-110"
 								>
 									<a
 										href={social.href}

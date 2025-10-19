@@ -74,11 +74,11 @@ describe("blogRouter", () => {
 
 		it("should validate getById input", () => {
 			const validInput = {
-				id: "test-id-123",
+				id: 123,
 			};
 
 			expect(validInput.id).toBeDefined();
-			expect(typeof validInput.id).toBe("string");
+			expect(typeof validInput.id).toBe("number");
 		});
 
 		it("should validate create input", () => {

@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import type { ReactNode } from "react";
+import React, { type ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // tRPCのクエリ戻り値の型定義
@@ -9,12 +9,6 @@ interface BlogPost {
 	excerpt?: string | null;
 	createdAt: string;
 	views: number;
-}
-
-interface UseQueryResult<TData = unknown, TError = unknown> {
-	data: TData | undefined;
-	isLoading: boolean;
-	error: TError | null;
 }
 
 interface MotionComponentProps {
@@ -45,8 +39,8 @@ vi.mock("framer-motion", () => ({
 			get:
 				(_target, prop) =>
 				({ children, ...props }: MotionComponentProps) => {
-					const Component = prop as keyof JSX.IntrinsicElements;
-					return <Component {...props}>{children}</Component>;
+					const Component = prop as keyof React.JSX.IntrinsicElements;
+					return React.createElement(Component as string, props, children);
 				},
 		},
 	),
@@ -82,12 +76,12 @@ import { useAdminAccess } from "@/hooks/use-admin-access";
 import { trpc } from "@/utils/trpc";
 import { Blog } from "./blog";
 
-const mockUseAdminAccess = useAdminAccess as ReturnType<typeof vi.fn>;
-const mockUseQuery = trpc.blog.getAll.useQuery as ReturnType<
-	typeof vi.fn<
-		[{ limit: number; published: boolean }],
-		UseQueryResult<BlogPost[], Error>
-	>
+// 型安全なモック関数を作成
+const mockUseAdminAccess = useAdminAccess as unknown as ReturnType<
+	typeof vi.fn
+>;
+const mockUseQuery = trpc.blog.getAll.useQuery as unknown as ReturnType<
+	typeof vi.fn
 >;
 
 describe("Blogコンポーネント", () => {

@@ -49,7 +49,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
 	if (isChecking || isLoading) {
 		return (
-			<div className="min-h-screen bg-background flex items-center justify-center">
+			<div className="flex min-h-screen items-center justify-center bg-background">
 				<motion.div
 					className="text-center"
 					initial={{ opacity: 0, y: 20 }}
@@ -59,13 +59,17 @@ export function AdminGuard({ children }: AdminGuardProps) {
 					<div className="mb-6">
 						<motion.div
 							animate={{ rotate: 360 }}
-							transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+							transition={{
+								duration: 2,
+								repeat: Number.POSITIVE_INFINITY,
+								ease: "linear",
+							}}
 							className="inline-block"
 						>
-							<RiShieldLine className="h-12 w-12 text-primary mx-auto" />
+							<RiShieldLine className="mx-auto h-12 w-12 text-primary" />
 						</motion.div>
 					</div>
-					<h2 className="text-2xl font-semibold mb-2">アクセス確認中...</h2>
+					<h2 className="mb-2 font-semibold text-2xl">アクセス確認中...</h2>
 					<p className="text-muted-foreground">
 						IPアドレスの確認を行っています
 					</p>
@@ -76,9 +80,9 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
 	if (!accessGranted || error) {
 		return (
-			<div className="min-h-screen bg-background flex items-center justify-center p-6">
+			<div className="flex min-h-screen items-center justify-center bg-background p-6">
 				<motion.div
-					className="max-w-md w-full"
+					className="w-full max-w-md"
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.6 }}
@@ -86,7 +90,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 					<Card className="border-red-500/20 bg-red-500/10">
 						<CardHeader className="text-center">
 							<div className="mb-4">
-								<RiErrorWarningLine className="h-16 w-16 text-red-500 mx-auto" />
+								<RiErrorWarningLine className="mx-auto h-16 w-16 text-red-500" />
 							</div>
 							<CardTitle className="text-red-400">
 								管理画面へのアクセスが拒否されました
@@ -94,26 +98,26 @@ export function AdminGuard({ children }: AdminGuardProps) {
 						</CardHeader>
 						<CardContent className="space-y-4">
 							{ipInfo && (
-								<div className="bg-card p-4 rounded-md border border-border">
-									<p className="text-sm text-muted-foreground mb-2">
+								<div className="rounded-md border border-border bg-card p-4">
+									<p className="mb-2 text-muted-foreground text-sm">
 										<strong>IPアドレス:</strong> {ipInfo.ip}
 									</p>
-									<p className="text-sm text-muted-foreground">
+									<p className="text-muted-foreground text-sm">
 										<strong>ステータス:</strong> {ipInfo.message}
 									</p>
 								</div>
 							)}
 
 							{error && (
-								<div className="bg-red-500/10 p-4 rounded-md border border-red-500/20">
-									<p className="text-sm text-red-400">
+								<div className="rounded-md border border-red-500/20 bg-red-500/10 p-4">
+									<p className="text-red-400 text-sm">
 										<strong>エラー:</strong> {error.message}
 									</p>
 								</div>
 							)}
 
-							<div className="text-center space-y-3">
-								<p className="text-sm text-muted-foreground">
+							<div className="space-y-3 text-center">
+								<p className="text-muted-foreground text-sm">
 									許可されたIPアドレスからのみアクセス可能です。
 								</p>
 								<Button
@@ -121,7 +125,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 									variant="outline"
 									className="w-full"
 								>
-									<RiRefreshLine className="h-4 w-4 mr-2" />
+									<RiRefreshLine className="mr-2 h-4 w-4" />
 									再試行
 								</Button>
 							</div>
@@ -137,7 +141,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 		<>
 			{/* アクセス成功の通知バナー */}
 			<motion.div
-				className="bg-green-500 text-white px-4 py-2 text-center text-sm"
+				className="bg-green-500 px-4 py-2 text-center text-sm text-white"
 				initial={{ y: -50, opacity: 0 }}
 				animate={{ y: 0, opacity: 1 }}
 				transition={{ duration: 0.5 }}

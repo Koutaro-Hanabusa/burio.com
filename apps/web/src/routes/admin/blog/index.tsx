@@ -47,7 +47,7 @@ function BlogAdmin() {
 		},
 	});
 
-	const handleDelete = (id: string, title: string) => {
+	const handleDelete = (id: number, title: string) => {
 		console.log(`Attempting to delete post: ${id} - ${title}`);
 		if (confirm(`「${title}」を削除してよろしいですか？`)) {
 			console.log(`User confirmed deletion for: ${id}`);
@@ -57,7 +57,7 @@ function BlogAdmin() {
 		}
 	};
 
-	const handleTogglePublish = (id: string, currentStatus: boolean) => {
+	const handleTogglePublish = (id: number, currentStatus: boolean) => {
 		togglePublish.mutate({
 			id,
 			published: !currentStatus,
@@ -123,7 +123,8 @@ function BlogAdmin() {
 									>
 										<td className="p-4">
 											<Link
-												to={`/blog/${post.id}`}
+												to="/blog/$id"
+												params={{ id: String(post.id) }}
 												className="font-medium hover:text-primary"
 											>
 												{post.title}
@@ -137,24 +138,27 @@ function BlogAdmin() {
 												variant="ghost"
 												size="sm"
 												onClick={() =>
-													handleTogglePublish(post.id, post.published)
+													handleTogglePublish(post.id, post.published === 1)
 												}
 											>
-												{post.published ? (
+												{post.published === 1 ? (
 													<RiEyeLine className="h-4 w-4 text-green-600" />
 												) : (
 													<RiEyeOffLine className="h-4 w-4 text-gray-400" />
 												)}
 											</Button>
 										</td>
-										<td className="p-4 text-center">{post.views}</td>
+										<td className="p-4 text-center">{post.views ?? 0}</td>
 										<td className="p-4 text-sm">
-											{formatDate(post.createdAt)}
+											{post.createdAt ? formatDate(post.createdAt) : "N/A"}
 										</td>
 										<td className="p-4">
 											<div className="flex justify-center gap-2">
 												<Button variant="ghost" size="sm" asChild>
-													<Link to={`/admin/blog/${post.id}/edit`}>
+													<Link
+														to="/admin/blog/$id/edit"
+														params={{ id: String(post.id) }}
+													>
 														<RiEditLine className="h-4 w-4" />
 													</Link>
 												</Button>

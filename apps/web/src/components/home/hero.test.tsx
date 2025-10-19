@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Hero } from "./hero";
 
@@ -11,8 +12,8 @@ vi.mock("framer-motion", () => ({
 				(_target, prop) =>
 				// biome-ignore lint/suspicious/noExplicitAny: test mock
 				({ children, ...props }: any) => {
-					const Component = prop as keyof JSX.IntrinsicElements;
-					return <Component {...props}>{children}</Component>;
+					const Component = prop as keyof React.JSX.IntrinsicElements;
+					return React.createElement(Component as string, props, children);
 				},
 		},
 	),

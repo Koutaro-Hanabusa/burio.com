@@ -55,20 +55,20 @@ function AdminDashboard() {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.8 }}
 				>
-					<div className="max-w-6xl mx-auto">
+					<div className="mx-auto max-w-6xl">
 						<motion.div
 							className="mb-12"
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.2, duration: 0.8 }}
 						>
-							<h1 className="text-4xl md:text-5xl font-bold mb-4">管理画面</h1>
-							<p className="text-xl text-muted-foreground">
+							<h1 className="mb-4 font-bold text-4xl md:text-5xl">管理画面</h1>
+							<p className="text-muted-foreground text-xl">
 								ブログとサイトの管理を行います
 							</p>
 						</motion.div>
 
-						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+						<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 							{adminCards.map((card, index) => (
 								<motion.div
 									key={card.href}
@@ -78,11 +78,11 @@ function AdminDashboard() {
 									whileHover={{ y: -4 }}
 								>
 									<Link to={card.href}>
-										<Card className="h-full hover:shadow-lg transition-all cursor-pointer group">
+										<Card className="group h-full cursor-pointer transition-all hover:shadow-lg">
 											<CardHeader className="pb-3">
 												<div className="flex items-center gap-3">
 													<div
-														className={`p-3 rounded-lg ${card.color} text-white group-hover:scale-110 transition-transform`}
+														className={`rounded-lg p-3 ${card.color} text-white transition-transform group-hover:scale-110`}
 													>
 														<card.icon className="h-6 w-6" />
 													</div>
@@ -103,30 +103,30 @@ function AdminDashboard() {
 						</div>
 
 						<motion.div
-							className="mt-12 p-6 bg-card rounded-lg border border-border"
+							className="mt-12 rounded-lg border border-border bg-card p-6"
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.8, duration: 0.6 }}
 						>
-							<h2 className="text-2xl font-semibold mb-4">
+							<h2 className="mb-4 font-semibold text-2xl">
 								クイックアクション
 							</h2>
 							<div className="flex flex-wrap gap-4">
 								<Button asChild>
 									<Link to="/admin/posts/new">
-										<RiAddLine className="h-4 w-4 mr-2" />
+										<RiAddLine className="mr-2 h-4 w-4" />
 										新規記事作成
 									</Link>
 								</Button>
 								<Button variant="outline" asChild>
 									<Link to="/admin/posts">
-										<RiArticleLine className="h-4 w-4 mr-2" />
+										<RiArticleLine className="mr-2 h-4 w-4" />
 										記事一覧
 									</Link>
 								</Button>
 								<Button variant="outline" asChild>
 									<Link to="/blog">
-										<RiDashboardLine className="h-4 w-4 mr-2" />
+										<RiDashboardLine className="mr-2 h-4 w-4" />
 										ブログを表示
 									</Link>
 								</Button>

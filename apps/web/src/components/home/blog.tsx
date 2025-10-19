@@ -14,11 +14,11 @@ import { trpc } from "@/utils/trpc";
 const BLOG_POST_LIMIT = 3;
 
 interface BlogPostProps {
-	id: string;
+	id: number;
 	title: string;
 	excerpt?: string | null;
-	createdAt: Date | string;
-	views: number;
+	createdAt: Date | string | null;
+	views: number | null;
 	index: number;
 }
 
@@ -46,16 +46,18 @@ function BlogPost({
 		>
 			<div className="mb-3 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 				<h3 className="font-semibold text-xl transition-colors group-hover:text-primary">
-					<Link to={`/blog/${id}`}>{title}</Link>
+					<Link to="/blog/$id" params={{ id: String(id) }}>
+						{title}
+					</Link>
 				</h3>
 				<time className="text-muted-foreground text-sm">
-					{formatDate(createdAt)}
+					{createdAt ? formatDate(createdAt) : "N/A"}
 				</time>
 			</div>
 			{excerpt && (
 				<p className="text-muted-foreground leading-relaxed">{excerpt}</p>
 			)}
-			{views > 0 && (
+			{views != null && views > 0 && (
 				<div className="mt-2 text-muted-foreground text-sm">{views} views</div>
 			)}
 		</motion.article>
@@ -157,8 +159,8 @@ export function Blog() {
 							id={post.id}
 							title={post.title}
 							excerpt={post.excerpt}
-							createdAt={post.createdAt}
-							views={post.views}
+							createdAt={post.createdAt ?? new Date()}
+							views={post.views ?? 0}
 							index={index}
 						/>
 					))}

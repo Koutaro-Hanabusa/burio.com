@@ -7,7 +7,6 @@ import {
 	useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import Header from "@/components/header";
 import Loader from "@/components/loader";
 import NotFound from "@/components/not-found";
 import { ThemeProvider } from "@/components/theme-provider";
