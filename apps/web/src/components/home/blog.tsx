@@ -14,7 +14,7 @@ import { trpc } from "@/utils/trpc";
 const BLOG_POST_LIMIT = 3;
 
 interface BlogPostProps {
-	slug: string;
+	id: string;
 	title: string;
 	excerpt?: string | null;
 	createdAt: Date | string;
@@ -23,7 +23,7 @@ interface BlogPostProps {
 }
 
 function BlogPost({
-	slug,
+	id,
 	title,
 	excerpt,
 	createdAt,
@@ -32,7 +32,7 @@ function BlogPost({
 }: BlogPostProps) {
 	return (
 		<motion.article
-			className="p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-colors group"
+			className="group rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50"
 			initial="hidden"
 			whileInView="visible"
 			whileHover="hover"
@@ -44,11 +44,11 @@ function BlogPost({
 			transition={{ delay: getStaggerDelay(index), duration: 0.6 }}
 			viewport={{ once: true }}
 		>
-			<div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-3">
-				<h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
-					<Link to={`/blog/${slug}`}>{title}</Link>
+			<div className="mb-3 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+				<h3 className="font-semibold text-xl transition-colors group-hover:text-primary">
+					<Link to={`/blog/${id}`}>{title}</Link>
 				</h3>
-				<time className="text-sm text-muted-foreground">
+				<time className="text-muted-foreground text-sm">
 					{formatDate(createdAt)}
 				</time>
 			</div>
@@ -56,7 +56,7 @@ function BlogPost({
 				<p className="text-muted-foreground leading-relaxed">{excerpt}</p>
 			)}
 			{views > 0 && (
-				<div className="mt-2 text-sm text-muted-foreground">{views} views</div>
+				<div className="mt-2 text-muted-foreground text-sm">{views} views</div>
 			)}
 		</motion.article>
 	);
@@ -64,9 +64,9 @@ function BlogPost({
 
 function BlogHeader({ isAdmin }: { isAdmin: boolean }) {
 	return (
-		<div className="flex items-center justify-between mb-12">
+		<div className="mb-12 flex items-center justify-between">
 			<motion.h2
-				className="text-3xl md:text-4xl font-bold text-balance"
+				className="text-balance font-bold text-3xl md:text-4xl"
 				initial="hidden"
 				whileInView="visible"
 				variants={fadeInUpVariants}
@@ -84,14 +84,14 @@ function BlogHeader({ isAdmin }: { isAdmin: boolean }) {
 			>
 				<Link
 					to="/blog"
-					className="text-primary hover:text-primary/80 transition-colors font-medium"
+					className="font-medium text-primary transition-colors hover:text-primary/80"
 				>
 					すべて見る →
 				</Link>
 				{isAdmin && (
 					<Link
 						to="/admin"
-						className="text-primary hover:text-primary/80 transition-colors font-medium"
+						className="font-medium text-primary transition-colors hover:text-primary/80"
 					>
 						管理画面
 					</Link>
@@ -104,13 +104,13 @@ function BlogHeader({ isAdmin }: { isAdmin: boolean }) {
 function BlogLoading() {
 	return (
 		<motion.section
-			className="py-20 px-6 md:px-12 lg:px-24 bg-muted/30"
+			className="bg-muted/30 px-6 py-20 md:px-12 lg:px-24"
 			initial="hidden"
 			animate="visible"
 			variants={fadeInVariants}
 		>
-			<div className="max-w-4xl mx-auto">
-				<h2 className="text-3xl md:text-4xl font-bold mb-12">
+			<div className="mx-auto max-w-4xl">
+				<h2 className="mb-12 font-bold text-3xl md:text-4xl">
 					最新のブログ記事
 				</h2>
 				<div className="text-center text-muted-foreground">読み込み中...</div>
@@ -141,20 +141,20 @@ export function Blog() {
 
 	return (
 		<motion.section
-			className="py-20 px-6 md:px-12 lg:px-24 bg-muted/30"
+			className="bg-muted/30 px-6 py-20 md:px-12 lg:px-24"
 			initial="hidden"
 			whileInView="visible"
 			variants={fadeInVariants}
 			transition={smoothTransition}
 			viewport={{ once: true }}
 		>
-			<div className="max-w-4xl mx-auto">
+			<div className="mx-auto max-w-4xl">
 				<BlogHeader isAdmin={isAdmin} />
 				<div className="space-y-6">
 					{posts.map((post, index) => (
 						<BlogPost
-							key={post.slug}
-							slug={post.slug}
+							key={post.id}
+							id={post.id}
 							title={post.title}
 							excerpt={post.excerpt}
 							createdAt={post.createdAt}
