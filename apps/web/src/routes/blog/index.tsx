@@ -64,20 +64,20 @@ function BlogListPage() {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.8 }}
 			>
-				<div className="max-w-4xl mx-auto">
+				<div className="mx-auto max-w-4xl">
 					<motion.div
 						className="mb-12 space-y-6"
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ delay: 0.2, duration: 0.8 }}
 					>
-						<h1 className="text-5xl md:text-6xl font-bold">Blog</h1>
-						<p className="text-xl text-muted-foreground">
+						<h1 className="font-bold text-5xl md:text-6xl">Blog</h1>
+						<p className="text-muted-foreground text-xl">
 							技術的な洞察、開発のヒント、そして私の考えを共有します
 						</p>
 
 						<div className="relative">
-							<RiSearchLine className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+							<RiSearchLine className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 transform text-muted-foreground" />
 							<Input
 								type="text"
 								placeholder="記事を検索..."
@@ -91,7 +91,7 @@ function BlogListPage() {
 					{isLoading ? (
 						<div className="space-y-6">
 							{[1, 2, 3].map((i) => (
-								<div key={i} className="p-6 rounded-lg border space-y-4">
+								<div key={i} className="space-y-4 rounded-lg border p-6">
 									<Skeleton className="h-6 w-3/4" />
 									<Skeleton className="h-4 w-full" />
 									<Skeleton className="h-4 w-5/6" />
@@ -105,7 +105,7 @@ function BlogListPage() {
 						</div>
 					) : filteredPosts.length === 0 ? (
 						<motion.div
-							className="text-center py-16 space-y-6"
+							className="space-y-6 py-16 text-center"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={{ duration: 0.5 }}
@@ -113,10 +113,10 @@ function BlogListPage() {
 							<div className="text-6xl">📝</div>
 							{searchQuery ? (
 								<>
-									<h2 className="text-2xl font-semibold">
+									<h2 className="font-semibold text-2xl">
 										記事が見つかりませんでした
 									</h2>
-									<p className="text-muted-foreground text-lg max-w-md mx-auto">
+									<p className="mx-auto max-w-md text-lg text-muted-foreground">
 										「{searchQuery}」に一致する記事がありませんでした。
 										<br />
 										別のキーワードで検索してみてください。
@@ -131,15 +131,15 @@ function BlogListPage() {
 								</>
 							) : (
 								<>
-									<h2 className="text-2xl font-semibold">
+									<h2 className="font-semibold text-2xl">
 										記事はまだありません
 									</h2>
-									<p className="text-muted-foreground text-lg max-w-md mx-auto">
+									<p className="mx-auto max-w-md text-lg text-muted-foreground">
 										現在ブログ記事を準備中です。
 										<br />
 										近日中に技術記事や開発に関する投稿をお届けします。
 									</p>
-									<div className="flex gap-4 justify-center mt-6">
+									<div className="mt-6 flex justify-center gap-4">
 										<Button asChild variant="outline">
 											<Link to="/">ホームに戻る</Link>
 										</Button>
@@ -155,7 +155,7 @@ function BlogListPage() {
 							{filteredPosts.map((post, index) => (
 								<motion.article
 									key={post.id}
-									className="group p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-all"
+									className="group rounded-lg border border-border bg-card p-6 transition-all hover:border-primary/50"
 									initial={{ opacity: 0, y: 20 }}
 									animate={{ opacity: 1, y: 0 }}
 									transition={{ delay: index * 0.1, duration: 0.6 }}
@@ -164,28 +164,28 @@ function BlogListPage() {
 										boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
 									}}
 								>
-									<Link to={`/blog/${post.slug}`} className="block">
+									<Link to={`/blog/${post.id}`} className="block">
 										{post.coverImage && (
-											<div className="mb-4 rounded-lg overflow-hidden">
+											<div className="mb-4 overflow-hidden rounded-lg">
 												<img
 													src={post.coverImage}
 													alt={post.title}
-													className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+													className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
 												/>
 											</div>
 										)}
 
-										<h2 className="text-2xl font-semibold mb-3 group-hover:text-primary transition-colors">
+										<h2 className="mb-3 font-semibold text-2xl transition-colors group-hover:text-primary">
 											{post.title}
 										</h2>
 
 										{post.excerpt && (
-											<p className="text-muted-foreground mb-4 line-clamp-2">
+											<p className="mb-4 line-clamp-2 text-muted-foreground">
 												{post.excerpt}
 											</p>
 										)}
 
-										<div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
+										<div className="mb-4 flex flex-wrap items-center gap-4 text-muted-foreground text-sm">
 											<div className="flex items-center gap-1">
 												<RiCalendarLine className="h-3.5 w-3.5" />
 												<time>{formatDate(post.createdAt)}</time>
@@ -203,11 +203,11 @@ function BlogListPage() {
 										</div>
 
 										{post.tags && JSON.parse(post.tags).length > 0 && (
-											<div className="flex flex-wrap gap-2 mb-4">
+											<div className="mb-4 flex flex-wrap gap-2">
 												{JSON.parse(post.tags).map((tag: string) => (
 													<span
 														key={tag}
-														className="px-2.5 py-0.5 text-xs rounded-full bg-accent/20 text-accent-foreground"
+														className="rounded-full bg-accent/20 px-2.5 py-0.5 text-accent-foreground text-xs"
 													>
 														{tag}
 													</span>
@@ -215,9 +215,9 @@ function BlogListPage() {
 											</div>
 										)}
 
-										<div className="flex items-center text-primary font-medium group-hover:gap-2 transition-all">
+										<div className="flex items-center font-medium text-primary transition-all group-hover:gap-2">
 											<span>続きを読む</span>
-											<RiArrowRightLine className="h-4 w-4 ml-1" />
+											<RiArrowRightLine className="ml-1 h-4 w-4" />
 										</div>
 									</Link>
 								</motion.article>

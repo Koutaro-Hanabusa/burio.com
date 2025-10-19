@@ -72,13 +72,13 @@ describe("blogRouter", () => {
 			expect(validInput.offset).toBeGreaterThanOrEqual(0);
 		});
 
-		it("should validate getBySlug input", () => {
+		it("should validate getById input", () => {
 			const validInput = {
-				slug: "test-post",
+				id: "test-id-123",
 			};
 
-			expect(validInput.slug).toBeDefined();
-			expect(typeof validInput.slug).toBe("string");
+			expect(validInput.id).toBeDefined();
+			expect(typeof validInput.id).toBe("string");
 		});
 
 		it("should validate create input", () => {
