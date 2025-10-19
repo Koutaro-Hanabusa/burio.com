@@ -1,4 +1,12 @@
 {
+	// ⚠️ DEPRECATED: This file is kept for reference only
+	// ✅ Please use wrangler.toml instead
+	// 📖 See SECURITY_SETUP.md for migration instructions
+	//
+	// SECURITY WARNING:
+	// This file previously contained sensitive database IDs and should not be used.
+	// All configuration has been moved to wrangler.toml with proper security practices.
+
 	"name": "burio-com-server",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-06-15",
