@@ -96,6 +96,10 @@ jobs:
         working-directory: apps/server
         run: bun run check-types
 
+      - name: Generate route tree (TanStack Router)
+        working-directory: apps/web
+        run: bunx @tanstack/router-cli generate
+
       - name: Type check (Frontend)
         working-directory: apps/web
         run: bun run check-types
