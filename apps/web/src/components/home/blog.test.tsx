@@ -11,12 +11,6 @@ interface BlogPost {
 	views: number;
 }
 
-interface UseQueryResult<TData = unknown, TError = unknown> {
-	data: TData | undefined;
-	isLoading: boolean;
-	error: TError | null;
-}
-
 interface MotionComponentProps {
 	children?: ReactNode;
 	className?: string;
@@ -82,8 +76,13 @@ import { useAdminAccess } from "@/hooks/use-admin-access";
 import { trpc } from "@/utils/trpc";
 import { Blog } from "./blog";
 
-const mockUseAdminAccess = useAdminAccess as any;
-const mockUseQuery = trpc.blog.getAll.useQuery as any;
+// 型安全なモック関数を作成
+const mockUseAdminAccess = useAdminAccess as unknown as ReturnType<
+	typeof vi.fn
+>;
+const mockUseQuery = trpc.blog.getAll.useQuery as unknown as ReturnType<
+	typeof vi.fn
+>;
 
 describe("Blogコンポーネント", () => {
 	beforeEach(() => {
