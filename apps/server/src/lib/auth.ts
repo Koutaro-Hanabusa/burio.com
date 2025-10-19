@@ -28,7 +28,11 @@ export const auth = betterAuth({
 		},
 	},
 	baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
-	secret: process.env.BETTER_AUTH_SECRET!,
+	secret:
+		process.env.BETTER_AUTH_SECRET ||
+		(() => {
+			throw new Error("BETTER_AUTH_SECRET environment variable is required");
+		})(),
 	trustedOrigins: [
 		"http://localhost:3001",
 		"https://burio-com.koutarouhanabusa.workers.dev",

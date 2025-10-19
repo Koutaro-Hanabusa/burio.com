@@ -5,9 +5,8 @@
  * 使用方法: bun run scripts/upload-to-r2.js <markdownファイルパス> <スラッグ>
  */
 
-import { execSync } from "child_process";
-import { existsSync, readFileSync } from "fs";
-import path from "path";
+import { execSync } from "node:child_process";
+import { existsSync } from "node:fs";
 
 function uploadToR2(filePath, slug, env = "dev") {
 	if (!existsSync(filePath)) {

@@ -10,14 +10,13 @@
  * - delete <slug> [env]: ファイルを削除
  */
 
+import { existsSync, readFileSync } from "node:fs";
 import {
 	DeleteObjectCommand,
 	ListObjectsV2Command,
 	PutObjectCommand,
 	S3Client,
 } from "@aws-sdk/client-s3";
-import { existsSync, readFileSync } from "fs";
-import path from "path";
 
 // R2設定
 const R2_CONFIG = {

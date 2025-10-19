@@ -10,10 +10,10 @@
  * 3. R2への自動アップロード
  */
 
+import { execSync } from "node:child_process";
+import { existsSync, writeFileSync } from "node:fs";
+import path from "node:path";
 import { createId } from "@paralleldrive/cuid2";
-import { execSync } from "child_process";
-import { existsSync, readFileSync, writeFileSync } from "fs";
-import path from "path";
 
 // slug生成関数
 function createSlug(title) {
