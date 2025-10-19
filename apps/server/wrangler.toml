@@ -1,0 +1,60 @@
+name = "burio-com-server"
+main = "src/index.ts"
+compatibility_date = "2025-06-15"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[vars]
+NODE_ENV = "production"
+CORS_ORIGIN = "https://burio16.com"
+BETTER_AUTH_URL = "https://api.burio16.com"
+
+# D1 Database Configuration
+# Database IDs are intentionally omitted for security
+# Set these using wrangler CLI or Cloudflare Dashboard
+[[d1_databases]]
+binding = "DB"
+database_name = "burio-com-db"
+# database_id will be read from wrangler.secret or environment
+migrations_dir = "./src/db/migrations"
+
+# R2 Bucket Configuration
+# Bucket names are intentionally generic
+# Actual bucket names should be managed via Cloudflare Dashboard
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "burio-com-blog"
+
+# Development Environment
+[env.dev]
+workers_dev = true
+
+[env.dev.vars]
+NODE_ENV = "development"
+CORS_ORIGIN = "http://localhost:3001"
+BETTER_AUTH_URL = "http://localhost:3000"
+
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "burio-com-dev"
+migrations_dir = "./src/db/migrations"
+
+[[env.dev.r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "burio-com-blog-dev"
+
+# ========================================
+# SECURITY NOTES:
+# ========================================
+# 1. For local development secrets, use .dev.vars file (auto-loaded by wrangler dev)
+# 2. For production secrets, use: wrangler secret put SECRET_NAME
+# 3. For database IDs, use environment-specific wrangler.toml or CLI flags
+# 4. Never commit .dev.vars or .env files to git
+#
+# Required secrets (set with wrangler secret put):
+# - BETTER_AUTH_SECRET
+# - Any API keys or tokens
+#
+# Database ID Management:
+# - Production: Set via Cloudflare Dashboard or wrangler CLI
+# - Development: Use .dev.vars or local wrangler.toml override

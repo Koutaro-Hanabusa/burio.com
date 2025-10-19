@@ -1,0 +1,18 @@
+# Development Environment Variables
+# Copy this file to .dev.vars and fill in your actual values
+# IMPORTANT: Never commit .dev.vars to git!
+
+# Authentication Secret (generate a random string)
+BETTER_AUTH_SECRET=your-dev-secret-here
+
+# Cloudflare Account ID (optional for local dev)
+# CLOUDFLARE_ACCOUNT_ID=
+
+# D1 Database Configuration (optional for local dev)
+# These are automatically handled by wrangler.toml bindings
+# CLOUDFLARE_DATABASE_ID=
+# CLOUDFLARE_D1_TOKEN=
+
+# Additional secrets can be added here as needed
+# Example: GITHUB_TOKEN=
+# Example: STRIPE_SECRET_KEY=

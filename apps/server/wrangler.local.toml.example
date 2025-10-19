@@ -1,0 +1,23 @@
+# Local Wrangler Configuration Override
+# Copy this file to wrangler.local.toml and fill in your actual database IDs
+# This file is ignored by git and should contain environment-specific IDs
+
+# Production Database Configuration
+[[d1_databases]]
+binding = "DB"
+database_name = "burio-com-db"
+database_id = "YOUR_PROD_DATABASE_ID_HERE"
+preview_database_id = "YOUR_PREVIEW_DATABASE_ID_HERE"
+migrations_dir = "./src/db/migrations"
+
+# Development Database Configuration
+[env.dev]
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "burio-com-dev"
+database_id = "YOUR_DEV_DATABASE_ID_HERE"
+preview_database_id = "YOUR_DEV_DATABASE_ID_HERE"
+migrations_dir = "./src/db/migrations"
+
+# Note: wrangler will merge this with wrangler.toml
+# Database IDs here will override those in wrangler.toml
