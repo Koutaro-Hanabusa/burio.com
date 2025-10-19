@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // tRPCのクエリ戻り値の型定義
 interface BlogPost {
+	id: number;
 	slug: string;
 	title: string;
 	excerpt?: string | null;
@@ -27,6 +28,7 @@ interface MotionComponentProps {
 interface LinkProps {
 	children: ReactNode;
 	to: string;
+	params?: Record<string, string>;
 	className?: string;
 	[key: string]: unknown;
 }
@@ -40,7 +42,18 @@ vi.mock("framer-motion", () => ({
 				(_target, prop) =>
 				({ children, ...props }: MotionComponentProps) => {
 					const Component = prop as keyof React.JSX.IntrinsicElements;
-					return React.createElement(Component as string, props, children);
+					// framer-motion固有のpropsを除外
+					const {
+						initial,
+						animate,
+						whileInView,
+						whileHover,
+						variants,
+						transition,
+						viewport,
+						...domProps
+					} = props;
+					return React.createElement(Component as string, domProps, children);
 				},
 		},
 	),
@@ -48,11 +61,20 @@ vi.mock("framer-motion", () => ({
 
 // @tanstack/react-routerをモック
 vi.mock("@tanstack/react-router", () => ({
-	Link: ({ children, to, ...props }: LinkProps) => (
-		<a href={to} {...props}>
-			{children}
-		</a>
-	),
+	Link: ({ children, to, params, ...props }: LinkProps) => {
+		// paramsがある場合、$idなどのプレースホルダーを置き換える
+		let href = to;
+		if (params) {
+			Object.entries(params).forEach(([key, value]) => {
+				href = href.replace(`$${key}`, value);
+			});
+		}
+		return (
+			<a href={href} {...props}>
+				{children}
+			</a>
+		);
+	},
 }));
 
 // useAdminAccessフックをモック
@@ -155,6 +177,7 @@ describe("Blogコンポーネント", () => {
 	describe("成功状態（記事表示）", () => {
 		const mockPosts: BlogPost[] = [
 			{
+				id: 1,
 				slug: "test-post-1",
 				title: "テスト記事1",
 				excerpt: "これはテスト記事1の抜粋です",
@@ -162,6 +185,7 @@ describe("Blogコンポーネント", () => {
 				views: 100,
 			},
 			{
+				id: 2,
 				slug: "test-post-2",
 				title: "テスト記事2",
 				excerpt: "これはテスト記事2の抜粋です",
@@ -169,6 +193,7 @@ describe("Blogコンポーネント", () => {
 				views: 50,
 			},
 			{
+				id: 3,
 				slug: "test-post-3",
 				title: "テスト記事3",
 				excerpt: null,
@@ -238,8 +263,8 @@ describe("Blogコンポーネント", () => {
 			render(<Blog />);
 			const link1 = screen.getByRole("link", { name: "テスト記事1" });
 			const link2 = screen.getByRole("link", { name: "テスト記事2" });
-			expect(link1).toHaveAttribute("href", "/blog/test-post-1");
-			expect(link2).toHaveAttribute("href", "/blog/test-post-2");
+			expect(link1).toHaveAttribute("href", "/blog/1");
+			expect(link2).toHaveAttribute("href", "/blog/2");
 		});
 	});
 
@@ -248,6 +273,7 @@ describe("Blogコンポーネント", () => {
 			mockUseQuery.mockReturnValue({
 				data: [
 					{
+						id: 1,
 						slug: "test",
 						title: "Test",
 						excerpt: null,
@@ -278,6 +304,7 @@ describe("Blogコンポーネント", () => {
 	describe("管理者機能", () => {
 		const mockPosts: BlogPost[] = [
 			{
+				id: 1,
 				slug: "test",
 				title: "Test",
 				excerpt: null,
@@ -322,6 +349,7 @@ describe("Blogコンポーネント", () => {
 			mockUseQuery.mockReturnValue({
 				data: [
 					{
+						id: 1,
 						slug: "test",
 						title: "Test",
 						excerpt: null,
