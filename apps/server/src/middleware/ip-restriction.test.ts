@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import {
-	createAdminIPMiddleware,
+	checkIPRestriction,
 	getClientIP,
 	getCurrentIP,
 	isIPAllowed,
@@ -150,29 +150,19 @@ describe("IP Restriction Middleware", () => {
 		});
 	});
 
-	describe("createAdminIPMiddleware", () => {
+	describe("checkIPRestriction", () => {
 		it("should allow request from authorized IP", () => {
-			const middleware = createAdminIPMiddleware();
-
 			const request = new Request("http://localhost", {
 				headers: {
 					"CF-Connecting-IP": "127.0.0.1",
 				},
 			});
 
-			const opts = {
-				ctx: { env: {} },
-				input: {},
-				req: request,
-			};
-
-			expect(() => middleware(opts)).not.toThrow();
+			expect(() => checkIPRestriction(request)).not.toThrow();
 		});
 
 		it("should throw TRPCError for unauthorized IP in production", () => {
 			process.env.NODE_ENV = "production";
-
-			const middleware = createAdminIPMiddleware();
 
 			const request = new Request("http://localhost", {
 				headers: {
@@ -180,15 +170,11 @@ describe("IP Restriction Middleware", () => {
 				},
 			});
 
-			const opts = {
-				ctx: { env: {} },
-				input: {},
-				req: request,
-			};
+			expect(() => checkIPRestriction(request)).toThrow(TRPCError);
 
-			expect(() => middleware(opts)).toThrow(TRPCError);
 			try {
-				middleware(opts);
+				checkIPRestriction(request);
+				expect.fail("Should have thrown an error");
 			} catch (error) {
 				if (error instanceof TRPCError) {
 					expect(error.code).toBe("FORBIDDEN");
@@ -197,20 +183,11 @@ describe("IP Restriction Middleware", () => {
 		});
 
 		it("should pass through when request is not available", () => {
-			const middleware = createAdminIPMiddleware();
-
-			const opts = {
-				ctx: { env: {} },
-				input: {},
-			};
-
-			expect(() => middleware(opts)).not.toThrow();
+			expect(() => checkIPRestriction(undefined)).not.toThrow();
 		});
 
 		it("should include IP address in error message", () => {
 			process.env.NODE_ENV = "production";
-
-			const middleware = createAdminIPMiddleware();
 
 			const request = new Request("http://localhost", {
 				headers: {
@@ -218,14 +195,8 @@ describe("IP Restriction Middleware", () => {
 				},
 			});
 
-			const opts = {
-				ctx: { env: {} },
-				input: {},
-				req: request,
-			};
-
 			try {
-				middleware(opts);
+				checkIPRestriction(request);
 				expect.fail("Should have thrown an error");
 			} catch (error) {
 				if (error instanceof TRPCError) {

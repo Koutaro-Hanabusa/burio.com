@@ -42,7 +42,7 @@ export const adminRouter = router({
 			}),
 		)
 		.query(async ({ input }) => {
-			console.log(`📊 Admin getAllPosts called with input:`, input);
+			console.log("📊 Admin getAllPosts called with input:", input);
 
 			const result = await db
 				.select()
@@ -95,7 +95,7 @@ export const adminRouter = router({
 					excerpt: input.excerpt,
 					coverImage: input.coverImage,
 					tags: input.tags ? JSON.stringify(input.tags) : null,
-					published: input.published,
+					published: input.published ? 1 : 0,
 				})
 				.returning();
 
@@ -107,7 +107,7 @@ export const adminRouter = router({
 	updatePost: adminProcedure
 		.input(
 			z.object({
-				id: z.string(),
+				id: z.number(),
 				title: z.string().min(1).optional(),
 				content: z.string().optional(),
 				excerpt: z.string().optional(),
@@ -129,7 +129,8 @@ export const adminRouter = router({
 				updateData.coverImage = input.coverImage;
 			if (input.tags !== undefined)
 				updateData.tags = JSON.stringify(input.tags);
-			if (input.published !== undefined) updateData.published = input.published;
+			if (input.published !== undefined)
+				updateData.published = input.published ? 1 : 0;
 
 			// 現在の記事を取得してスラッグをチェック
 			const currentPost = await db
@@ -174,7 +175,7 @@ export const adminRouter = router({
 
 	// 管理者専用：記事削除
 	deletePost: adminProcedure
-		.input(z.object({ id: z.string() }))
+		.input(z.object({ id: z.number() }))
 		.mutation(async ({ input, ctx }) => {
 			console.log(`🗑️ Admin deleting post: ${input.id}`);
 

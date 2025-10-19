@@ -1,7 +1,7 @@
 import type { MockPost } from "../mocks/db.mock";
 
 export const createMockPost = (overrides?: Partial<MockPost>): MockPost => {
-	const id = overrides?.id || `post-${Date.now()}-${Math.random()}`;
+	const id = overrides?.id || Math.floor(Math.random() * 1000000);
 	const now = new Date();
 
 	return {
@@ -13,7 +13,7 @@ export const createMockPost = (overrides?: Partial<MockPost>): MockPost => {
 		coverImage: "https://example.com/cover.jpg",
 		tags: JSON.stringify(["test", "vitest"]),
 		views: 0,
-		authorId: "author-123",
+		authorId: 1,
 		published: 1,
 		createdAt: now,
 		updatedAt: now,
@@ -24,7 +24,7 @@ export const createMockPost = (overrides?: Partial<MockPost>): MockPost => {
 export const createMultipleMockPosts = (count: number): MockPost[] => {
 	return Array.from({ length: count }, (_, i) =>
 		createMockPost({
-			id: `post-${i + 1}`,
+			id: i + 1,
 			title: `Test Post ${i + 1}`,
 			slug: `test-post-${i + 1}`,
 			published: i % 2 === 0 ? 1 : 0, // 偶数は公開、奇数は下書き

@@ -143,9 +143,6 @@ function BlogListPage() {
 										<Button asChild variant="outline">
 											<Link to="/">ホームに戻る</Link>
 										</Button>
-										<Button asChild>
-											<Link to="/contact">お問い合わせ</Link>
-										</Button>
 									</div>
 								</>
 							)}
@@ -164,7 +161,11 @@ function BlogListPage() {
 										boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
 									}}
 								>
-									<Link to={`/blog/${post.id}`} className="block">
+									<Link
+										to="/blog/$id"
+										params={{ id: String(post.id) }}
+										className="block"
+									>
 										{post.coverImage && (
 											<div className="mb-4 overflow-hidden rounded-lg">
 												<img
@@ -188,13 +189,15 @@ function BlogListPage() {
 										<div className="mb-4 flex flex-wrap items-center gap-4 text-muted-foreground text-sm">
 											<div className="flex items-center gap-1">
 												<RiCalendarLine className="h-3.5 w-3.5" />
-												<time>{formatDate(post.createdAt)}</time>
+												<time>
+													{post.createdAt ? formatDate(post.createdAt) : "N/A"}
+												</time>
 											</div>
 											<div className="flex items-center gap-1">
 												<RiTimeLine className="h-3.5 w-3.5" />
 												<span>{calculateReadTime(post.content || "")}</span>
 											</div>
-											{post.views > 0 && (
+											{post.views != null && post.views > 0 && (
 												<div className="flex items-center gap-1">
 													<RiEyeLine className="h-3.5 w-3.5" />
 													<span>{post.views} views</span>

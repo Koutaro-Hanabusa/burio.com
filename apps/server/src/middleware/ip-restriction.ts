@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { t } from "../lib/trpc";
 
 // 基本的な許可IPリスト（開発用）
 const BASE_ALLOWED_IPS = [
@@ -89,24 +90,30 @@ export function isIPAllowed(ip: string): boolean {
 }
 
 /**
+ * IPアドレスの制限チェックを実行する関数
+ * テスト可能なように抽出
+ */
+export function checkIPRestriction(req?: Request): void {
+	if (req) {
+		const clientIP = getClientIP(req);
+
+		if (!isIPAllowed(clientIP)) {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: `Access denied from IP: ${clientIP}`,
+			});
+		}
+	}
+}
+
+/**
  * 管理者用ルートのIPアドレス制限ミドルウェア
  */
 export function createAdminIPMiddleware() {
-	return (opts: { ctx: { env: unknown }; input: unknown; req?: Request }) => {
-		// リクエストオブジェクトが利用可能な場合のみチェック
-		if (opts.req) {
-			const clientIP = getClientIP(opts.req);
-
-			if (!isIPAllowed(clientIP)) {
-				throw new TRPCError({
-					code: "FORBIDDEN",
-					message: `Access denied from IP: ${clientIP}`,
-				});
-			}
-		}
-
-		return opts;
-	};
+	return t.middleware(async ({ ctx, next }) => {
+		checkIPRestriction(ctx.req);
+		return next({ ctx });
+	});
 }
 
 /**

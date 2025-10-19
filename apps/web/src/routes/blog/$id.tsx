@@ -23,7 +23,9 @@ export const Route = createFileRoute("/blog/$id")({
 
 function BlogPostPage() {
 	const { id } = Route.useParams();
-	const { data: post, isLoading } = trpc.blog.getById.useQuery({ id });
+	const { data: post, isLoading } = trpc.blog.getById.useQuery({
+		id: Number(id),
+	});
 	const [copied, setCopied] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
 
@@ -37,7 +39,7 @@ function BlogPostPage() {
 			});
 
 			// Parse markdown and sanitize HTML
-			const rawHtml = marked(post.content);
+			const rawHtml = marked(post.content) as string;
 			const cleanHtml = DOMPurify.sanitize(rawHtml, {
 				// 許可する属性を明示的に指定
 				ADD_ATTR: ["target", "rel"],
@@ -182,13 +184,15 @@ function BlogPostPage() {
 						<div className="mb-6 flex flex-wrap items-center gap-4 text-muted-foreground text-sm">
 							<div className="flex items-center gap-1">
 								<RiCalendarLine className="h-4 w-4" />
-								<time>{formatDate(post.createdAt)}</time>
+								<time>
+									{post.createdAt ? formatDate(post.createdAt) : "N/A"}
+								</time>
 							</div>
 							<div className="flex items-center gap-1">
 								<RiTimeLine className="h-4 w-4" />
 								<span>{calculateReadTime(post.content || "")}</span>
 							</div>
-							{post.views > 0 && (
+							{post.views != null && post.views > 0 && (
 								<div className="flex items-center gap-1">
 									<RiEyeLine className="h-4 w-4" />
 									<span>{post.views} views</span>

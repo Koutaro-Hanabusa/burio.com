@@ -76,7 +76,7 @@ export const blogRouter = router({
 		}),
 
 	getById: publicProcedure
-		.input(z.object({ id: z.string() }))
+		.input(z.object({ id: z.number() }))
 		.query(async ({ input, ctx }) => {
 			console.log(`🔍 getById called with id: ${input.id}`);
 
@@ -188,7 +188,7 @@ export const blogRouter = router({
 	update: publicProcedure
 		.input(
 			z.object({
-				id: z.string(),
+				id: z.number(),
 				title: z.string().min(1).optional(),
 				content: z.string().optional(),
 				excerpt: z.string().optional(),
@@ -250,7 +250,7 @@ export const blogRouter = router({
 		}),
 
 	delete: publicProcedure
-		.input(z.object({ id: z.string() }))
+		.input(z.object({ id: z.number() }))
 		.mutation(async ({ input, ctx }) => {
 			console.log(`🗑️ Attempting to delete post with ID: ${input.id}`);
 

@@ -73,23 +73,23 @@ describe("adminRouter", () => {
 
 		it("should validate updatePost input", () => {
 			const validInput = {
-				id: "post-123",
+				id: 123,
 				title: "Updated Title",
 				published: true,
 			};
 
 			expect(validInput.id).toBeDefined();
-			expect(typeof validInput.id).toBe("string");
+			expect(typeof validInput.id).toBe("number");
 			expect(typeof validInput.published).toBe("boolean");
 		});
 
 		it("should validate deletePost input", () => {
 			const validInput = {
-				id: "post-123",
+				id: 123,
 			};
 
 			expect(validInput.id).toBeDefined();
-			expect(typeof validInput.id).toBe("string");
+			expect(typeof validInput.id).toBe("number");
 		});
 	});
 

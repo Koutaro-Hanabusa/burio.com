@@ -6,7 +6,7 @@ declare namespace Cloudflare {
 		mainModule: typeof import("./src/index");
 	}
 	interface Env {
-		NODE_ENV: "production";
+		NODE_ENV: "production" | "development" | "test";
 		CLOUDFLARE_ACCOUNT_ID: string;
 		CLOUDFLARE_DATABASE_ID: string;
 		CLOUDFLARE_D1_TOKEN: string;
@@ -8757,7 +8757,7 @@ declare namespace Rpc {
 	export type Stub<T extends Stubable> = Provider<T> & StubBase<T>;
 	// This represents all the types that can be sent as-is over an RPC boundary
 	type BaseType =
-		| void
+		| undefined
 		| undefined
 		| null
 		| boolean

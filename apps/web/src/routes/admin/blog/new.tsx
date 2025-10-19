@@ -42,7 +42,7 @@ function NewBlogPost() {
 				breaks: true,
 				pedantic: false,
 			});
-			const rawHtml = marked(content);
+			const rawHtml = marked(content) as string;
 			const cleanHtml = DOMPurify.sanitize(rawHtml, {
 				// プレビュー用の安全な設定
 				FORBID_TAGS: ["script", "object", "embed", "form", "input"],
@@ -73,13 +73,13 @@ function NewBlogPost() {
 	return (
 		<main className="min-h-screen px-6 py-20 md:px-12 lg:px-24">
 			<motion.div
-				className="max-w-4xl mx-auto"
+				className="mx-auto max-w-4xl"
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.8 }}
 			>
-				<div className="flex items-center justify-between mb-8">
-					<h1 className="text-3xl font-bold">新しい記事を作成</h1>
+				<div className="mb-8 flex items-center justify-between">
+					<h1 className="font-bold text-3xl">新しい記事を作成</h1>
 					<div className="flex gap-2">
 						<Button
 							variant="outline"
@@ -124,7 +124,7 @@ function NewBlogPost() {
 								id="content"
 								value={content}
 								onChange={(e) => setContent(e.target.value)}
-								className="w-full h-96 p-3 border rounded-md bg-background text-foreground resize-y"
+								className="h-96 w-full resize-y rounded-md border bg-background p-3 text-foreground"
 								placeholder="Markdownで記事を書く..."
 							/>
 						</div>
@@ -172,18 +172,18 @@ function NewBlogPost() {
 					</form>
 				) : (
 					<div className="space-y-6">
-						<div className="p-6 border rounded-lg bg-card">
-							<h2 className="text-2xl font-bold mb-4">
+						<div className="rounded-lg border bg-card p-6">
+							<h2 className="mb-4 font-bold text-2xl">
 								{title || "タイトル未設定"}
 							</h2>
 							{excerpt && (
-								<p className="text-muted-foreground mb-4">{excerpt}</p>
+								<p className="mb-4 text-muted-foreground">{excerpt}</p>
 							)}
 							{coverImage && (
 								<img
 									src={coverImage}
 									alt={title}
-									className="w-full h-64 object-cover rounded-lg mb-6"
+									className="mb-6 h-64 w-full rounded-lg object-cover"
 								/>
 							)}
 							<div
@@ -191,11 +191,11 @@ function NewBlogPost() {
 								dangerouslySetInnerHTML={{ __html: htmlContent }}
 							/>
 							{tags && (
-								<div className="flex flex-wrap gap-2 mt-6">
+								<div className="mt-6 flex flex-wrap gap-2">
 									{tags.split(",").map((tag, index) => (
 										<span
 											key={index}
-											className="px-3 py-1 text-sm rounded-full bg-accent/20 text-accent-foreground"
+											className="rounded-full bg-accent/20 px-3 py-1 text-accent-foreground text-sm"
 										>
 											{tag.trim()}
 										</span>

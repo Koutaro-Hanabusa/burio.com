@@ -35,7 +35,7 @@ function NewPostPage() {
 	const createPostMutation = trpc.blog.create.useMutation({
 		onSuccess: (_data) => {
 			toast.success("記事が作成されました！");
-			navigate({ to: `/admin/posts` });
+			navigate({ to: "/admin/posts" });
 		},
 		onError: (error) => {
 			toast.error(`エラー: ${error.message}`);
@@ -94,7 +94,7 @@ function NewPostPage() {
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.8 }}
 			>
-				<div className="max-w-4xl mx-auto">
+				<div className="mx-auto max-w-4xl">
 					<motion.div
 						className="mb-8 flex items-center justify-between"
 						initial={{ opacity: 0, y: 20 }}
@@ -107,11 +107,11 @@ function NewPostPage() {
 								size="sm"
 								onClick={() => navigate({ to: "/admin/posts" })}
 							>
-								<RiArrowLeftLine className="h-4 w-4 mr-2" />
+								<RiArrowLeftLine className="mr-2 h-4 w-4" />
 								戻る
 							</Button>
 							<div>
-								<h1 className="text-3xl md:text-4xl font-bold">新規記事作成</h1>
+								<h1 className="font-bold text-3xl md:text-4xl">新規記事作成</h1>
 								<p className="text-muted-foreground">
 									新しいブログ記事を作成します
 								</p>
@@ -151,7 +151,7 @@ function NewPostPage() {
 											required
 										/>
 										{formData.title && (
-											<p className="text-sm text-muted-foreground mt-1">
+											<p className="mt-1 text-muted-foreground text-sm">
 												スラッグ: {generateSlug(formData.title)}
 											</p>
 										)}
@@ -194,7 +194,7 @@ function NewPostPage() {
 											placeholder="タグをカンマ区切りで入力... (例: React, JavaScript, Web)"
 										/>
 										{previewTags.length > 0 && (
-											<div className="flex flex-wrap gap-2 mt-2">
+											<div className="mt-2 flex flex-wrap gap-2">
 												{previewTags.map((tag) => (
 													<Badge key={tag} variant="secondary">
 														{tag}
@@ -241,12 +241,12 @@ function NewPostPage() {
 												rows={20}
 												className="font-mono text-sm"
 											/>
-											<p className="text-sm text-muted-foreground mt-2">
+											<p className="mt-2 text-muted-foreground text-sm">
 												Markdown記法をサポートしています。見出し、リスト、コードブロックなどが使用できます。
 											</p>
 										</TabsContent>
 										<TabsContent value="preview" className="mt-4">
-											<div className="p-4 border border-border rounded-lg bg-card min-h-[400px]">
+											<div className="min-h-[400px] rounded-lg border border-border bg-card p-4">
 												{formData.content ? (
 													<div className="prose prose-gray max-w-none">
 														<pre className="whitespace-pre-wrap">
@@ -266,7 +266,7 @@ function NewPostPage() {
 						</motion.div>
 
 						<motion.div
-							className="flex gap-4 justify-end"
+							className="flex justify-end gap-4"
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.5, duration: 0.8 }}
@@ -287,7 +287,7 @@ function NewPostPage() {
 									"作成中..."
 								) : (
 									<>
-										<RiSaveLine className="h-4 w-4 mr-2" />
+										<RiSaveLine className="mr-2 h-4 w-4" />
 										{formData.published ? "公開" : "下書き保存"}
 									</>
 								)}
