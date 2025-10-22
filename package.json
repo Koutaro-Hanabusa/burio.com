@@ -39,7 +39,8 @@
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.908.0",
-		"@paralleldrive/cuid2": "^2.2.2"
+		"@paralleldrive/cuid2": "^2.2.2",
+		"@types/three": "^0.180.0"
 	},
 	"devDependencies": {
 		"turbo": "^2.5.4",
