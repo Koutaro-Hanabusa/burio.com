@@ -17,7 +17,6 @@ export function AdminGuard({ children }: AdminGuardProps) {
 	const [isChecking, setIsChecking] = useState(true);
 	const [accessGranted, setAccessGranted] = useState(false);
 	const [ipInfo, setIpInfo] = useState<{
-		ip: string;
 		allowed: boolean;
 		message: string;
 	} | null>(null);
@@ -99,9 +98,6 @@ export function AdminGuard({ children }: AdminGuardProps) {
 						<CardContent className="space-y-4">
 							{ipInfo && (
 								<div className="rounded-md border border-border bg-card p-4">
-									<p className="mb-2 text-muted-foreground text-sm">
-										<strong>IPアドレス:</strong> {ipInfo.ip}
-									</p>
 									<p className="text-muted-foreground text-sm">
 										<strong>ステータス:</strong> {ipInfo.message}
 									</p>
@@ -146,7 +142,7 @@ export function AdminGuard({ children }: AdminGuardProps) {
 				animate={{ y: 0, opacity: 1 }}
 				transition={{ duration: 0.5 }}
 			>
-				✅ 管理者アクセス許可 (IP: {ipInfo?.ip})
+				✅ 管理者アクセス許可
 			</motion.div>
 			{children}
 		</>
