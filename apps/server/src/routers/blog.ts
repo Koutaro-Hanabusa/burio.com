@@ -84,7 +84,7 @@ export const blogRouter = router({
 				const post = await db
 					.select()
 					.from(posts)
-					.where(eq(posts.id, input.id))
+					.where(eq(posts.id, Number(input.id)))
 					.limit(1);
 
 				console.log(`📊 Query result: found ${post.length} posts`);
