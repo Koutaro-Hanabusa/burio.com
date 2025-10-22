@@ -76,7 +76,7 @@ export const blogRouter = router({
 		}),
 
 	getById: publicProcedure
-		.input(z.object({ id: z.number() }))
+		.input(z.object({ id: z.string() }))
 		.query(async ({ input, ctx }) => {
 			console.log(`🔍 getById called with id: ${input.id}`);
 

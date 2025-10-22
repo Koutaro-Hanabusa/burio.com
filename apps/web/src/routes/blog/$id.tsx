@@ -24,7 +24,7 @@ export const Route = createFileRoute("/blog/$id")({
 function BlogPostPage() {
 	const { id } = Route.useParams();
 	const { data: post, isLoading } = trpc.blog.getById.useQuery({
-		id: Number(id),
+		id: id,
 	});
 	const [copied, setCopied] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
