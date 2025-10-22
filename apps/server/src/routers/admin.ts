@@ -17,19 +17,15 @@ export const adminRouter = router({
 		if (!ctx.req) {
 			return {
 				allowed: false,
-				ip: "unknown",
 				message: "Request object not available",
 			};
 		}
 
-		const { ip, allowed } = getCurrentIP(ctx.req);
+		const { allowed } = getCurrentIP(ctx.req);
 
 		return {
 			allowed,
-			ip,
-			message: allowed
-				? "Access granted for this IP address"
-				: "Access denied for this IP address",
+			message: allowed ? "Access granted" : "Access denied",
 		};
 	}),
 
