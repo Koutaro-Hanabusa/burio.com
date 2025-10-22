@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	characterVariants,
@@ -16,10 +17,20 @@ import { SOCIAL_LINKS } from "@/constants/social-links";
 const NAME_CHARACTERS = ["ぶ", "り", "お"] as const;
 
 export function Hero() {
+	const [enableAnimations, setEnableAnimations] = useState(false);
+
+	useEffect(() => {
+		// Enable animations after initial render for better LCP
+		// This ensures critical content is visible immediately
+		requestAnimationFrame(() => {
+			setEnableAnimations(true);
+		});
+	}, []);
+
 	return (
 		<motion.section
 			className="flex min-h-screen items-center justify-center px-6 py-20"
-			initial="hidden"
+			initial={enableAnimations ? "hidden" : "visible"}
 			animate="visible"
 			variants={sectionVariants}
 			transition={smoothTransition}
@@ -28,7 +39,7 @@ export function Hero() {
 				<div className="space-y-6">
 					<motion.div
 						className="inline-block text-balance font-bold text-5xl tracking-tight md:text-7xl"
-						initial="hidden"
+						initial={enableAnimations ? "hidden" : "visible"}
 						animate="visible"
 						whileHover="hover"
 						variants={heroTitleVariants}
@@ -38,12 +49,12 @@ export function Hero() {
 							<motion.span
 								key={char}
 								className="inline-block"
-								initial="hidden"
+								initial={enableAnimations ? "hidden" : "visible"}
 								animate="visible"
 								whileHover="hover"
 								variants={characterVariants}
 								transition={{
-									delay: getStaggerDelay(i, 0.4),
+									delay: enableAnimations ? getStaggerDelay(i, 0.4) : 0,
 									...springTransition,
 								}}
 							>
@@ -54,20 +65,26 @@ export function Hero() {
 
 					<motion.p
 						className="text-muted-foreground text-xl md:text-2xl"
-						initial="hidden"
+						initial={enableAnimations ? "hidden" : "visible"}
 						animate="visible"
 						variants={fadeInUpVariants}
-						transition={{ delay: 0.4, ...smoothTransition }}
+						transition={{
+							delay: enableAnimations ? 0.4 : 0,
+							...smoothTransition,
+						}}
 					>
 						WEBエンジニア
 					</motion.p>
 
 					<motion.p
 						className="max-w-2xl text-lg text-muted-foreground leading-relaxed"
-						initial="hidden"
+						initial={enableAnimations ? "hidden" : "visible"}
 						animate="visible"
 						variants={fadeInUpVariants}
-						transition={{ delay: 0.6, ...smoothTransition }}
+						transition={{
+							delay: enableAnimations ? 0.6 : 0,
+							...smoothTransition,
+						}}
 					>
 						文系学部からほぼ未経験でエンジニアとして
 						<a href="https://sencorp.co.jp/">千株式会社</a>
@@ -78,19 +95,22 @@ export function Hero() {
 
 					<motion.div
 						className="flex gap-4 pt-4"
-						initial="hidden"
+						initial={enableAnimations ? "hidden" : "visible"}
 						animate="visible"
 						variants={fadeInUpVariants}
-						transition={{ delay: 0.8, ...smoothTransition }}
+						transition={{
+							delay: enableAnimations ? 0.8 : 0,
+							...smoothTransition,
+						}}
 					>
 						{SOCIAL_LINKS.map((social, index) => (
 							<motion.div
 								key={social.label}
-								initial="hidden"
+								initial={enableAnimations ? "hidden" : "visible"}
 								animate="visible"
 								variants={socialIconVariants}
 								transition={{
-									delay: getStaggerDelay(index, 1.0),
+									delay: enableAnimations ? getStaggerDelay(index, 1.0) : 0,
 									duration: 0.3,
 								}}
 							>
