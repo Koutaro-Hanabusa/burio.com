@@ -35,8 +35,8 @@ export const heroTitleVariants: Variants = {
 		rotate: 0,
 	},
 	hover: {
-		scale: 1.1,
-		rotate: [0, -5, 5, -5, 0],
+		scale: 1.05,
+		rotate: 2,
 	},
 };
 
@@ -46,7 +46,7 @@ export const characterVariants: Variants = {
 	visible: { opacity: 1, y: 0 },
 	hover: {
 		y: -10,
-		color: "#3b82f6",
+		scale: 1.1,
 	},
 };
 

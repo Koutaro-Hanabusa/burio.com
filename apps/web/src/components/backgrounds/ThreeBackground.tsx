@@ -33,7 +33,7 @@ function RotatingText({ position }: { position: [number, number, number] }) {
 			const newRotation = totalRotation + rotationSpeed;
 			setTotalRotation(newRotation);
 
-			// 2周 = 4π ラジアン
+			// 1周 = 2π ラジアン
 			if (newRotation >= Math.PI * 2) {
 				setCurrentTextIndex((prev) => (prev + 1) % TEXTS.length);
 				setTotalRotation(0);
@@ -57,9 +57,11 @@ function RotatingText({ position }: { position: [number, number, number] }) {
 				>
 					{TEXTS[currentTextIndex]}
 					<meshStandardMaterial
-						color="#f5f5f5"
-						emissive="#60a5fa"
-						emissiveIntensity={0.5}
+						color="#34d399"
+						emissive="#10b981"
+						emissiveIntensity={0.7}
+						transparent
+						opacity={0.7}
 					/>
 				</Text3D>
 			</Center>
