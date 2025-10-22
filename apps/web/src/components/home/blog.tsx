@@ -31,36 +31,38 @@ function BlogPost({
 	index,
 }: BlogPostProps) {
 	return (
-		<motion.article
-			className="group rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50"
-			initial="hidden"
-			whileInView="visible"
-			whileHover="hover"
-			variants={{
-				hidden: { opacity: 0, y: 20 },
-				visible: { opacity: 1, y: 0 },
-				...cardHoverVariants,
-			}}
-			transition={{ delay: getStaggerDelay(index), duration: 0.6 }}
-			viewport={{ once: true }}
-		>
-			<div className="mb-3 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-				<h3 className="font-semibold text-xl transition-colors group-hover:text-primary">
-					<Link to="/blog/$id" params={{ id: String(id) }}>
+		<Link to="/blog/$id" params={{ id: String(id) }} className="block">
+			<motion.article
+				className="group cursor-pointer rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50"
+				initial="hidden"
+				whileInView="visible"
+				whileHover="hover"
+				variants={{
+					hidden: { opacity: 0, y: 20 },
+					visible: { opacity: 1, y: 0 },
+					...cardHoverVariants,
+				}}
+				transition={{ delay: getStaggerDelay(index), duration: 0.6 }}
+				viewport={{ once: true }}
+			>
+				<div className="mb-3 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+					<h3 className="font-semibold text-xl transition-colors group-hover:text-primary">
 						{title}
-					</Link>
-				</h3>
-				<time className="text-muted-foreground text-sm">
-					{createdAt ? formatDate(createdAt) : "N/A"}
-				</time>
-			</div>
-			{excerpt && (
-				<p className="text-muted-foreground leading-relaxed">{excerpt}</p>
-			)}
-			{views != null && views > 0 && (
-				<div className="mt-2 text-muted-foreground text-sm">{views} views</div>
-			)}
-		</motion.article>
+					</h3>
+					<time className="text-muted-foreground text-sm">
+						{createdAt ? formatDate(createdAt) : "N/A"}
+					</time>
+				</div>
+				{excerpt && (
+					<p className="text-muted-foreground leading-relaxed">{excerpt}</p>
+				)}
+				{views != null && views > 0 && (
+					<div className="mt-2 text-muted-foreground text-sm">
+						{views} views
+					</div>
+				)}
+			</motion.article>
+		</Link>
 	);
 }
 
