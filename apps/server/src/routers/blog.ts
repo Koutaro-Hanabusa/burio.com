@@ -76,7 +76,7 @@ export const blogRouter = router({
 		}),
 
 	getById: publicProcedure
-		.input(z.object({ id: z.string() }))
+		.input(z.object({ id: z.number() }))
 		.query(async ({ input, ctx }) => {
 			console.log(`🔍 getById called with id: ${input.id}`);
 
@@ -84,7 +84,7 @@ export const blogRouter = router({
 				const post = await db
 					.select()
 					.from(posts)
-					.where(eq(posts.id, input.id))
+					.where(eq(posts.id, Number(input.id)))
 					.limit(1);
 
 				console.log(`📊 Query result: found ${post.length} posts`);
