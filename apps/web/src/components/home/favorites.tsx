@@ -69,6 +69,22 @@ export function Favorites() {
 									</motion.div>
 								))}
 							</div>
+							{favorite.detail && (
+								<motion.div
+									className="mt-4 whitespace-pre-line text-muted-foreground text-sm"
+									initial="hidden"
+									whileInView="visible"
+									variants={fadeInLeftVariants}
+									transition={{
+										delay:
+											getStaggerDelay(index) + favorite.items.length * 0.05,
+										duration: 0.4,
+									}}
+									viewport={{ once: true }}
+								>
+									<span>{favorite.detail}</span>
+								</motion.div>
+							)}
 						</motion.div>
 					))}
 				</div>

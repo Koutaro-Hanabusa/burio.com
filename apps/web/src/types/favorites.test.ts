@@ -36,6 +36,34 @@ describe("FavoriteCategory型", () => {
 			expect(favorite.items).toEqual([]);
 			expect(favorite.items.length).toBe(0);
 		});
+
+		it("detailプロパティはオプショナルである", () => {
+			const favoriteWithoutDetail: FavoriteCategory = {
+				category: "テストカテゴリー",
+				items: ["アイテム1"],
+			};
+
+			const favoriteWithDetail: FavoriteCategory = {
+				category: "テストカテゴリー",
+				items: ["アイテム1"],
+				detail: "詳細情報",
+			};
+
+			expect(favoriteWithoutDetail).not.toHaveProperty("detail");
+			expect(favoriteWithDetail).toHaveProperty("detail");
+			expect(typeof favoriteWithDetail.detail).toBe("string");
+		});
+
+		it("detailプロパティが文字列である", () => {
+			const favorite: FavoriteCategory = {
+				category: "テストカテゴリー",
+				items: ["アイテム1"],
+				detail: "これは詳細情報です",
+			};
+
+			expect(favorite.detail).toBeDefined();
+			expect(typeof favorite.detail).toBe("string");
+		});
 	});
 
 	describe("定数データの型整合性", () => {
@@ -107,6 +135,28 @@ describe("FavoriteCategory型", () => {
 			expect(food?.items).toContain("タコス");
 			expect(food?.items).toContain("ラーメン");
 			expect(food?.items).toContain("ハンバーガー");
+		});
+
+		it("Tottenham Hotspur FCカテゴリーに詳細情報が含まれている", () => {
+			const tottenham = FAVORITES.find(
+				(f) => f.category === "Tottenham Hotspur FC",
+			);
+			expect(tottenham?.detail).toBeDefined();
+			expect(tottenham?.detail).toContain("サポーター");
+		});
+
+		it("食べ物カテゴリーに詳細情報が含まれている", () => {
+			const food = FAVORITES.find((f) => f.category === "食べ物");
+			expect(food?.detail).toBeDefined();
+			expect(food?.detail).toContain("タコス");
+		});
+
+		it("全てのカテゴリーに詳細情報が存在する", () => {
+			FAVORITES.forEach((favorite) => {
+				expect(favorite.detail).toBeDefined();
+				expect(typeof favorite.detail).toBe("string");
+				expect(favorite.detail?.length).toBeGreaterThan(0);
+			});
 		});
 	});
 });
