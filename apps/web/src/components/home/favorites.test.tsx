@@ -150,4 +150,46 @@ describe("Favoritesコンポーネント", () => {
 			expect(mainHeading.className).toContain("md:text-4xl");
 		});
 	});
+
+	describe("詳細情報（detail）", () => {
+		it("Tottenham Hotspur FCの詳細が表示される", () => {
+			render(<Favorites />);
+			expect(
+				screen.getByText(
+					/ロンドンにあるTottenham Hotspur FCというチームのサポーターをしています/,
+				),
+			).toBeInTheDocument();
+		});
+
+		it("食べ物の詳細が表示される", () => {
+			render(<Favorites />);
+			expect(screen.getByText(/特にタコスが大好きです/)).toBeInTheDocument();
+		});
+
+		it("詳細情報に改行用のクラスが適用されている", () => {
+			const { container } = render(<Favorites />);
+			const detailElements = container.querySelectorAll(
+				".whitespace-pre-line.text-sm",
+			);
+			expect(detailElements.length).toBe(2); // 2つのカテゴリー
+		});
+
+		it("詳細情報が適切なマージンで配置されている", () => {
+			const { container } = render(<Favorites />);
+			const detailElements = container.querySelectorAll(".mt-4.text-sm");
+			expect(detailElements.length).toBeGreaterThan(0);
+		});
+
+		it("詳細情報のテキストが改行文字を含む", () => {
+			render(<Favorites />);
+			const tottenhamDetail = screen.getByText(
+				/ロンドンにあるTottenham Hotspur FCというチームのサポーターをしています/,
+			).textContent;
+			const foodDetail = screen.getByText(/特にタコスが大好きです/).textContent;
+
+			// 改行文字が保持されていることを確認
+			expect(tottenhamDetail).toContain("気づけばもう8年目になっていました");
+			expect(foodDetail).toContain("タコスを食べて火曜日を感じましょう");
+		});
+	});
 });
