@@ -4,6 +4,20 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>burio.com</title>
+
+    <!-- Resource Hints for faster DNS resolution and connection -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+
+    <!-- Preload critical Three.js font file -->
+    <link rel="preload" href="/fonts/helvetiker_regular.typeface.json" as="fetch" type="application/json" crossorigin />
+
+    <!-- Optimize font loading with font-display -->
+    <style>
+      @font-face {
+        font-display: swap;
+      }
+    </style>
   </head>
 
   <body>
