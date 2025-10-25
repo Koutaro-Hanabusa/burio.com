@@ -7,6 +7,7 @@ import {
 	useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import Header from "@/components/header";
 import Loader from "@/components/loader";
 import NotFound from "@/components/not-found";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -25,11 +26,11 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 	head: () => ({
 		meta: [
 			{
-				title: "burio.com",
+				title: "burio16.com",
 			},
 			{
 				name: "description",
-				content: "burio.com is a web application",
+				content: "burio16.com is a web application",
 			},
 		],
 		links: [
@@ -55,8 +56,11 @@ function RootComponent() {
 				disableTransitionOnChange
 				storageKey="vite-ui-theme"
 			>
-				<div className="grid h-svh grid-rows-[auto_1fr] bg-transparent">
-					{isFetching ? <Loader /> : <Outlet />}
+				<div className="min-h-screen bg-transparent">
+					<Header />
+					<main className="relative pt-16">
+						{isFetching ? <Loader /> : <Outlet />}
+					</main>
 				</div>
 				<Toaster richColors />
 			</ThemeProvider>

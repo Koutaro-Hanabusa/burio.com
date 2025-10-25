@@ -1,0 +1,23 @@
+{
+	"name": "burio16.com",
+	"short_name": "burio16",
+	"description": "burio16.com - Personal Portfolio and Blog",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#ffffff",
+	"theme_color": "#ff914d",
+	"icons": [
+		{
+			"src": "/favicon.png",
+			"sizes": "1080x1080",
+			"type": "image/png",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "/burio.com_transparent.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		}
+	]
+}
