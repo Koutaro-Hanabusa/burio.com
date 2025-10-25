@@ -126,7 +126,7 @@ export function Hero() {
 										rel="noopener noreferrer"
 										aria-label={social.label}
 									>
-										<social.icon className="h-12 w-12" />
+										<social.icon className="size-12" />
 									</a>
 								</Button>
 							</motion.div>
