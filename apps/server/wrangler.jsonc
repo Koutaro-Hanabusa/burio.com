@@ -1,11 +1,6 @@
 {
-	// ⚠️ DEPRECATED: This file is kept for reference only
-	// ✅ Please use wrangler.toml instead
-	// 📖 See SECURITY_SETUP.md for migration instructions
-	//
-	// SECURITY WARNING:
-	// This file previously contained sensitive database IDs and should not be used.
-	// All configuration has been moved to wrangler.toml with proper security practices.
+	// Cloudflare Workers configuration
+	// Note: database_id is not sensitive - it's just a resource identifier
 
 	"name": "burio-com-server",
 	"main": "src/index.ts",
@@ -45,6 +40,27 @@
 		}
 	],
 	"env": {
+		"production": {
+			"d1_databases": [
+				{
+					"binding": "DB",
+					"database_name": "burio-com-db",
+					"database_id": "7390edad-195a-4da4-80a8-90209083afcc",
+					"migrations_dir": "./src/db/migrations"
+				}
+			],
+			"r2_buckets": [
+				{
+					"binding": "R2_BUCKET",
+					"bucket_name": "burio-com-blog"
+				}
+			],
+			"vars": {
+				"NODE_ENV": "production",
+				"CORS_ORIGIN": "https://burio16.com",
+				"BETTER_AUTH_URL": "https://api.burio16.com"
+			}
+		},
 		"dev": {
 			"d1_databases": [
 				{
