@@ -26,11 +26,11 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 	head: () => ({
 		meta: [
 			{
-				title: "burio.com",
+				title: "burio16.com",
 			},
 			{
 				name: "description",
-				content: "burio.com is a web application",
+				content: "burio16.com is a web application",
 			},
 		],
 		links: [
@@ -58,7 +58,7 @@ function RootComponent() {
 			>
 				<div className="min-h-screen bg-transparent">
 					<Header />
-					<main className="relative">
+					<main className="relative pt-16">
 						{isFetching ? <Loader /> : <Outlet />}
 					</main>
 				</div>

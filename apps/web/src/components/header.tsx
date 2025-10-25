@@ -4,7 +4,6 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { fadeInVariants, smoothTransition } from "@/constants/animations";
-import { ModeToggle } from "./mode-toggle";
 
 export default function Header() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -16,7 +15,7 @@ export default function Header() {
 
 	return (
 		<motion.header
-			className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+			className="fixed top-0 z-50 w-full border-white/20 border-b bg-black backdrop-blur supports-[backdrop-filter]:bg-black/95 dark:border-black/20 dark:bg-white dark:supports-[backdrop-filter]:bg-white/95"
 			initial="hidden"
 			animate="visible"
 			variants={fadeInVariants}
@@ -30,14 +29,14 @@ export default function Header() {
 					aria-label="Home"
 				>
 					<motion.img
-						src="/logo.svg"
-						alt="burio.com logo"
+						src="/burio.com_transparent.svg"
+						alt="burio16.com logo"
 						className="h-10 w-10 sm:h-12 sm:w-12"
 						whileHover={{ scale: 1.05, rotate: 5 }}
 						transition={{ type: "spring", stiffness: 300 }}
 					/>
-					<span className="font-bold text-lg text-primary sm:text-xl">
-						burio.com
+					<span className="font-bold text-lg text-white sm:text-xl dark:text-black">
+						burio16.com
 					</span>
 				</Link>
 
@@ -47,40 +46,37 @@ export default function Header() {
 						<Link
 							key={to}
 							to={to}
-							className="font-medium text-foreground/80 text-sm transition-colors hover:text-foreground [&.active]:text-primary"
+							className="font-medium text-sm text-white/80 transition-colors hover:text-white dark:text-black/80 dark:hover:text-black [&.active]:font-semibold [&.active]:text-white dark:[&.active]:text-black"
 							activeProps={{
-								className: "active text-primary font-semibold",
+								className: "active font-semibold",
 							}}
 						>
 							{label}
 						</Link>
 					))}
-					<ModeToggle />
 				</nav>
 
 				{/* Mobile Menu Button */}
-				<div className="flex items-center gap-2 md:hidden">
-					<ModeToggle />
-					<Button
-						variant="ghost"
-						size="icon"
-						onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-						aria-label="Toggle menu"
-						aria-expanded={mobileMenuOpen}
-					>
-						{mobileMenuOpen ? (
-							<X className="h-5 w-5" />
-						) : (
-							<Menu className="h-5 w-5" />
-						)}
-					</Button>
-				</div>
+				<Button
+					variant="ghost"
+					size="icon"
+					onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+					aria-label="Toggle menu"
+					aria-expanded={mobileMenuOpen}
+					className="text-white hover:bg-white/10 md:hidden dark:text-black dark:hover:bg-black/10"
+				>
+					{mobileMenuOpen ? (
+						<X className="h-5 w-5" />
+					) : (
+						<Menu className="h-5 w-5" />
+					)}
+				</Button>
 			</div>
 
 			{/* Mobile Navigation */}
 			{mobileMenuOpen && (
 				<motion.div
-					className="border-t bg-background md:hidden"
+					className="border-white/20 border-t bg-black md:hidden dark:border-black/20 dark:bg-white"
 					initial={{ opacity: 0, height: 0 }}
 					animate={{ opacity: 1, height: "auto" }}
 					exit={{ opacity: 0, height: 0 }}
@@ -91,9 +87,9 @@ export default function Header() {
 							<Link
 								key={to}
 								to={to}
-								className="font-medium text-base text-foreground/80 transition-colors hover:text-foreground [&.active]:text-primary"
+								className="font-medium text-base text-white/80 transition-colors hover:text-white dark:text-black/80 dark:hover:text-black [&.active]:font-semibold [&.active]:text-white dark:[&.active]:text-black"
 								activeProps={{
-									className: "active text-primary font-semibold",
+									className: "active font-semibold",
 								}}
 								onClick={() => setMobileMenuOpen(false)}
 							>
