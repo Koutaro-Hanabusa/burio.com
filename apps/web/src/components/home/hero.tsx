@@ -94,7 +94,7 @@ export function Hero() {
 					</motion.p>
 
 					<motion.div
-						className="flex gap-4 pt-4"
+						className="flex gap-6 pt-4"
 						initial={enableAnimations ? "hidden" : "visible"}
 						animate="visible"
 						variants={fadeInUpVariants}
@@ -126,7 +126,7 @@ export function Hero() {
 										rel="noopener noreferrer"
 										aria-label={social.label}
 									>
-										<social.icon className="h-6 w-6" />
+										<social.icon className="size-9" />
 									</a>
 								</Button>
 							</motion.div>
