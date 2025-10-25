@@ -1,0 +1,112 @@
+name: Create Release PR
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-pr:
+    name: Create staging → main PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check if PR already exists
+        id: check-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # staging → main のPRが既に存在するかチェック
+          PR_COUNT=$(gh pr list --base main --head staging --state open --json number --jq 'length')
+          echo "pr_count=$PR_COUNT" >> $GITHUB_OUTPUT
+
+          if [ "$PR_COUNT" -gt 0 ]; then
+            echo "PR already exists. Skipping creation."
+            PR_NUMBER=$(gh pr list --base main --head staging --state open --json number --jq '.[0].number')
+            echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get commit messages
+        id: commits
+        if: steps.check-pr.outputs.pr_count == '0'
+        run: |
+          # mainとstagingの差分コミットメッセージを取得
+          COMMITS=$(git log origin/main..origin/staging --pretty=format:"- %s" --no-merges | head -20)
+
+          # 複数行をGitHub Outputに保存
+          {
+            echo 'commits<<EOF'
+            echo "$COMMITS"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+
+      - name: Create Pull Request
+        if: steps.check-pr.outputs.pr_count == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # PRの本文を作成
+          PR_BODY=$(cat <<'EOF'
+          ## リリース準備完了
+
+          stagingブランチの変更をmainにマージして本番環境へリリースします。
+
+          ### 変更内容
+
+          ${{ steps.commits.outputs.commits }}
+
+          ### デプロイフロー
+
+          このPRをマージすると、以下のアクションが自動実行されます：
+
+          1. ✅ CI/CDパイプライン実行
+          2. 🚀 本番環境へ自動デプロイ
+             - Server: https://api.burio16.com
+             - Frontend: https://burio16.com
+
+          ### チェックリスト
+
+          - [ ] すべてのテストが通過している
+          - [ ] staging環境で動作確認済み
+          - [ ] データベースマイグレーションが必要な場合は実施済み
+          - [ ] 必要に応じてロールバック手順を確認済み
+
+          ---
+
+          🤖 このPRは自動生成されました
+          EOF
+          )
+
+          # PRを作成
+          gh pr create \
+            --base main \
+            --head staging \
+            --title "Release: staging → main" \
+            --body "$PR_BODY" \
+            --label "release"
+
+      - name: PR Summary
+        run: |
+          if [ "${{ steps.check-pr.outputs.pr_count }}" -gt 0 ]; then
+            echo "### PR Already Exists ✅" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "PR #${{ steps.check-pr.outputs.pr_number }} is already open." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "View PR: ${{ github.server_url }}/${{ github.repository }}/pull/${{ steps.check-pr.outputs.pr_number }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### PR Created Successfully! 🎉" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "A new release PR (staging → main) has been created." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Review and merge the PR to deploy to production." >> $GITHUB_STEP_SUMMARY
+          fi
