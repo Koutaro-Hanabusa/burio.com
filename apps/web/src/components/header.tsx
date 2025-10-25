@@ -30,7 +30,7 @@ export default function Header() {
 					aria-label="Home"
 				>
 					<motion.img
-						src="/logo.png"
+						src="/logo.svg"
 						alt="burio.com logo"
 						className="h-10 w-10 sm:h-12 sm:w-12"
 						whileHover={{ scale: 1.05, rotate: 5 }}
