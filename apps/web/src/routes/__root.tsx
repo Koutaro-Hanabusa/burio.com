@@ -1,13 +1,32 @@
 import type { QueryClient } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
 	createRootRouteWithContext,
 	HeadContent,
 	Outlet,
 	useRouterState,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { lazy, Suspense } from "react";
 import { HelmetProvider } from "react-helmet-async";
+
+// Lazy load devtools only in development
+const ReactQueryDevtools =
+	import.meta.env.MODE === "development"
+		? lazy(() =>
+				import("@tanstack/react-query-devtools").then((module) => ({
+					default: module.ReactQueryDevtools,
+				})),
+			)
+		: () => null;
+
+const TanStackRouterDevtools =
+	import.meta.env.MODE === "development"
+		? lazy(() =>
+				import("@tanstack/react-router-devtools").then((module) => ({
+					default: module.TanStackRouterDevtools,
+				})),
+			)
+		: () => null;
+
 import Header from "@/components/header";
 import Loader from "@/components/loader";
 import NotFound from "@/components/not-found";
@@ -65,8 +84,12 @@ function RootComponent() {
 				</div>
 				<Toaster richColors />
 			</ThemeProvider>
-			<TanStackRouterDevtools position="bottom-left" />
-			<ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
+			{import.meta.env.MODE === "development" && (
+				<Suspense fallback={null}>
+					<TanStackRouterDevtools position="bottom-left" />
+					<ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
+				</Suspense>
+			)}
 		</HelmetProvider>
 	);
 }

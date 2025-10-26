@@ -55,6 +55,16 @@ export default defineConfig({
 			"@tanstack/react-query",
 			"framer-motion",
 		],
-		exclude: ["three"], // Three.js benefits from dynamic loading
+		exclude: [
+			"three", // Three.js benefits from dynamic loading
+			"@tanstack/react-query-devtools",
+			"@tanstack/react-router-devtools",
+		],
+	},
+
+	// Server configuration
+	server: {
+		// Enable preload for better performance
+		preTransformRequests: true,
 	},
 });

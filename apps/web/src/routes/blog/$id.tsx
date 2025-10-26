@@ -249,6 +249,8 @@ function BlogPostPage() {
 							<img
 								src={post.coverImage}
 								alt={post.title}
+								fetchPriority="high"
+								decoding="async"
 								className="h-auto w-full"
 							/>
 						</motion.div>

@@ -37,16 +37,16 @@ export function Hero() {
 
 		// Enable animations after initial render for better LCP
 		// This ensures critical content is visible immediately
-		// On mobile, animations are simplified for better performance
-		requestAnimationFrame(() => {
-			setEnableAnimations(true);
-		});
-
-		return () => {
-			if (typeof window !== "undefined") {
-				window.removeEventListener("resize", checkMobile);
-			}
-		};
+		// Use requestIdleCallback if available for better performance
+		if ("requestIdleCallback" in window) {
+			requestIdleCallback(() => {
+				setEnableAnimations(true);
+			});
+		} else {
+			requestAnimationFrame(() => {
+				setEnableAnimations(true);
+			});
+		}
 	}, []);
 
 	/**
