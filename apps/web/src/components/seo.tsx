@@ -12,7 +12,7 @@ interface SEOProps {
 const DEFAULT_VALUES = {
 	title: "burio16.com　ぶりおのプロフィールサイト",
 	description: "burio16.comへようこそ",
-	image: "https://burio16.com/logo.png",
+	image: "https://burio16.com/burio.com_ogp.png",
 	url: "https://burio16.com/",
 	type: "website" as const,
 	siteName: "burio16.com",
@@ -46,6 +46,8 @@ export function SEO({
 			<meta property="og:description" content={seoDescription} />
 			<meta property="og:url" content={seoUrl} />
 			<meta property="og:image" content={seoImage} />
+			<meta property="og:image:width" content="1200" />
+			<meta property="og:image:height" content="600" />
 			<meta property="og:image:alt" content={`${seoTitle} thumbnail`} />
 			<meta property="og:locale" content="ja_JP" />
 
