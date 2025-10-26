@@ -71,9 +71,13 @@ function BlogListPage() {
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ delay: 0.2, duration: 0.8 }}
 					>
-						<h1 className="font-bold text-5xl md:text-6xl">Blog</h1>
+						<h1 className="font-bold text-5xl md:text-6xl">ぶりおの部屋</h1>
+						<p className="text-medium text-muted-foreground">
+							ルールル　ルルル　ルールル　ルルル　ルー↑ ルー↑↑　ルー↑↑↑
+							　ルー↑↑↑↑ ルールルー↑
+						</p>
 						<p className="text-muted-foreground text-xl">
-							技術的な洞察、開発のヒント、そして私の考えを共有します
+							サッカーの話、タコスの話、はたまた技術の話など幅広く思ったことを書いていきます。
 						</p>
 
 						<div className="relative">
