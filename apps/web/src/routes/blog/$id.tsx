@@ -151,7 +151,7 @@ function BlogPostPage() {
 			<SEO
 				title={post.title}
 				description={post.excerpt || undefined}
-				image={post.coverImage || undefined}
+				image={post.coverImage || `https://burio16.com/blog/${id}/og-image`}
 				url={currentUrl}
 				type="article"
 			/>
