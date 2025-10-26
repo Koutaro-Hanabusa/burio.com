@@ -6,6 +6,20 @@ interface Env {
 	OGP_BASE_IMAGE_URL: string;
 }
 
+// Cloudflare Pages Function context type
+interface EventContext<Env = unknown, P extends string = any, Data = unknown> {
+	request: Request;
+	env: Env;
+	params: P;
+	waitUntil: (promise: Promise<unknown>) => void;
+	next: (input?: Request | string) => Promise<Response>;
+	data: Data;
+}
+
+type PagesFunction<Env = unknown> = (
+	context: EventContext<Env, any, Record<string, unknown>>,
+) => Response | Promise<Response>;
+
 interface BlogPost {
 	id: number;
 	title: string;
@@ -121,116 +135,125 @@ const ErrorDisplay = ({
 	</div>
 );
 
-export const onRequest = vercelOGPagesPlugin({
-	imagePathSuffix: "/og-image",
-	autoInject: {
-		openGraph: true,
-	},
-	width: 1200,
-	height: 630,
-	component: async ({ pathname, request, env }) => {
-		// Extract blog ID from pathname: /blog/:id or /blog/:id/
-		const match = pathname.match(/\/blog\/(\d+)/);
-		if (!match || !match[1]) {
-			return <ErrorDisplay message="Invalid blog URL" />;
-		}
+export const onRequest: PagesFunction<Env> = async (context) => {
+	const ogHandler = vercelOGPagesPlugin<{ env: Env }>({
+		imagePathSuffix: "/og-image",
+		autoInject: {
+			openGraph: true,
+		},
+		options: {
+			width: 1200,
+			height: 630,
+		},
+		component: async ({ pathname, env }) => {
+			// Extract blog ID from pathname: /blog/:id or /blog/:id/
+			const match = pathname.match(/\/blog\/(\d+)/);
+			if (!match || !match[1]) {
+				return <ErrorDisplay message="Invalid blog URL" />;
+			}
 
-		const blogId = match[1];
-		const numericId = Number(blogId);
+			const blogId = match[1];
+			const numericId = Number(blogId);
 
-		// IDの範囲検証
-		if (
-			!Number.isInteger(numericId) ||
-			numericId <= 0 ||
-			numericId > Number.MAX_SAFE_INTEGER
-		) {
+			// IDの範囲検証
+			if (
+				!Number.isInteger(numericId) ||
+				numericId <= 0 ||
+				numericId > Number.MAX_SAFE_INTEGER
+			) {
+				return (
+					<ErrorDisplay message="Invalid blog ID" detail={`ID: ${blogId}`} />
+				);
+			}
+
+			const post = await fetchBlogPost(blogId, env);
+
+			if (!post) {
+				return (
+					<ErrorDisplay
+						message="記事が見つかりません"
+						detail={`Blog ID: ${blogId}`}
+					/>
+				);
+			}
+
+			// 背景画像URLを環境変数から取得
+			const baseImageUrl =
+				env.OGP_BASE_IMAGE_URL || "https://burio16.com/burio.com_ogp.png";
+
+			// タイトルと抜粋をサニタイズ
+			const safeTitle = escapeHtml(truncateTitle(post.title));
+			const safeExcerpt = post.excerpt
+				? escapeHtml(
+						post.excerpt.length > 100
+							? `${post.excerpt.substring(0, 97)}...`
+							: post.excerpt,
+					)
+				: null;
+
+			// Single parent JSX element to avoid Cloudflare runtime errors
 			return (
-				<ErrorDisplay message="Invalid blog ID" detail={`ID: ${blogId}`} />
-			);
-		}
-
-		const post = await fetchBlogPost(blogId, env as Env);
-
-		if (!post) {
-			return (
-				<ErrorDisplay
-					message="記事が見つかりません"
-					detail={`Blog ID: ${blogId}`}
-				/>
-			);
-		}
-
-		// 背景画像URLを環境変数から取得
-		const baseImageUrl =
-			(env as Env).OGP_BASE_IMAGE_URL ||
-			"https://burio16.com/burio.com_ogp.png";
-
-		// タイトルと抜粋をサニタイズ
-		const safeTitle = escapeHtml(truncateTitle(post.title));
-		const safeExcerpt = post.excerpt
-			? escapeHtml(
-					post.excerpt.length > 100
-						? `${post.excerpt.substring(0, 97)}...`
-						: post.excerpt,
-				)
-			: null;
-
-		// Single parent JSX element to avoid Cloudflare runtime errors
-		return (
-			<div
-				style={{
-					display: "flex",
-					flexDirection: "column",
-					width: "100%",
-					height: "100%",
-					backgroundImage: `url(${baseImageUrl})`,
-					backgroundSize: "cover",
-					backgroundPosition: "center",
-					padding: "60px",
-					fontFamily: "sans-serif",
-				}}
-			>
 				<div
 					style={{
 						display: "flex",
 						flexDirection: "column",
-						justifyContent: "center",
-						alignItems: "center",
-						flex: 1,
-						backgroundColor: "rgba(0, 0, 0, 0.6)",
-						borderRadius: "20px",
-						padding: "40px",
+						width: "100%",
+						height: "100%",
+						backgroundImage: `url(${baseImageUrl})`,
+						backgroundSize: "cover",
+						backgroundPosition: "center",
+						padding: "60px",
+						fontFamily: "sans-serif",
 					}}
 				>
 					<div
 						style={{
-							fontSize: getTitleFontSize(post.title),
-							fontWeight: "bold",
-							color: "white",
-							textAlign: "center",
-							lineHeight: 1.2,
-							maxWidth: "90%",
-							textShadow: "2px 2px 4px rgba(0, 0, 0, 0.8)",
+							display: "flex",
+							flexDirection: "column",
+							justifyContent: "center",
+							alignItems: "center",
+							flex: 1,
+							backgroundColor: "rgba(0, 0, 0, 0.6)",
+							borderRadius: "20px",
+							padding: "40px",
 						}}
 					>
-						{safeTitle}
-					</div>
-					{safeExcerpt && (
 						<div
 							style={{
-								fontSize: "28px",
-								color: "#e0e0e0",
+								fontSize: getTitleFontSize(post.title),
+								fontWeight: "bold",
+								color: "white",
 								textAlign: "center",
-								marginTop: "20px",
-								maxWidth: "85%",
-								textShadow: "1px 1px 2px rgba(0, 0, 0, 0.8)",
+								lineHeight: 1.2,
+								maxWidth: "90%",
+								textShadow: "2px 2px 4px rgba(0, 0, 0, 0.8)",
 							}}
 						>
-							{safeExcerpt}
+							{safeTitle}
 						</div>
-					)}
+						{safeExcerpt && (
+							<div
+								style={{
+									fontSize: "28px",
+									color: "#e0e0e0",
+									textAlign: "center",
+									marginTop: "20px",
+									maxWidth: "85%",
+									textShadow: "1px 1px 2px rgba(0, 0, 0, 0.8)",
+								}}
+							>
+								{safeExcerpt}
+							</div>
+						)}
+					</div>
 				</div>
-			</div>
-		);
-	},
-});
+			);
+		},
+	});
+
+	// Pass the env through the plugin's props
+	return ogHandler({
+		...context,
+		data: { env: context.env },
+	});
+};
