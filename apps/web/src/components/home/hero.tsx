@@ -23,9 +23,16 @@ export function Hero() {
 	useEffect(() => {
 		// Enable animations after initial render for better LCP
 		// This ensures critical content is visible immediately
-		requestAnimationFrame(() => {
-			setEnableAnimations(true);
-		});
+		// Use requestIdleCallback if available for better performance
+		if ("requestIdleCallback" in window) {
+			requestIdleCallback(() => {
+				setEnableAnimations(true);
+			});
+		} else {
+			requestAnimationFrame(() => {
+				setEnableAnimations(true);
+			});
+		}
 	}, []);
 
 	/**
