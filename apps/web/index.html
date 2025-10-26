@@ -31,21 +31,34 @@
 
     <!-- Resource Hints for faster DNS resolution and connection -->
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Preload critical Three.js font file -->
+    <!-- Preload critical Three.js font file (defer to improve LCP) -->
     <link
-      rel="preload"
+      rel="prefetch"
       href="/fonts/helvetiker_regular.typeface.json"
       as="fetch"
       type="application/json"
       crossorigin
     />
 
-    <!-- Optimize font loading with font-display -->
+    <!-- Optimize font loading with font-display and critical CSS -->
     <style>
+      /* Critical CSS for initial paint */
       @font-face {
         font-display: swap;
+      }
+
+      /* Prevent layout shift during font loading */
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      }
+
+      /* Optimize initial paint by hiding non-critical content */
+      #app {
+        min-height: 100vh;
       }
     </style>
   </head>
