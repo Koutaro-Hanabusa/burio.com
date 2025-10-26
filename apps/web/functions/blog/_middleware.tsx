@@ -181,6 +181,21 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 			const baseImageUrl =
 				env.OGP_BASE_IMAGE_URL || "https://burio16.com/burio.com_ogp.png";
 
+			// 背景画像をBase64エンコードして取得
+			let backgroundImageData = "";
+			try {
+				const imageResponse = await fetch(baseImageUrl);
+				if (imageResponse.ok) {
+					const imageBuffer = await imageResponse.arrayBuffer();
+					const base64 = btoa(
+						String.fromCharCode(...new Uint8Array(imageBuffer)),
+					);
+					backgroundImageData = `data:image/png;base64,${base64}`;
+				}
+			} catch (error) {
+				console.error("Failed to fetch background image:", error);
+			}
+
 			// タイトルと抜粋をサニタイズ
 			const safeTitle = escapeHtml(truncateTitle(post.title));
 			const safeExcerpt = post.excerpt
@@ -199,8 +214,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 						flexDirection: "column",
 						width: "100%",
 						height: "100%",
-						backgroundImage: `url(${baseImageUrl})`,
-						backgroundSize: "cover",
+						backgroundImage: backgroundImageData
+							? `url(${backgroundImageData})`
+							: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+						backgroundSize: "1200px 630px",
 						backgroundPosition: "center",
 						padding: "60px",
 						fontFamily: "sans-serif",
