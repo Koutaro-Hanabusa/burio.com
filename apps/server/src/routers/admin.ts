@@ -7,6 +7,7 @@ import {
 	createAdminIPMiddleware,
 	getCurrentIP,
 } from "../middleware/ip-restriction";
+import { generateAndSaveOGPImage } from "../utils/ogp";
 
 // 管理者用プロシージャ（IP制限付き）
 const adminProcedure = publicProcedure.use(createAdminIPMiddleware());
@@ -82,6 +83,7 @@ export const adminRouter = router({
 				}
 			}
 
+			// DBに記事を作成（まずIDを取得するため）
 			const result = await db
 				.insert(posts)
 				.values({
@@ -94,6 +96,36 @@ export const adminRouter = router({
 					published: input.published ? 1 : 0,
 				})
 				.returning();
+
+			// OGP画像を生成（coverImageが指定されていない場合のみ）
+			if (
+				!input.coverImage &&
+				ctx.env?.R2_BUCKET &&
+				ctx.env?.R2_PUBLIC_URL &&
+				result[0]
+			) {
+				try {
+					console.log(`🎨 Generating OGP image for post: ${result[0].id}`);
+					const ogpImageUrl = await generateAndSaveOGPImage(
+						input.title,
+						result[0].id,
+						ctx.env.R2_BUCKET,
+						ctx.env.R2_PUBLIC_URL,
+					);
+
+					// coverImageを更新
+					await db
+						.update(posts)
+						.set({ coverImage: ogpImageUrl })
+						.where(eq(posts.id, result[0].id));
+
+					result[0].coverImage = ogpImageUrl;
+					console.log(`✅ OGP image generated: ${ogpImageUrl}`);
+				} catch (error) {
+					console.error("❌ Error generating OGP image:", error);
+					// OGP生成失敗してもエラーにはしない
+				}
+			}
 
 			console.log(`✅ Post created: ${result[0].id}`);
 			return result[0];
@@ -165,6 +197,40 @@ export const adminRouter = router({
 				.where(eq(posts.id, input.id))
 				.returning();
 
+			// タイトルが変更された場合、またはcoverImageが明示的に削除された場合にOGP画像を再生成
+			const shouldRegenerateOGP =
+				(input.title && input.title !== currentPost[0].title) ||
+				(input.coverImage === "" && currentPost[0].coverImage);
+
+			if (
+				shouldRegenerateOGP &&
+				ctx.env?.R2_BUCKET &&
+				ctx.env?.R2_PUBLIC_URL &&
+				result[0]
+			) {
+				try {
+					console.log(`🎨 Regenerating OGP image for post: ${input.id}`);
+					const ogpImageUrl = await generateAndSaveOGPImage(
+						result[0].title,
+						result[0].id,
+						ctx.env.R2_BUCKET,
+						ctx.env.R2_PUBLIC_URL,
+					);
+
+					// coverImageを更新
+					await db
+						.update(posts)
+						.set({ coverImage: ogpImageUrl })
+						.where(eq(posts.id, input.id));
+
+					result[0].coverImage = ogpImageUrl;
+					console.log(`✅ OGP image regenerated: ${ogpImageUrl}`);
+				} catch (error) {
+					console.error("❌ Error regenerating OGP image:", error);
+					// OGP生成失敗してもエラーにはしない
+				}
+			}
+
 			console.log(`✅ Post updated: ${input.id}`);
 			return result[0];
 		}),
@@ -203,6 +269,68 @@ export const adminRouter = router({
 			console.log(`✅ Post deleted: ${input.id}`);
 			return { success: true };
 		}),
+
+	// 管理者専用：全ての記事のOGP画像を再生成
+	regenerateAllOGPImages: adminProcedure.mutation(async ({ ctx }) => {
+		if (!ctx.env?.R2_BUCKET || !ctx.env?.R2_PUBLIC_URL) {
+			throw new Error("R2 bucket or public URL not configured");
+		}
+
+		console.log("🎨 Starting bulk OGP image generation...");
+
+		// 全ての記事を取得
+		const allPosts = await db.select().from(posts).orderBy(desc(posts.id));
+
+		console.log(`📊 Found ${allPosts.length} posts to process`);
+
+		const results = {
+			total: allPosts.length,
+			success: 0,
+			failed: 0,
+			errors: [] as Array<{ id: number; title: string; error: string }>,
+		};
+
+		// 各記事のOGP画像を生成
+		for (const post of allPosts) {
+			try {
+				console.log(
+					`🎨 Generating OGP image for post ${post.id}: ${post.title}`,
+				);
+
+				const ogpImageUrl = await generateAndSaveOGPImage(
+					post.title,
+					post.id,
+					ctx.env.R2_BUCKET,
+					ctx.env.R2_PUBLIC_URL,
+				);
+
+				// coverImageを更新
+				await db
+					.update(posts)
+					.set({ coverImage: ogpImageUrl })
+					.where(eq(posts.id, post.id));
+
+				results.success++;
+				console.log(`✅ OGP image generated for post ${post.id}`);
+			} catch (error) {
+				results.failed++;
+				const errorMessage =
+					error instanceof Error ? error.message : String(error);
+				results.errors.push({
+					id: post.id,
+					title: post.title,
+					error: errorMessage,
+				});
+				console.error(`❌ Failed to generate OGP for post ${post.id}:`, error);
+			}
+		}
+
+		console.log(
+			`✅ Bulk OGP generation completed: ${results.success} success, ${results.failed} failed`,
+		);
+
+		return results;
+	}),
 });
 
 // スラッグ生成関数
