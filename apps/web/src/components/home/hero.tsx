@@ -13,6 +13,7 @@ import {
 	springTransition,
 } from "@/constants/animations";
 import { SOCIAL_LINKS } from "@/constants/social-links";
+import { type SocialPlatform, trackSocialClick } from "@/utils/analytics";
 
 const NAME_CHARACTERS = ["ぶ", "り", "お"] as const;
 
@@ -26,6 +27,20 @@ export function Hero() {
 			setEnableAnimations(true);
 		});
 	}, []);
+
+	/**
+	 * Handle social media link clicks and track them in GTM
+	 */
+	const handleSocialClick = (label: string) => {
+		const platform = label.toLowerCase() as SocialPlatform;
+		if (
+			platform === "github" ||
+			platform === "twitter" ||
+			platform === "instagram"
+		) {
+			trackSocialClick(platform);
+		}
+	};
 
 	return (
 		<motion.section
@@ -125,6 +140,7 @@ export function Hero() {
 										target="_blank"
 										rel="noopener noreferrer"
 										aria-label={social.label}
+										onClick={() => handleSocialClick(social.label)}
 									>
 										<social.icon className="size-9" />
 									</a>
