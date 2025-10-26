@@ -139,7 +139,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 	const ogHandler = vercelOGPagesPlugin<{ env: Env }>({
 		imagePathSuffix: "/og-image",
 		autoInject: {
-			openGraph: true,
+			openGraph: false,
 		},
 		options: {
 			width: 1200,
