@@ -15,4 +15,4 @@ beforeEach(() => {
 });
 
 // 環境変数のモック
-process.env.NODE_ENV = "test";
+(process.env.NODE_ENV as string) = "test";

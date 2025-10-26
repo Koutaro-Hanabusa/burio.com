@@ -8,6 +8,7 @@ workers_dev = true
 NODE_ENV = "production"
 CORS_ORIGIN = "https://burio16.com"
 BETTER_AUTH_URL = "https://api.burio16.com"
+R2_PUBLIC_URL = "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev"
 
 # D1 Database Configuration
 # Database IDs are intentionally omitted for security
@@ -33,6 +34,7 @@ workers_dev = true
 NODE_ENV = "development"
 CORS_ORIGIN = "http://localhost:3001"
 BETTER_AUTH_URL = "http://localhost:3000"
+R2_PUBLIC_URL = "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev"  # burio-com-blog-dev public URL
 
 [[env.dev.d1_databases]]
 binding = "DB"
