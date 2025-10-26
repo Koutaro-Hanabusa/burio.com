@@ -3,6 +3,12 @@ import { z } from "zod";
 import { db } from "../db";
 import { posts } from "../db/schema";
 import { publicProcedure, router } from "../lib/trpc";
+import {
+	generateOGPImage,
+	getOGPImageUrl,
+	saveOGPImageToR2,
+	svgToPng,
+} from "../utils/ogp";
 
 const createSlug = (title: string): string => {
 	// 日本語を含むタイトルに対応するため、日本語文字をローマ字に変換するか、
@@ -21,6 +27,73 @@ const createSlug = (title: string): string => {
 
 	return baseSlug;
 };
+
+/**
+ * R2バケットのパブリックURLを取得
+ * @param env - 環境変数
+ * @returns R2バケットのパブリックURL
+ */
+const getR2PublicUrl = (env: Record<string, unknown>): string => {
+	// 環境変数からR2のパブリックURLを取得
+	const r2PublicUrl = env.R2_PUBLIC_URL as string | undefined;
+
+	if (r2PublicUrl) {
+		return r2PublicUrl;
+	}
+
+	// フォールバック: 環境に応じたデフォルトURLを返す
+	const nodeEnv = env.NODE_ENV as string;
+	if (nodeEnv === "development") {
+		console.warn("⚠️ R2_PUBLIC_URL not set, using default dev URL");
+		return "https://pub-dev.r2.dev";
+	}
+	console.warn("⚠️ R2_PUBLIC_URL not set, using default production URL");
+	return "https://pub.r2.dev";
+};
+
+/**
+ * ブログ記事のOGP画像を生成してR2に保存
+ * @param r2Bucket - R2バケット
+ * @param postId - 記事ID
+ * @param title - 記事タイトル
+ * @param env - 環境変数
+ * @returns OGP画像のURL、エラー時はnull
+ */
+async function generateAndSaveOGPImage(
+	r2Bucket: R2Bucket | undefined,
+	postId: number,
+	title: string,
+	env: Record<string, unknown>,
+): Promise<string | null> {
+	if (!r2Bucket) {
+		console.warn("⚠️ R2_BUCKET not available, skipping OGP generation");
+		return null;
+	}
+
+	try {
+		console.log(`🎨 Generating OGP image for post: ${title}`);
+
+		// SVG画像を生成
+		const svgBuffer = await generateOGPImage(title);
+
+		// PNGに変換
+		const pngBuffer = await svgToPng(svgBuffer);
+
+		// R2に保存
+		await saveOGPImageToR2(r2Bucket, postId, pngBuffer);
+
+		// 公開URLを生成
+		const publicUrl = getR2PublicUrl(env);
+		const ogpUrl = getOGPImageUrl(publicUrl, postId);
+
+		console.log(`✅ OGP image generated: ${ogpUrl}`);
+		return ogpUrl;
+	} catch (error) {
+		console.error("❌ Failed to generate OGP image:", error);
+		// エラーが発生しても処理を続行
+		return null;
+	}
+}
 
 export const blogRouter = router({
 	getAll: publicProcedure
@@ -165,24 +238,50 @@ export const blogRouter = router({
 				})
 				.returning();
 
+			const post = result[0];
+
+			if (!post) {
+				throw new Error("Failed to create post");
+			}
+
 			// Save markdown content to R2 if available (using post ID)
-			if (ctx.env?.R2_BUCKET && input.content && result[0]) {
+			if (ctx.env?.R2_BUCKET && input.content) {
 				try {
-					await ctx.env.R2_BUCKET.put(
-						`blog/${result[0].id}.md`,
-						input.content,
-						{
-							httpMetadata: {
-								contentType: "text/markdown",
-							},
+					await ctx.env.R2_BUCKET.put(`blog/${post.id}.md`, input.content, {
+						httpMetadata: {
+							contentType: "text/markdown",
 						},
-					);
+					});
 				} catch (error) {
 					console.error("Error saving content to R2:", error);
 				}
 			}
 
-			return result[0];
+			// Generate and save OGP image
+			const ogpImageUrl = await generateAndSaveOGPImage(
+				ctx.env?.R2_BUCKET,
+				post.id,
+				input.title,
+				ctx.env || {},
+			);
+
+			// Update coverImage if OGP was generated successfully
+			if (ogpImageUrl && !input.coverImage) {
+				try {
+					const updatedPost = await db
+						.update(posts)
+						.set({ coverImage: ogpImageUrl })
+						.where(eq(posts.id, post.id))
+						.returning();
+
+					return updatedPost[0] || post;
+				} catch (error) {
+					console.error("Error updating coverImage:", error);
+					return post;
+				}
+			}
+
+			return post;
 		}),
 
 	update: publicProcedure
@@ -240,6 +339,21 @@ export const blogRouter = router({
 				}
 			}
 
+			// Regenerate OGP image if title changed
+			if (input.title && input.title !== currentPost[0].title) {
+				const ogpImageUrl = await generateAndSaveOGPImage(
+					ctx.env?.R2_BUCKET,
+					input.id,
+					input.title,
+					ctx.env || {},
+				);
+
+				// Update coverImage if OGP was generated successfully
+				if (ogpImageUrl) {
+					updateData.coverImage = ogpImageUrl;
+				}
+			}
+
 			const result = await db
 				.update(posts)
 				.set(updateData)
@@ -277,6 +391,12 @@ export const blogRouter = router({
 				try {
 					console.log(`📁 Deleting R2 content: blog/${postToDelete[0].id}.md`);
 					await ctx.env.R2_BUCKET.delete(`blog/${postToDelete[0].id}.md`);
+
+					// Delete OGP image
+					console.log(
+						`🖼️ Deleting OGP image: blog/ogp/${postToDelete[0].id}.png`,
+					);
+					await ctx.env.R2_BUCKET.delete(`blog/ogp/${postToDelete[0].id}.png`);
 				} catch (error) {
 					console.error("Error deleting content from R2:", error);
 				}
