@@ -2,13 +2,9 @@ import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db";
 import { posts } from "../db/schema";
+import { generateOGPImage } from "../lib/ogp-generator";
 import { publicProcedure, router } from "../lib/trpc";
-import {
-	generateOGPImage,
-	getOGPImageUrl,
-	saveOGPImageToR2,
-	svgToPng,
-} from "../utils/ogp";
+import { getOGPImageUrl, saveOGPImageToR2 } from "../utils/ogp";
 
 const createSlug = (title: string): string => {
 	// 日本語を含むタイトルに対応するため、日本語文字をローマ字に変換するか、
@@ -74,13 +70,10 @@ async function generateAndSaveOGPImage(
 		console.log(`🎨 Generating OGP image for post: ${title}`);
 
 		// SVG画像を生成
-		const svgBuffer = await generateOGPImage(title);
-
-		// PNGに変換
-		const pngBuffer = await svgToPng(svgBuffer);
+		const { svg } = await generateOGPImage({ title });
 
 		// R2に保存
-		await saveOGPImageToR2(r2Bucket, postId, pngBuffer);
+		await saveOGPImageToR2(r2Bucket, postId, svg);
 
 		// 公開URLを生成
 		const publicUrl = getR2PublicUrl(env);
@@ -393,10 +386,8 @@ export const blogRouter = router({
 					await ctx.env.R2_BUCKET.delete(`blog/${postToDelete[0].id}.md`);
 
 					// Delete OGP image
-					console.log(
-						`🖼️ Deleting OGP image: blog/ogp/${postToDelete[0].id}.png`,
-					);
-					await ctx.env.R2_BUCKET.delete(`blog/ogp/${postToDelete[0].id}.png`);
+					console.log(`🖼️ Deleting OGP image: ogp/${postToDelete[0].id}.svg`);
+					await ctx.env.R2_BUCKET.delete(`ogp/${postToDelete[0].id}.svg`);
 				} catch (error) {
 					console.error("Error deleting content from R2:", error);
 				}
