@@ -7,6 +7,7 @@ import {
 	useRouterState,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+import { HelmetProvider } from "react-helmet-async";
 import Header from "@/components/header";
 import Loader from "@/components/loader";
 import NotFound from "@/components/not-found";
@@ -48,7 +49,7 @@ function RootComponent() {
 	});
 
 	return (
-		<>
+		<HelmetProvider>
 			<HeadContent />
 			<ThemeProvider
 				attribute="class"
@@ -66,6 +67,6 @@ function RootComponent() {
 			</ThemeProvider>
 			<TanStackRouterDevtools position="bottom-left" />
 			<ReactQueryDevtools position="bottom" buttonPosition="bottom-right" />
-		</>
+		</HelmetProvider>
 	);
 }

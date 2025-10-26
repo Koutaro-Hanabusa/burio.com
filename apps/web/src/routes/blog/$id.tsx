@@ -13,6 +13,7 @@ import {
 	RiTimeLine,
 } from "react-icons/ri";
 import { toast } from "sonner";
+import { SEO } from "@/components/seo";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/utils/trpc";
@@ -143,8 +144,17 @@ function BlogPostPage() {
 		);
 	}
 
+	const currentUrl = typeof window !== "undefined" ? window.location.href : "";
+
 	return (
 		<main className="min-h-screen">
+			<SEO
+				title={post.title}
+				description={post.excerpt || undefined}
+				image={post.coverImage || undefined}
+				url={currentUrl}
+				type="article"
+			/>
 			<motion.article
 				className="px-6 py-20 md:px-12 lg:px-24"
 				initial={{ opacity: 0, y: 30 }}
