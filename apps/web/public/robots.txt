@@ -1,0 +1,8 @@
+# robots.txt for burio.com
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://burio.com/sitemap.xml

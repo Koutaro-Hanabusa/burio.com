@@ -19,8 +19,22 @@ const NAME_CHARACTERS = ["ぶ", "り", "お"] as const;
 
 export function Hero() {
 	const [enableAnimations, setEnableAnimations] = useState(false);
+	const [isMobile, setIsMobile] = useState(false);
 
 	useEffect(() => {
+		// Check if device is mobile (only in browser environment)
+		const checkMobile = () => {
+			if (typeof window !== "undefined") {
+				setIsMobile(window.innerWidth < 768);
+			}
+		};
+
+		checkMobile();
+
+		if (typeof window !== "undefined") {
+			window.addEventListener("resize", checkMobile);
+		}
+
 		// Enable animations after initial render for better LCP
 		// This ensures critical content is visible immediately
 		// Use requestIdleCallback if available for better performance
@@ -52,7 +66,7 @@ export function Hero() {
 	return (
 		<motion.section
 			className="flex min-h-screen items-center justify-center px-6 py-20"
-			initial={enableAnimations ? "hidden" : "visible"}
+			initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 			animate="visible"
 			variants={sectionVariants}
 			transition={smoothTransition}
@@ -60,8 +74,8 @@ export function Hero() {
 			<div className="w-full max-w-4xl">
 				<div className="space-y-6">
 					<motion.div
-						className="inline-block text-balance font-bold text-5xl tracking-tight md:text-7xl"
-						initial={enableAnimations ? "hidden" : "visible"}
+						className="inline-block whitespace-nowrap text-balance font-bold text-5xl tracking-tight md:text-7xl"
+						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 						animate="visible"
 						whileHover="hover"
 						variants={heroTitleVariants}
@@ -71,12 +85,13 @@ export function Hero() {
 							<motion.span
 								key={char}
 								className="inline-block"
-								initial={enableAnimations ? "hidden" : "visible"}
+								initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 								animate="visible"
 								whileHover="hover"
 								variants={characterVariants}
 								transition={{
-									delay: enableAnimations ? getStaggerDelay(i, 0.4) : 0,
+									delay:
+										enableAnimations && !isMobile ? getStaggerDelay(i, 0.4) : 0,
 									...springTransition,
 								}}
 							>
@@ -87,11 +102,11 @@ export function Hero() {
 
 					<motion.p
 						className="text-muted-foreground text-xl md:text-2xl"
-						initial={enableAnimations ? "hidden" : "visible"}
+						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 						animate="visible"
 						variants={fadeInUpVariants}
 						transition={{
-							delay: enableAnimations ? 0.4 : 0,
+							delay: enableAnimations && !isMobile ? 0.4 : 0,
 							...smoothTransition,
 						}}
 					>
@@ -100,11 +115,11 @@ export function Hero() {
 
 					<motion.p
 						className="max-w-2xl text-lg text-muted-foreground leading-relaxed"
-						initial={enableAnimations ? "hidden" : "visible"}
+						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 						animate="visible"
 						variants={fadeInUpVariants}
 						transition={{
-							delay: enableAnimations ? 0.6 : 0,
+							delay: enableAnimations && !isMobile ? 0.6 : 0,
 							...smoothTransition,
 						}}
 					>
@@ -117,22 +132,25 @@ export function Hero() {
 
 					<motion.div
 						className="flex gap-6 pt-4"
-						initial={enableAnimations ? "hidden" : "visible"}
+						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 						animate="visible"
 						variants={fadeInUpVariants}
 						transition={{
-							delay: enableAnimations ? 0.8 : 0,
+							delay: enableAnimations && !isMobile ? 0.8 : 0,
 							...smoothTransition,
 						}}
 					>
 						{SOCIAL_LINKS.map((social, index) => (
 							<motion.div
 								key={social.label}
-								initial={enableAnimations ? "hidden" : "visible"}
+								initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 								animate="visible"
 								variants={socialIconVariants}
 								transition={{
-									delay: enableAnimations ? getStaggerDelay(index, 1.0) : 0,
+									delay:
+										enableAnimations && !isMobile
+											? getStaggerDelay(index, 1.0)
+											: 0,
 									duration: 0.3,
 								}}
 							>
