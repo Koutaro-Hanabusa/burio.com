@@ -122,7 +122,7 @@ export async function generateOgImage(c: Context) {
 						style={{
 							display: "flex",
 							flexDirection: "column",
-							background: "rgba(255, 255, 255, 0.95)",
+							background: "white",
 							padding: "50px 80px",
 							borderRadius: "24px",
 							maxWidth: "900px",
