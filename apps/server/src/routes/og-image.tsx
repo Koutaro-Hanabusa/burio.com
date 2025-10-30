@@ -8,9 +8,10 @@ import { posts } from "../db/schema";
  * 動的OGP画像生成エンドポイント
  *
  * 機能:
- * - ブログ記事のタイトルと概要を含むOGP画像を生成
+ * - ブログ記事のタイトルを含むOGP画像を生成
+ * - R2バケットから既存のOGPテンプレート画像を取得して背景に使用
  * - Google Fonts APIから日本語フォント（Noto Sans JP）を取得
- * - 美しいグラデーション背景 + 白いカードデザイン
+ * - テンプレート画像の上にタイトルを半透明のオーバーレイで重ねる
  * - タイトルの長さに応じたフォントサイズ調整
  *
  * @param c - Hono Context
@@ -29,7 +30,6 @@ export async function generateOgImage(c: Context) {
 		const post = await db
 			.select({
 				title: posts.title,
-				excerpt: posts.excerpt,
 			})
 			.from(posts)
 			.where(eq(posts.id, postId))
@@ -41,8 +41,27 @@ export async function generateOgImage(c: Context) {
 
 		const postData = post[0];
 
+		// R2バケットからOGPテンプレート画像を取得
+		let base64Image: string | undefined;
+		try {
+			const r2Object = await c.env.R2_BUCKET.get("ogp-template.png");
+			if (r2Object) {
+				const imageData = await r2Object.arrayBuffer();
+				// ArrayBufferをBase64に変換
+				const bytes = new Uint8Array(imageData);
+				let binary = "";
+				for (let i = 0; i < bytes.byteLength; i++) {
+					binary += String.fromCharCode(bytes[i]);
+				}
+				base64Image = btoa(binary);
+			}
+		} catch (error) {
+			console.error("Error fetching OGP template from R2:", error);
+			// テンプレート画像の取得に失敗してもフォールバックで処理を続行
+		}
+
 		// Google Fonts APIから日本語フォントを取得
-		const fontText = [postData.title, postData.excerpt || ""].join("");
+		const fontText = postData.title;
 		const fontUrl = `https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&text=${encodeURIComponent(fontText)}`;
 
 		let fontData: ArrayBuffer | undefined;
@@ -68,19 +87,81 @@ export async function generateOgImage(c: Context) {
 		// タイトルの長さに応じてフォントサイズを調整
 		const titleLength = postData.title.length;
 		let titleFontSize = "60px";
-		if (titleLength > 40) {
+		if (titleLength > 50) {
+			titleFontSize = "44px";
+		} else if (titleLength > 40) {
 			titleFontSize = "48px";
 		} else if (titleLength > 30) {
 			titleFontSize = "52px";
 		}
 
-		// 概要テキストの処理（長い場合は省略）
-		const maxExcerptLength = 120;
-		let excerptText = postData.excerpt || "";
-		if (excerptText.length > maxExcerptLength) {
-			excerptText = `${excerptText.substring(0, maxExcerptLength)}...`;
+		// テンプレート画像が取得できた場合はそれを使用、できなかった場合はフォールバック
+		if (base64Image) {
+			return new ImageResponse(
+				<div
+					style={{
+						display: "flex",
+						width: "100%",
+						height: "100%",
+						position: "relative",
+					}}
+				>
+					{/* 背景画像: 既存のOGPテンプレート */}
+					<img
+						src={`data:image/png;base64,${base64Image}`}
+						alt="background"
+						width="1200"
+						height="630"
+						style={{ position: "absolute", top: 0, left: 0 }}
+					/>
+
+					{/* タイトルオーバーレイ */}
+					<div
+						style={{
+							position: "absolute",
+							bottom: "80px",
+							left: "60px",
+							right: "60px",
+							display: "flex",
+							flexDirection: "column",
+							background: "rgba(0, 0, 0, 0.75)",
+							padding: "40px 60px",
+							borderRadius: "16px",
+						}}
+					>
+						<h1
+							style={{
+								fontSize: titleFontSize,
+								fontWeight: 700,
+								color: "white",
+								margin: 0,
+								lineHeight: 1.3,
+								fontFamily: fontData ? "Noto Sans JP" : "sans-serif",
+								display: "flex",
+								wordBreak: "break-word",
+							}}
+						>
+							{postData.title}
+						</h1>
+					</div>
+				</div>,
+				{
+					width: 1200,
+					height: 630,
+					fonts: fontData
+						? [
+								{
+									name: "Noto Sans JP",
+									data: fontData,
+									weight: 700,
+								},
+							]
+						: undefined,
+				},
+			);
 		}
 
+		// フォールバック: テンプレート画像が取得できなかった場合はシンプルなデザイン
 		return new ImageResponse(
 			<div
 				style={{
@@ -89,7 +170,7 @@ export async function generateOgImage(c: Context) {
 					height: "100%",
 					alignItems: "center",
 					justifyContent: "center",
-					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+					background: "white",
 					padding: "60px",
 				}}
 			>
@@ -99,11 +180,8 @@ export async function generateOgImage(c: Context) {
 						flexDirection: "column",
 						width: "100%",
 						height: "100%",
-						backgroundColor: "white",
-						borderRadius: "24px",
-						padding: "60px",
-						boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
-						justifyContent: "space-between",
+						justifyContent: "center",
+						alignItems: "center",
 					}}
 				>
 					{/* タイトル */}
@@ -114,6 +192,7 @@ export async function generateOgImage(c: Context) {
 							lineHeight: 1.3,
 							color: "#1a202c",
 							margin: 0,
+							textAlign: "center",
 							fontFamily: fontData ? "Noto Sans JP" : "sans-serif",
 							display: "flex",
 							wordBreak: "break-word",
@@ -122,53 +201,17 @@ export async function generateOgImage(c: Context) {
 						{postData.title}
 					</h1>
 
-					{/* 概要 */}
-					{excerptText && (
-						<p
-							style={{
-								fontSize: "28px",
-								lineHeight: 1.6,
-								color: "#4a5568",
-								margin: 0,
-								fontFamily: fontData ? "Noto Sans JP" : "sans-serif",
-								display: "flex",
-								wordBreak: "break-word",
-							}}
-						>
-							{excerptText}
-						</p>
-					)}
-
-					{/* フッター */}
+					{/* サイト名 */}
 					<div
 						style={{
+							marginTop: "60px",
+							fontSize: "32px",
+							fontWeight: 600,
+							color: "#FF6B35",
 							display: "flex",
-							justifyContent: "space-between",
-							alignItems: "center",
-							marginTop: "auto",
-							paddingTop: "40px",
-							borderTop: "2px solid #e2e8f0",
 						}}
 					>
-						<div
-							style={{
-								fontSize: "24px",
-								fontWeight: 600,
-								color: "#667eea",
-								display: "flex",
-							}}
-						>
-							burio16.com
-						</div>
-						<div
-							style={{
-								fontSize: "20px",
-								color: "#718096",
-								display: "flex",
-							}}
-						>
-							ブログ記事
-						</div>
+						burio16.com
 					</div>
 				</div>
 			</div>,
@@ -189,7 +232,7 @@ export async function generateOgImage(c: Context) {
 	} catch (error) {
 		console.error("Error generating OG image:", error);
 
-		// エラー時はフォールバック画像を返す
+		// エラー時はシンプルなフォールバック画像を返す
 		return new ImageResponse(
 			<div
 				style={{
@@ -198,14 +241,14 @@ export async function generateOgImage(c: Context) {
 					height: "100%",
 					alignItems: "center",
 					justifyContent: "center",
-					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+					background: "white",
 				}}
 			>
 				<div
 					style={{
 						fontSize: "48px",
 						fontWeight: 700,
-						color: "white",
+						color: "#FF6B35",
 						display: "flex",
 					}}
 				>
