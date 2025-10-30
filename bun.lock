@@ -5,6 +5,7 @@
       "name": "burio.com",
       "dependencies": {
         "@aws-sdk/client-s3": "^3.908.0",
+        "@cloudflare/pages-plugin-vercel-og": "^0.1.2",
         "@paralleldrive/cuid2": "^2.2.2",
         "@types/three": "^0.180.0",
       },
@@ -278,6 +279,8 @@
     "@biomejs/cli-win32-x64": ["@biomejs/cli-win32-x64@2.2.5", "", { "os": "win32", "cpu": "x64" }, "sha512-F/jhuXCssPFAuciMhHKk00xnCAxJRS/pUzVfXYmOMUp//XW7mO6QeCjsjvnm8L4AO/dG2VOB0O+fJPiJ2uXtIw=="],
 
     "@cloudflare/kv-asset-handler": ["@cloudflare/kv-asset-handler@0.4.0", "", { "dependencies": { "mime": "^3.0.0" } }, "sha512-+tv3z+SPp+gqTIcImN9o0hqE9xyfQjI1XD9pL6NuKjua9B1y7mNYv0S9cP+QEbA4ppVgGZEmKOvHX5G5Ei1CVA=="],
+
+    "@cloudflare/pages-plugin-vercel-og": ["@cloudflare/pages-plugin-vercel-og@0.1.2", "", {}, "sha512-aWA2pHu1R2UbOJIcSASCuViyYVEhYkZ3tWTrTnr+yLosBfksOzjecHQkCkPv/jy75hGPrn1BbtsQR+oWVFkp1g=="],
 
     "@cloudflare/unenv-preset": ["@cloudflare/unenv-preset@2.7.7", "", { "peerDependencies": { "unenv": "2.0.0-rc.21", "workerd": "^1.20250927.0" }, "optionalPeers": ["workerd"] }, "sha512-HtZuh166y0Olbj9bqqySckz0Rw9uHjggJeoGbDx5x+sgezBXlxO6tQSig2RZw5tgObF8mWI8zaPvQMkQZtAODw=="],
 
