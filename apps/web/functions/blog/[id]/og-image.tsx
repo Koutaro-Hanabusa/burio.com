@@ -1,3 +1,5 @@
+/** @jsxRuntime automatic */
+/** @jsxImportSource react */
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 
 // Cloudflare Pages Functions type
@@ -27,10 +29,14 @@ interface TRPCResponse {
  */
 export const onRequestGet: PagesFunction<Env> = async (context) => {
 	try {
+		console.log("OG Image request received");
+
 		// 動的パラメータからIDを取得
 		const { id } = context.params;
+		console.log("Blog post ID:", id);
 
 		if (!id || typeof id !== "string") {
+			console.error("Invalid blog post ID:", id);
 			return new Response("Invalid blog post ID", { status: 400 });
 		}
 
@@ -39,6 +45,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 			JSON.stringify({ id: Number(id) }),
 		)}`;
 
+		console.log("Fetching blog post from API:", apiUrl);
 		const response = await fetch(apiUrl);
 
 		if (!response.ok) {
@@ -47,11 +54,16 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 		}
 
 		const data = (await response.json()) as TRPCResponse;
+		console.log("API response received, has data:", !!data.result.data);
+
 		const post = data.result.data;
 
 		if (!post) {
+			console.error("No blog post data in response");
 			return new Response("Blog post not found", { status: 404 });
 		}
+
+		console.log("Blog post loaded:", post.title);
 
 		// フォント取得 - Noto Sans JPのサブセット
 		// タイトルと概要の文字だけを含むサブセットフォントを取得
@@ -91,6 +103,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 		// タイトルの長さに応じてフォントサイズを調整
 		const titleLength = post.title.length;
 		const titleFontSize = titleLength > 40 ? 48 : titleLength > 25 ? 56 : 64;
+
+		console.log("Generating image with title font size:", titleFontSize);
+		console.log("Using custom font:", !!fontData);
 
 		// JSXでOGP画像を生成
 		const imageResponse = new ImageResponse(
@@ -183,33 +198,53 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
 			},
 		);
 
+		console.log("Image response created successfully");
 		return imageResponse;
 	} catch (error) {
 		console.error("Error generating OG image:", error);
+		console.error(
+			"Error details:",
+			error instanceof Error ? error.stack : error,
+		);
 
 		// エラー時はシンプルなエラー画像を返す
-		return new ImageResponse(
-			<div
-				style={{
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					width: "100%",
-					height: "100%",
-					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-					fontSize: "48px",
-					fontWeight: 700,
-					color: "white",
-					textAlign: "center",
-					padding: "80px",
-				}}
-			>
-				burio16.com
-			</div>,
-			{
-				width: 1200,
-				height: 630,
-			},
-		);
+		try {
+			return new ImageResponse(
+				<div
+					style={{
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						width: "100%",
+						height: "100%",
+						background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+						fontSize: "48px",
+						fontWeight: 700,
+						color: "white",
+						textAlign: "center",
+						padding: "80px",
+					}}
+				>
+					burio16.com
+				</div>,
+				{
+					width: 1200,
+					height: 630,
+				},
+			);
+		} catch (fallbackError) {
+			console.error("Failed to generate fallback image:", fallbackError);
+			// 最終的なフォールバック：テキストレスポンス
+			return new Response(
+				JSON.stringify({
+					error: "Failed to generate OG image",
+					message: error instanceof Error ? error.message : "Unknown error",
+				}),
+				{
+					status: 500,
+					headers: { "Content-Type": "application/json" },
+				},
+			);
+		}
 	}
 };
