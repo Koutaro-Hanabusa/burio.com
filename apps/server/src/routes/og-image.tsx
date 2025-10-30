@@ -104,6 +104,8 @@ export async function generateOgImage(c: Context) {
 						width: "100%",
 						height: "100%",
 						position: "relative",
+						alignItems: "center",
+						justifyContent: "center",
 					}}
 				>
 					{/* 背景画像: 既存のOGPテンプレート */}
@@ -115,29 +117,28 @@ export async function generateOgImage(c: Context) {
 						style={{ position: "absolute", top: 0, left: 0 }}
 					/>
 
-					{/* タイトルオーバーレイ */}
+					{/* タイトルボックス */}
 					<div
 						style={{
-							position: "absolute",
-							bottom: "80px",
-							left: "60px",
-							right: "60px",
 							display: "flex",
 							flexDirection: "column",
-							background: "rgba(0, 0, 0, 0.75)",
-							padding: "40px 60px",
-							borderRadius: "16px",
+							background: "rgba(255, 255, 255, 0.95)",
+							padding: "50px 80px",
+							borderRadius: "24px",
+							maxWidth: "900px",
+							border: "4px solid #FF6B35",
+							boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
 						}}
 					>
 						<h1
 							style={{
 								fontSize: titleFontSize,
 								fontWeight: 700,
-								color: "white",
+								color: "#1a202c",
 								margin: 0,
 								lineHeight: 1.3,
 								fontFamily: fontData ? "Noto Sans JP" : "sans-serif",
-								display: "flex",
+								textAlign: "center",
 								wordBreak: "break-word",
 							}}
 						>
