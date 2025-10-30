@@ -1,4 +1,4 @@
-import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og";
+import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 
 // Cloudflare Pages Functions type
 type Env = {};
