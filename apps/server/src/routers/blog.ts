@@ -93,11 +93,16 @@ export const blogRouter = router({
 					throw new Error("Post not found");
 				}
 
-				// Increment view count
-				await db
-					.update(posts)
-					.set({ views: sql`${posts.views} + 1` })
-					.where(eq(posts.id, input.id));
+				// Increment view count (don't fail if this errors)
+				try {
+					const currentViews = post[0].views || 0;
+					await db
+						.update(posts)
+						.set({ views: currentViews + 1 })
+						.where(eq(posts.id, input.id));
+				} catch (error) {
+					console.error("Failed to increment view count:", error);
+				}
 
 				// Fetch markdown content from R2 if needed
 				const postData = post[0];
