@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { Blog } from "@/components/home/blog";
 import { Favorites } from "@/components/home/favorites";
 import { Hero } from "@/components/home/hero";
+import { SEO } from "@/components/seo";
 
 // Lazy load the 3D background for better initial bundle size
 const ThreeBackground = lazy(() =>
@@ -40,6 +41,7 @@ function HomeComponent() {
 
 	return (
 		<>
+			<SEO />
 			{/* 3D Background - deferred load for better LCP */}
 			{shouldLoadBackground && (
 				<Suspense fallback={null}>
