@@ -144,8 +144,6 @@ function BlogPostPage() {
 		);
 	}
 
-	const currentUrl = typeof window !== "undefined" ? window.location.href : "";
-
 	return (
 		<main className="min-h-screen">
 			<SEO
@@ -155,7 +153,7 @@ function BlogPostPage() {
 					post.coverImage ||
 					`${import.meta.env.VITE_SERVER_URL}/blog/${id}/og-image`
 				}
-				url={currentUrl}
+				url={`https://burio16.com/blog/${id}`}
 				type="article"
 			/>
 			<motion.article
