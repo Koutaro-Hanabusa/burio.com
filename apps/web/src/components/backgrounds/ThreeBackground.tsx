@@ -24,7 +24,7 @@ function RotatingText({ position }: { position: [number, number, number] }) {
 		return () => mediaQuery.removeEventListener("change", handleChange);
 	}, []);
 
-	useFrame((state, delta) => {
+	useFrame((_state, delta) => {
 		if (groupRef.current && shouldAnimate) {
 			const rotationSpeed = delta * 0.5;
 			groupRef.current.rotation.y += rotationSpeed;

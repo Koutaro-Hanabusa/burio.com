@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
+import { generateOgImage } from "./routes/og-image";
 
 const app = new Hono();
 
@@ -39,5 +40,8 @@ app.use(
 app.get("/", (c) => {
 	return c.text("OK");
 });
+
+// OGP画像生成エンドポイント
+app.get("/blog/:id/og-image", generateOgImage);
 
 export default app;

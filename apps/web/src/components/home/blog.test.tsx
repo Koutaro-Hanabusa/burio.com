@@ -245,7 +245,7 @@ describe("Blogコンポーネント", () => {
 					expect(article).toBeDefined();
 					// excerptは通常長めのテキストなので、記事内に極端に長いテキストがないことを確認
 					const textContent = article?.textContent || "";
-					const words = textContent.split(/\s+/);
+					const _words = textContent.split(/\s+/);
 					// タイトル、日付、views以外の長いテキストブロックがないことを確認
 					expect(textContent).toContain(post.title);
 				});
