@@ -1,7 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 import {
 	createRootRouteWithContext,
-	HeadContent,
 	Outlet,
 	useRouterState,
 } from "@tanstack/react-router";
@@ -43,23 +42,6 @@ export interface RouterAppContext {
 export const Route = createRootRouteWithContext<RouterAppContext>()({
 	component: RootComponent,
 	notFoundComponent: NotFound,
-	head: () => ({
-		meta: [
-			{
-				title: "burio16.com",
-			},
-			{
-				name: "description",
-				content: "burio16.com is a web application",
-			},
-		],
-		links: [
-			{
-				rel: "icon",
-				href: "/favicon.ico",
-			},
-		],
-	}),
 });
 
 function RootComponent() {
@@ -69,7 +51,6 @@ function RootComponent() {
 
 	return (
 		<HelmetProvider>
-			<HeadContent />
 			<ThemeProvider
 				attribute="class"
 				defaultTheme="dark"
