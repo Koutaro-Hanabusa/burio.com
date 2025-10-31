@@ -43,8 +43,7 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 	let html = await response.text();
 
 	// OGP meta tags to inject
-	// Use the proxied image URL from the main domain for better Twitter compatibility
-	const ogpImageUrl = `https://burio16.com/api/blog/${id}/og-image`;
+	const ogpImageUrl = `${SERVER_URL}/blog/${id}/og-image`;
 	const pageUrl = `https://burio16.com/blog/${id}`;
 
 	const metaTags = `
