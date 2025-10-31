@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite --port=3001",
-		"build": "VITE_SERVER_URL=https://burio-com-server.koutarouhanabusa.workers.dev vite build",
+		"build": "vite build",
 		"serve": "vite preview",
 		"start": "vite",
 		"check-types": "tsc --noEmit",

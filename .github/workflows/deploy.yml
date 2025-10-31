@@ -62,7 +62,7 @@ jobs:
         working-directory: apps/web
         env:
           NODE_ENV: production
-          VITE_SERVER_URL: ${{ vars.VITE_SERVER_URL }}
+          VITE_SERVER_URL: https://burio-com-server.koutarouhanabusa.workers.dev
         run: bun run build
 
       - name: Deploy Frontend (Cloudflare Pages)
