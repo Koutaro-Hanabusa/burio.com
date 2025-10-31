@@ -41,12 +41,14 @@ export async function generateOgImage(c: Context) {
 
 		const postData = post[0];
 
-		// R2バケットからOGPテンプレート画像を取得
+		// HTTPSから公開OGPテンプレート画像を取得
 		let base64Image: string | undefined;
 		try {
-			const r2Object = await c.env.R2_BUCKET.get("ogp-template.png");
-			if (r2Object) {
-				const imageData = await r2Object.arrayBuffer();
+			const imageResponse = await fetch(
+				"https://burio16.com/burio.com_ogp.png",
+			);
+			if (imageResponse.ok) {
+				const imageData = await imageResponse.arrayBuffer();
 				// ArrayBufferをBase64に変換
 				const bytes = new Uint8Array(imageData);
 				let binary = "";
@@ -56,7 +58,7 @@ export async function generateOgImage(c: Context) {
 				base64Image = btoa(binary);
 			}
 		} catch (error) {
-			console.error("Error fetching OGP template from R2:", error);
+			console.error("Error fetching OGP template from HTTPS:", error);
 			// テンプレート画像の取得に失敗してもフォールバックで処理を続行
 		}
 
