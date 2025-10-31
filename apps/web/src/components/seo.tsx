@@ -53,6 +53,7 @@ export function SEO({
 
 			{/* Twitter Card */}
 			<meta name="twitter:card" content="summary_large_image" />
+			<meta name="twitter:url" content={seoUrl} />
 			<meta name="twitter:title" content={seoTitle} />
 			<meta name="twitter:description" content={seoDescription} />
 			<meta name="twitter:image" content={seoImage} />
