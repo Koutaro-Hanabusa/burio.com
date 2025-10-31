@@ -151,7 +151,10 @@ function BlogPostPage() {
 			<SEO
 				title={post.title}
 				description={post.excerpt || undefined}
-				image={post.coverImage || `https://burio16.com/blog/${id}/og-image`}
+				image={
+					post.coverImage ||
+					`${import.meta.env.VITE_SERVER_URL}/blog/${id}/og-image`
+				}
 				url={currentUrl}
 				type="article"
 			/>
