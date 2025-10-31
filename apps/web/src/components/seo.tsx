@@ -47,7 +47,7 @@ export function SEO({
 			<meta property="og:url" content={seoUrl} />
 			<meta property="og:image" content={seoImage} />
 			<meta property="og:image:width" content="1200" />
-			<meta property="og:image:height" content="600" />
+			<meta property="og:image:height" content="630" />
 			<meta property="og:image:alt" content={`${seoTitle} thumbnail`} />
 			<meta property="og:locale" content="ja_JP" />
 
