@@ -13,7 +13,7 @@ const SERVER_URL = "https://burio-com-server.koutarouhanabusa.workers.dev";
 
 export const onRequest: PagesFunction<Env> = async (context) => {
 	const { params } = context;
-	const id = params.id as string;
+	const id = (params as { id: string }).id;
 
 	// Fetch blog post data from API
 	let postTitle = "burio16.com";
