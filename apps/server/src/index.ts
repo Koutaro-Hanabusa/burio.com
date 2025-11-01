@@ -5,7 +5,6 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
-import { ogImageRouter } from "./routes/og-image";
 
 const app = new Hono();
 
@@ -36,8 +35,6 @@ app.use(
 		},
 	}),
 );
-
-app.route("/api/og-image.png", ogImageRouter);
 
 app.get("/", (c) => {
 	return c.text("OK");
