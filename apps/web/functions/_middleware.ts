@@ -37,7 +37,7 @@ export async function onRequest(context: {
 	// HTMLを取得して書き換え
 	const html = await response.text();
 	const serverUrl =
-		env.VITE_SERVER_URL ||
+		env.VITE_SERVER_URL?.trim() ||
 		"https://burio-com-server.koutarouhanabusa.workers.dev";
 	const ogImageUrl = `${serverUrl}/blog/${postId}/og-image`;
 	const pageUrl = `https://burio16.com/blog/${postId}`;
