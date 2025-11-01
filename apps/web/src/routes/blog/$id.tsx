@@ -3,6 +3,7 @@ import DOMPurify from "dompurify";
 import { motion } from "framer-motion";
 import { marked } from "marked";
 import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet-async";
 import {
 	RiArrowLeftLine,
 	RiCalendarLine,
@@ -28,6 +29,12 @@ function BlogPostPage() {
 	});
 	const [copied, setCopied] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
+
+	const ogImageUrl = `https://api.burio16.com/api/og-image?id=${id}`;
+	const pageUrl =
+		typeof window !== "undefined"
+			? window.location.href
+			: `https://burio16.com/blog/${id}`;
 
 	useEffect(() => {
 		if (post?.content) {
@@ -145,6 +152,28 @@ function BlogPostPage() {
 
 	return (
 		<main className="min-h-screen">
+			<Helmet>
+				<title>{post.title}</title>
+				<meta name="description" content={post.excerpt || ""} />
+				<link rel="canonical" href={pageUrl} />
+
+				{/* Open Graph Protocol */}
+				<meta property="og:type" content="article" />
+				<meta property="og:title" content={post.title} />
+				<meta property="og:description" content={post.excerpt || ""} />
+				<meta property="og:image" content={ogImageUrl} />
+				<meta property="og:url" content={pageUrl} />
+				<meta property="og:image:width" content="1200" />
+				<meta property="og:image:height" content="630" />
+				<meta property="og:site_name" content="burio16.com" />
+
+				{/* Twitter Card */}
+				<meta name="twitter:card" content="summary_large_image" />
+				<meta name="twitter:title" content={post.title} />
+				<meta name="twitter:description" content={post.excerpt || ""} />
+				<meta name="twitter:image" content={ogImageUrl} />
+			</Helmet>
+
 			<motion.article
 				className="px-6 py-20 md:px-12 lg:px-24"
 				initial={{ opacity: 0, y: 30 }}
@@ -229,22 +258,20 @@ function BlogPostPage() {
 						</div>
 					</motion.header>
 
-					{post.coverImage && (
-						<motion.div
-							className="mb-8 overflow-hidden rounded-xl"
-							initial={{ opacity: 0, scale: 0.95 }}
-							animate={{ opacity: 1, scale: 1 }}
-							transition={{ delay: 0.4, duration: 0.6 }}
-						>
-							<img
-								src={post.coverImage}
-								alt={post.title}
-								fetchPriority="high"
-								decoding="async"
-								className="h-auto w-full"
-							/>
-						</motion.div>
-					)}
+					<motion.div
+						className="mb-8 overflow-hidden rounded-xl"
+						initial={{ opacity: 0, scale: 0.95 }}
+						animate={{ opacity: 1, scale: 1 }}
+						transition={{ delay: 0.4, duration: 0.6 }}
+					>
+						<img
+							src={post.coverImage || ogImageUrl}
+							alt={post.coverImage ? post.title : `${post.title} - OG Image`}
+							fetchPriority="high"
+							decoding="async"
+							className="h-auto w-full"
+						/>
+					</motion.div>
 
 					<motion.div
 						className="prose prose-lg dark:prose-invert max-w-none"
