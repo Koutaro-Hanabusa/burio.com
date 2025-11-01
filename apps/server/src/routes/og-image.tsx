@@ -59,6 +59,9 @@ ogImageRouter.get("/", async (c) => {
 		// フォントを取得
 		const notoSansFont = await getFont();
 
+		// ベース画像URL
+		const baseImageUrl = "https://burio16.com/burio.com_ogp.png";
+
 		// ImageResponseでOG画像を生成
 		return new ImageResponse(
 			<div
@@ -66,25 +69,39 @@ ogImageRouter.get("/", async (c) => {
 					width: "100%",
 					height: "100%",
 					display: "flex",
-					flexDirection: "column",
 					alignItems: "center",
 					justifyContent: "center",
-					background: "#FF9F66",
+					backgroundImage: `url(${baseImageUrl})`,
+					backgroundSize: "cover",
+					backgroundPosition: "center",
 					fontFamily: '"Noto Sans JP", sans-serif',
-					padding: "60px",
+					padding: "80px",
 					position: "relative",
 				}}
 			>
+				{/* 半透明オーバーレイ */}
+				<div
+					style={{
+						position: "absolute",
+						width: "100%",
+						height: "100%",
+						background: "rgba(0, 0, 0, 0.4)",
+						top: 0,
+						left: 0,
+					}}
+				/>
+
 				{/* タイトル */}
 				<div
 					style={{
-						fontSize: "68px",
+						fontSize: "64px",
 						fontWeight: 700,
-						color: "#000000",
+						color: "white",
 						textAlign: "center",
 						lineHeight: 1.3,
 						maxWidth: "1000px",
 						zIndex: 10,
+						textShadow: "2px 2px 12px rgba(0, 0, 0, 0.9)",
 					}}
 				>
 					{title}
