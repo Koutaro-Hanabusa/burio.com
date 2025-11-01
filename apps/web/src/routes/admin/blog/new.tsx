@@ -36,7 +36,7 @@ function NewBlogPost() {
 	const createPost = trpc.blog.create.useMutation({
 		onSuccess: (data) => {
 			toast.success("記事を作成しました");
-			navigate({ to: `/blog/${data.slug}` });
+			navigate({ to: `/blog/${data.id}` });
 		},
 		onError: (error) => {
 			toast.error(`エラー: ${error.message}`);

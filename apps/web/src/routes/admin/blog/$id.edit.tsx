@@ -56,7 +56,7 @@ function EditBlogPost() {
 	const updatePost = trpc.blog.update.useMutation({
 		onSuccess: (data) => {
 			toast.success("記事を更新しました");
-			navigate({ to: `/blog/${data.slug}` });
+			navigate({ to: `/blog/${data.id}` });
 		},
 		onError: (error) => {
 			toast.error(`エラー: ${error.message}`);
