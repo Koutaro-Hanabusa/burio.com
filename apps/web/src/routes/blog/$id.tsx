@@ -13,7 +13,6 @@ import {
 	RiTimeLine,
 } from "react-icons/ri";
 import { toast } from "sonner";
-import { SEO } from "@/components/seo";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/utils/trpc";
@@ -146,16 +145,6 @@ function BlogPostPage() {
 
 	return (
 		<main className="min-h-screen">
-			<SEO
-				title={post.title}
-				description={post.excerpt || undefined}
-				image={
-					post.coverImage ||
-					`${import.meta.env.VITE_SERVER_URL?.trim() || ""}/blog/${id}/og-image`
-				}
-				url={`https://burio16.com/blog/${id}`}
-				type="article"
-			/>
 			<motion.article
 				className="px-6 py-20 md:px-12 lg:px-24"
 				initial={{ opacity: 0, y: 30 }}
