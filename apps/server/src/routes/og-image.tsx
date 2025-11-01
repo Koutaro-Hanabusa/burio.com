@@ -54,10 +54,11 @@ export async function generateOgImage(c: Context) {
 					);
 					const r2Object = await c.env.R2_BUCKET.get("burio.com_ogp.png");
 					if (r2Object) {
-						imageData = await r2Object.arrayBuffer();
+						const fetchedData = await r2Object.arrayBuffer();
+						imageData = fetchedData;
 						console.log(
 							"Successfully fetched image from R2, size:",
-							imageData.byteLength,
+							fetchedData.byteLength,
 							"bytes",
 						);
 					} else {
@@ -84,8 +85,9 @@ export async function generateOgImage(c: Context) {
 				);
 
 				if (imageResponse.ok) {
-					imageData = await imageResponse.arrayBuffer();
-					console.log("Image data size:", imageData.byteLength, "bytes");
+					const fetchedData = await imageResponse.arrayBuffer();
+					imageData = fetchedData;
+					console.log("Image data size:", fetchedData.byteLength, "bytes");
 				} else {
 					console.error(
 						"Failed to fetch image, status:",
