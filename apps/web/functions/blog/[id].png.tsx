@@ -1,15 +1,5 @@
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
-import { eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/d1";
-import { Hono } from "hono";
-import * as schema from "../db/schema";
-import { posts } from "../db/schema";
-
-const ogImageRouter = new Hono<{
-	Bindings: {
-		DB: D1Database;
-	};
-}>();
+import type { D1Database, PagesFunction } from "@cloudflare/workers-types";
 
 // Noto Sans JPフォントをGoogle Fontsから取得
 async function getFont(): Promise<ArrayBuffer> {
@@ -29,29 +19,29 @@ async function getFont(): Promise<ArrayBuffer> {
 	return fontResponse.arrayBuffer();
 }
 
-ogImageRouter.get("/", async (c) => {
-	try {
-		// データベース接続をコンテキストから取得
-		const db = drizzle(c.env.DB, { schema });
+interface Env {
+	DB: D1Database;
+}
 
-		// クエリパラメータからIDを取得
-		const idParam = c.req.query("id");
+export const onRequest: PagesFunction<Env> = async (context) => {
+	try {
+		const { id } = context.params;
+		const db = context.env.DB;
 
 		let title = "burio.com";
 
 		// IDが指定されている場合は、データベースから記事を取得
-		if (idParam) {
-			const id = Number.parseInt(idParam, 10);
+		if (id) {
+			const postId = Number.parseInt(id as string, 10);
 
-			if (!Number.isNaN(id)) {
-				const post = await db
-					.select({ title: posts.title })
-					.from(posts)
-					.where(eq(posts.id, id))
-					.get();
+			if (!Number.isNaN(postId)) {
+				const result = await db
+					.prepare("SELECT title FROM posts WHERE id = ?")
+					.bind(postId)
+					.first<{ title: string }>();
 
-				if (post) {
-					title = post.title;
+				if (result) {
+					title = result.title;
 				}
 			}
 		}
@@ -161,6 +151,4 @@ ogImageRouter.get("/", async (c) => {
 			},
 		);
 	}
-});
-
-export { ogImageRouter };
+};
