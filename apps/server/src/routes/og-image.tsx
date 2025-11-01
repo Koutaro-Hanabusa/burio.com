@@ -1,0 +1,184 @@
+import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
+import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/d1";
+import { Hono } from "hono";
+import * as schema from "../db/schema";
+import { posts } from "../db/schema";
+
+const ogImageRouter = new Hono<{
+	Bindings: {
+		DB: D1Database;
+	};
+}>();
+
+// Noto Sans JPフォントをGoogle Fontsから取得
+async function getFont(): Promise<ArrayBuffer> {
+	const fontUrl =
+		"https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&display=swap";
+
+	// CSSからフォントファイルのURLを取得
+	const css = await fetch(fontUrl).then((res) => res.text());
+	const fontFileUrl = css.match(/url\((https:\/\/[^)]+\.woff2)\)/)?.[1];
+
+	if (!fontFileUrl) {
+		throw new Error("Failed to extract font URL from Google Fonts CSS");
+	}
+
+	// フォントファイルをダウンロード
+	const fontResponse = await fetch(fontFileUrl);
+	return fontResponse.arrayBuffer();
+}
+
+ogImageRouter.get("/", async (c) => {
+	try {
+		// データベース接続をコンテキストから取得
+		const db = drizzle(c.env.DB, { schema });
+
+		// クエリパラメータからIDを取得
+		const idParam = c.req.query("id");
+
+		let title = "burio.com";
+		let subtitle = "Blog & Portfolio";
+
+		// IDが指定されている場合は、データベースから記事を取得
+		if (idParam) {
+			const id = Number.parseInt(idParam, 10);
+
+			if (!Number.isNaN(id)) {
+				const post = await db
+					.select({ title: posts.title })
+					.from(posts)
+					.where(eq(posts.id, id))
+					.get();
+
+				if (post) {
+					title = post.title;
+					subtitle = "burio.com";
+				}
+			}
+		}
+
+		// フォントを取得
+		const notoSansFont = await getFont();
+
+		// ImageResponseでOG画像を生成
+		return new ImageResponse(
+			<div
+				style={{
+					width: "100%",
+					height: "100%",
+					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+					justifyContent: "center",
+					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+					fontFamily: '"Noto Sans JP", sans-serif',
+					padding: "60px",
+				}}
+			>
+				{/* メインタイトル */}
+				<div
+					style={{
+						fontSize: "72px",
+						fontWeight: 700,
+						color: "white",
+						textAlign: "center",
+						marginBottom: "30px",
+						lineHeight: 1.2,
+						maxWidth: "1080px",
+						overflow: "hidden",
+						textOverflow: "ellipsis",
+						display: "-webkit-box",
+						WebkitLineClamp: 3,
+						WebkitBoxOrient: "vertical",
+					}}
+				>
+					{title}
+				</div>
+
+				{/* サブタイトル/サイト名 */}
+				<div
+					style={{
+						fontSize: "36px",
+						fontWeight: 700,
+						color: "rgba(255, 255, 255, 0.9)",
+						textAlign: "center",
+					}}
+				>
+					{subtitle}
+				</div>
+
+				{/* 装飾的な要素 */}
+				<div
+					style={{
+						position: "absolute",
+						bottom: "60px",
+						right: "60px",
+						width: "200px",
+						height: "200px",
+						borderRadius: "50%",
+						background: "rgba(255, 255, 255, 0.1)",
+						display: "flex",
+					}}
+				/>
+				<div
+					style={{
+						position: "absolute",
+						top: "60px",
+						left: "60px",
+						width: "150px",
+						height: "150px",
+						borderRadius: "50%",
+						background: "rgba(255, 255, 255, 0.1)",
+						display: "flex",
+					}}
+				/>
+			</div>,
+			{
+				width: 1200,
+				height: 630,
+				fonts: [
+					{
+						name: "Noto Sans JP",
+						data: notoSansFont,
+						style: "normal",
+						weight: 700,
+					},
+				],
+			},
+		);
+	} catch (error) {
+		console.error("OG Image generation error:", error);
+
+		// エラー時はシンプルなデフォルト画像を返す
+		return new ImageResponse(
+			<div
+				style={{
+					width: "100%",
+					height: "100%",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+					fontFamily: "sans-serif",
+				}}
+			>
+				<div
+					style={{
+						fontSize: "96px",
+						fontWeight: 700,
+						color: "white",
+					}}
+				>
+					burio.com
+				</div>
+			</div>,
+			{
+				width: 1200,
+				height: 630,
+			},
+		);
+	}
+});
+
+export { ogImageRouter };
