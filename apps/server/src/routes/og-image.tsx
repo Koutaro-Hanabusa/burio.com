@@ -59,14 +59,6 @@ ogImageRouter.get("/", async (c) => {
 		// フォントを取得
 		const notoSansFont = await getFont();
 
-		// ベース画像を取得
-		const baseImageUrl = "https://burio16.com/burio.com_ogp.png";
-		const baseImageResponse = await fetch(baseImageUrl);
-		const baseImageArrayBuffer = await baseImageResponse.arrayBuffer();
-		const baseImageBase64 = btoa(
-			String.fromCharCode(...new Uint8Array(baseImageArrayBuffer)),
-		);
-
 		// ImageResponseでOG画像を生成
 		return new ImageResponse(
 			<div
@@ -74,48 +66,28 @@ ogImageRouter.get("/", async (c) => {
 					width: "100%",
 					height: "100%",
 					display: "flex",
+					flexDirection: "column",
+					alignItems: "center",
+					justifyContent: "center",
+					background: "#FF9F66",
+					fontFamily: '"Noto Sans JP", sans-serif',
+					padding: "60px",
 					position: "relative",
 				}}
 			>
-				{/* ベース画像 */}
-				<img
-					src={`data:image/png;base64,${baseImageBase64}`}
-					alt="Base"
-					style={{
-						position: "absolute",
-						width: "100%",
-						height: "100%",
-						objectFit: "cover",
-					}}
-				/>
-
-				{/* タイトルオーバーレイ */}
+				{/* タイトル */}
 				<div
 					style={{
-						position: "absolute",
-						width: "100%",
-						height: "100%",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
-						background: "rgba(0, 0, 0, 0.3)",
-						padding: "80px",
+						fontSize: "68px",
+						fontWeight: 700,
+						color: "#000000",
+						textAlign: "center",
+						lineHeight: 1.3,
+						maxWidth: "1000px",
+						zIndex: 10,
 					}}
 				>
-					<div
-						style={{
-							fontSize: "64px",
-							fontWeight: 700,
-							color: "white",
-							textAlign: "center",
-							lineHeight: 1.3,
-							maxWidth: "1000px",
-							textShadow: "2px 2px 8px rgba(0, 0, 0, 0.8)",
-							fontFamily: '"Noto Sans JP", sans-serif',
-						}}
-					>
-						{title}
-					</div>
+					{title}
 				</div>
 			</div>,
 			{
