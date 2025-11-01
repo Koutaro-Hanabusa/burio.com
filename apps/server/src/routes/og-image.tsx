@@ -59,14 +59,8 @@ ogImageRouter.get("/", async (c) => {
 		// フォントを取得
 		const notoSansFont = await getFont();
 
-		// ベース画像を取得してdata URIに変換
+		// ベース画像URL（フルパスで指定）
 		const baseImageUrl = "https://burio16.com/burio.com_ogp.png";
-		const imageResponse = await fetch(baseImageUrl);
-		const imageArrayBuffer = await imageResponse.arrayBuffer();
-		const imageBase64 = btoa(
-			String.fromCharCode(...new Uint8Array(imageArrayBuffer)),
-		);
-		const imageDataUri = `data:image/png;base64,${imageBase64}`;
 
 		// ImageResponseでOG画像を生成
 		return new ImageResponse(
@@ -75,49 +69,42 @@ ogImageRouter.get("/", async (c) => {
 					width: "100%",
 					height: "100%",
 					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+					backgroundImage: `url("${baseImageUrl}")`,
+					backgroundSize: "cover",
+					backgroundPosition: "center",
+					fontFamily: '"Noto Sans JP", sans-serif',
+					padding: "80px",
 					position: "relative",
 				}}
 			>
-				{/* ベース画像 */}
-				<img
-					src={imageDataUri}
-					alt="Base"
-					width="1200"
-					height="630"
-					style={{
-						position: "absolute",
-						width: "100%",
-						height: "100%",
-					}}
-				/>
-
-				{/* タイトルオーバーレイ */}
+				{/* 半透明オーバーレイ */}
 				<div
 					style={{
 						position: "absolute",
 						width: "100%",
 						height: "100%",
-						display: "flex",
-						alignItems: "center",
-						justifyContent: "center",
 						background: "rgba(0, 0, 0, 0.5)",
-						fontFamily: '"Noto Sans JP", sans-serif',
-						padding: "80px",
+						top: 0,
+						left: 0,
+					}}
+				/>
+
+				{/* タイトル */}
+				<div
+					style={{
+						fontSize: "72px",
+						fontWeight: 700,
+						color: "white",
+						textAlign: "center",
+						lineHeight: 1.3,
+						maxWidth: "1000px",
+						zIndex: 10,
+						textShadow: "4px 4px 8px rgba(0, 0, 0, 0.9)",
 					}}
 				>
-					<div
-						style={{
-							fontSize: "72px",
-							fontWeight: 700,
-							color: "white",
-							textAlign: "center",
-							lineHeight: 1.3,
-							maxWidth: "1000px",
-							textShadow: "4px 4px 8px rgba(0, 0, 0, 0.9)",
-						}}
-					>
-						{title}
-					</div>
+					{title}
 				</div>
 			</div>,
 			{
