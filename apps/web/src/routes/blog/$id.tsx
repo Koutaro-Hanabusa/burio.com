@@ -258,20 +258,22 @@ function BlogPostPage() {
 						</div>
 					</motion.header>
 
-					<motion.div
-						className="mb-8 overflow-hidden rounded-xl"
-						initial={{ opacity: 0, scale: 0.95 }}
-						animate={{ opacity: 1, scale: 1 }}
-						transition={{ delay: 0.4, duration: 0.6 }}
-					>
-						<img
-							src={post.coverImage || ogImageUrl}
-							alt={post.coverImage ? post.title : `${post.title} - OG Image`}
-							fetchPriority="high"
-							decoding="async"
-							className="h-auto w-full"
-						/>
-					</motion.div>
+					{post.coverImage && (
+						<motion.div
+							className="mb-8 overflow-hidden rounded-xl"
+							initial={{ opacity: 0, scale: 0.95 }}
+							animate={{ opacity: 1, scale: 1 }}
+							transition={{ delay: 0.4, duration: 0.6 }}
+						>
+							<img
+								src={post.coverImage}
+								alt={post.title}
+								fetchPriority="high"
+								decoding="async"
+								className="h-auto w-full"
+							/>
+						</motion.div>
+					)}
 
 					<motion.div
 						className="prose prose-lg dark:prose-invert max-w-none"
