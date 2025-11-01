@@ -37,7 +37,7 @@ app.use(
 	}),
 );
 
-app.route("/api/og-image", ogImageRouter);
+app.route("/api/og-image.png", ogImageRouter);
 
 app.get("/", (c) => {
 	return c.text("OK");

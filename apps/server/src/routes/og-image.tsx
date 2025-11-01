@@ -63,7 +63,7 @@ ogImageRouter.get("/", async (c) => {
 		const baseImageUrl = "https://burio16.com/burio.com_ogp.png";
 
 		// ImageResponseでOG画像を生成
-		return new ImageResponse(
+		const response = new ImageResponse(
 			<div
 				style={{
 					width: "100%",
@@ -120,6 +120,15 @@ ogImageRouter.get("/", async (c) => {
 				],
 			},
 		);
+
+		// キャッシュヘッダーを設定（Cloudflareのキャッシュを効かせる）
+		response.headers.set(
+			"Cache-Control",
+			"public, max-age=31536000, immutable",
+		);
+		response.headers.set("Content-Type", "image/png");
+
+		return response;
 	} catch (error) {
 		console.error("OG Image generation error:", error);
 

@@ -30,7 +30,7 @@ function BlogPostPage() {
 	const [copied, setCopied] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
 
-	const ogImageUrl = `https://api.burio16.com/api/og-image?id=${id}`;
+	const ogImageUrl = `https://api.burio16.com/api/og-image.png?id=${id}`;
 	const pageUrl =
 		typeof window !== "undefined"
 			? window.location.href
