@@ -69,42 +69,49 @@ ogImageRouter.get("/", async (c) => {
 					width: "100%",
 					height: "100%",
 					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					backgroundImage: `url(${baseImageUrl})`,
-					backgroundSize: "cover",
-					backgroundPosition: "center",
-					fontFamily: '"Noto Sans JP", sans-serif',
-					padding: "80px",
 					position: "relative",
 				}}
 			>
-				{/* 半透明オーバーレイ */}
+				{/* ベース画像 */}
+				<img
+					src={baseImageUrl}
+					alt="Base"
+					width="1200"
+					height="630"
+					style={{
+						position: "absolute",
+						width: "100%",
+						height: "100%",
+					}}
+				/>
+
+				{/* タイトルオーバーレイ */}
 				<div
 					style={{
 						position: "absolute",
 						width: "100%",
 						height: "100%",
-						background: "rgba(0, 0, 0, 0.4)",
-						top: 0,
-						left: 0,
-					}}
-				/>
-
-				{/* タイトル */}
-				<div
-					style={{
-						fontSize: "64px",
-						fontWeight: 700,
-						color: "white",
-						textAlign: "center",
-						lineHeight: 1.3,
-						maxWidth: "1000px",
-						zIndex: 10,
-						textShadow: "2px 2px 12px rgba(0, 0, 0, 0.9)",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						background: "rgba(0, 0, 0, 0.5)",
+						fontFamily: '"Noto Sans JP", sans-serif',
+						padding: "80px",
 					}}
 				>
-					{title}
+					<div
+						style={{
+							fontSize: "72px",
+							fontWeight: 700,
+							color: "white",
+							textAlign: "center",
+							lineHeight: 1.3,
+							maxWidth: "1000px",
+							textShadow: "4px 4px 8px rgba(0, 0, 0, 0.9)",
+						}}
+					>
+						{title}
+					</div>
 				</div>
 			</div>,
 			{
