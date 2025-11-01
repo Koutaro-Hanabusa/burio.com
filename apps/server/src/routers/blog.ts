@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "../db";
 import { posts } from "../db/schema";
 import { publicProcedure, router } from "../lib/trpc";
+import { generateOgImageBuffer } from "../routes/og-image";
 
 const createSlug = (title: string): string => {
 	// 日本語を含むタイトルに対応するため、日本語文字をローマ字に変換するか、
@@ -187,6 +188,29 @@ export const blogRouter = router({
 				}
 			}
 
+			// Generate and save OGP image to R2
+			if (ctx.env?.R2_BUCKET && result[0]) {
+				try {
+					console.log(`Generating OGP image for post ${result[0].id}...`);
+					const ogpImageBuffer = await generateOgImageBuffer(
+						result[0].title,
+						ctx.env.R2_BUCKET,
+					);
+					await ctx.env.R2_BUCKET.put(
+						`blog/${result[0].id}-ogp.png`,
+						ogpImageBuffer,
+						{
+							httpMetadata: {
+								contentType: "image/png",
+							},
+						},
+					);
+					console.log(`OGP image saved for post ${result[0].id}`);
+				} catch (error) {
+					console.error("Error generating/saving OGP image:", error);
+				}
+			}
+
 			return result[0];
 		}),
 
@@ -251,6 +275,29 @@ export const blogRouter = router({
 				.where(eq(posts.id, input.id))
 				.returning();
 
+			// Regenerate OGP image if title changed
+			if (ctx.env?.R2_BUCKET && input.title && result[0]) {
+				try {
+					console.log(`Regenerating OGP image for post ${result[0].id}...`);
+					const ogpImageBuffer = await generateOgImageBuffer(
+						result[0].title,
+						ctx.env.R2_BUCKET,
+					);
+					await ctx.env.R2_BUCKET.put(
+						`blog/${result[0].id}-ogp.png`,
+						ogpImageBuffer,
+						{
+							httpMetadata: {
+								contentType: "image/png",
+							},
+						},
+					);
+					console.log(`OGP image regenerated for post ${result[0].id}`);
+				} catch (error) {
+					console.error("Error regenerating OGP image:", error);
+				}
+			}
+
 			return result[0];
 		}),
 
@@ -282,6 +329,12 @@ export const blogRouter = router({
 				try {
 					console.log(`📁 Deleting R2 content: blog/${postToDelete[0].id}.md`);
 					await ctx.env.R2_BUCKET.delete(`blog/${postToDelete[0].id}.md`);
+
+					// Also delete OGP image
+					console.log(
+						`🖼️ Deleting OGP image: blog/${postToDelete[0].id}-ogp.png`,
+					);
+					await ctx.env.R2_BUCKET.delete(`blog/${postToDelete[0].id}-ogp.png`);
 				} catch (error) {
 					console.error("Error deleting content from R2:", error);
 				}

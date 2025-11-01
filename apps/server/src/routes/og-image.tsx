@@ -26,6 +26,28 @@ export async function generateOgImage(c: Context) {
 			return c.text("Invalid post ID", 400);
 		}
 
+		// まずR2から事前生成された画像を取得
+		if (c.env?.R2_BUCKET) {
+			try {
+				const ogpImage = await c.env.R2_BUCKET.get(`blog/${postId}-ogp.png`);
+				if (ogpImage) {
+					console.log(`Serving pre-generated OGP image for post ${postId}`);
+					return new Response(ogpImage.body, {
+						headers: {
+							"Content-Type": "image/png",
+							"Cache-Control": "public, max-age=31536000, immutable",
+						},
+					});
+				}
+				console.log(
+					`Pre-generated OGP image not found for post ${postId}, generating dynamically`,
+				);
+			} catch (error) {
+				console.error("Error fetching OGP image from R2:", error);
+			}
+		}
+
+		// R2に画像がない場合は動的に生成（フォールバック）
 		// データベースから記事を取得
 		const post = await db
 			.select({
@@ -321,4 +343,274 @@ export async function generateOgImage(c: Context) {
 			},
 		);
 	}
+}
+
+/**
+ * OGP画像を生成してバッファを返す（R2保存用）
+ * @param title ブログ記事のタイトル
+ * @param r2Bucket R2バケット
+ * @returns PNG画像のArrayBuffer
+ */
+export async function generateOgImageBuffer(
+	title: string,
+	r2Bucket?: R2Bucket,
+): Promise<ArrayBuffer> {
+	// 既存のgenerateOgImage関数と同じロジック
+	const imageResponse = await generateImageResponse(title, r2Bucket);
+	return await imageResponse.arrayBuffer();
+}
+
+/**
+ * ImageResponseを生成する（内部関数）
+ */
+async function generateImageResponse(
+	title: string,
+	r2Bucket?: R2Bucket,
+): Promise<Response> {
+	// R2バケットまたはHTTPSから公開OGPテンプレート画像を取得
+	let base64Image: string | undefined;
+	try {
+		let imageData: ArrayBuffer | undefined;
+
+		// まずR2バケットから取得を試みる
+		if (r2Bucket) {
+			try {
+				console.log(
+					"Attempting to fetch OGP template from R2: burio.com_ogp.png",
+				);
+				const r2Object = await r2Bucket.get("burio.com_ogp.png");
+				if (r2Object) {
+					const fetchedData = await r2Object.arrayBuffer();
+					imageData = fetchedData;
+					console.log(
+						"Successfully fetched image from R2, size:",
+						fetchedData.byteLength,
+						"bytes",
+					);
+				} else {
+					console.log("Image not found in R2, falling back to HTTPS");
+				}
+			} catch (r2Error) {
+				console.error("Error fetching from R2:", r2Error);
+				console.log("Falling back to HTTPS");
+			}
+		}
+
+		// R2で取得できなかった場合はHTTPSから取得
+		if (!imageData) {
+			console.log(
+				"Fetching OGP template image from: https://burio16.com/burio.com_ogp.png",
+			);
+			const imageResponse = await fetch(
+				"https://burio16.com/burio.com_ogp.png",
+			);
+			console.log(
+				"Image fetch response status:",
+				imageResponse.status,
+				imageResponse.statusText,
+			);
+
+			if (imageResponse.ok) {
+				const fetchedData = await imageResponse.arrayBuffer();
+				imageData = fetchedData;
+				console.log("Image data size:", fetchedData.byteLength, "bytes");
+			} else {
+				console.error(
+					"Failed to fetch image, status:",
+					imageResponse.status,
+					imageResponse.statusText,
+				);
+			}
+		}
+
+		// 画像データをBase64に変換
+		if (imageData) {
+			const bytes = new Uint8Array(imageData);
+			let binary = "";
+			for (let i = 0; i < bytes.byteLength; i++) {
+				binary += String.fromCharCode(bytes[i]);
+			}
+			base64Image = btoa(binary);
+			console.log(
+				"Successfully converted image to base64, length:",
+				base64Image.length,
+			);
+		}
+	} catch (error) {
+		console.error("Error fetching OGP template:", error);
+		console.error(
+			"Error details:",
+			error instanceof Error ? error.message : String(error),
+		);
+	}
+
+	// Google Fonts APIから日本語フォントを取得
+	const fontText = title;
+	const fontUrl = `https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&text=${encodeURIComponent(fontText)}`;
+
+	let fontData: ArrayBuffer | undefined;
+
+	try {
+		const fontCssResponse = await fetch(fontUrl);
+		const fontCss = await fontCssResponse.text();
+
+		// CSSからTTFファイルのURLを抽出
+		const fontUrlMatch = fontCss.match(/url\(([^)]+\.ttf)\)/);
+
+		if (fontUrlMatch?.[1]) {
+			const ttfResponse = await fetch(fontUrlMatch[1]);
+			if (ttfResponse.ok) {
+				fontData = await ttfResponse.arrayBuffer();
+			}
+		}
+	} catch (error) {
+		console.error("Error fetching font:", error);
+	}
+
+	// タイトルの長さに応じてフォントサイズを調整
+	const titleLength = title.length;
+	let titleFontSize = "60px";
+	if (titleLength > 50) {
+		titleFontSize = "44px";
+	} else if (titleLength > 40) {
+		titleFontSize = "48px";
+	} else if (titleLength > 30) {
+		titleFontSize = "52px";
+	}
+
+	// テンプレート画像が取得できた場合はそれを使用、できなかった場合はフォールバック
+	if (base64Image) {
+		return new ImageResponse(
+			<div
+				style={{
+					display: "flex",
+					width: "100%",
+					height: "100%",
+					position: "relative",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				{/* 背景画像: 既存のOGPテンプレート */}
+				<img
+					src={`data:image/png;base64,${base64Image}`}
+					alt="background"
+					width="1200"
+					height="630"
+					style={{ position: "absolute", top: 0, left: 0 }}
+				/>
+
+				{/* タイトルボックス */}
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						background: "white",
+						padding: "50px 80px",
+						borderRadius: "24px",
+						maxWidth: "900px",
+						border: "4px solid #FF6B35",
+						boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
+					}}
+				>
+					<h1
+						style={{
+							fontSize: titleFontSize,
+							fontWeight: 700,
+							color: "#1a202c",
+							margin: 0,
+							lineHeight: 1.3,
+							fontFamily: fontData ? "Noto Sans JP" : "sans-serif",
+							textAlign: "center",
+							wordBreak: "break-word",
+						}}
+					>
+						{title}
+					</h1>
+				</div>
+			</div>,
+			{
+				width: 1200,
+				height: 630,
+				fonts: fontData
+					? [
+							{
+								name: "Noto Sans JP",
+								data: fontData,
+								weight: 700,
+							},
+						]
+					: undefined,
+			},
+		);
+	}
+
+	// フォールバック: テンプレート画像が取得できなかった場合はシンプルなデザイン
+	return new ImageResponse(
+		<div
+			style={{
+				display: "flex",
+				width: "100%",
+				height: "100%",
+				alignItems: "center",
+				justifyContent: "center",
+				background: "white",
+				padding: "60px",
+			}}
+		>
+			<div
+				style={{
+					display: "flex",
+					flexDirection: "column",
+					width: "100%",
+					height: "100%",
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				{/* タイトル */}
+				<h1
+					style={{
+						fontSize: titleFontSize,
+						fontWeight: 700,
+						lineHeight: 1.3,
+						color: "#1a202c",
+						margin: 0,
+						textAlign: "center",
+						fontFamily: fontData ? "Noto Sans JP" : "sans-serif",
+						display: "flex",
+						wordBreak: "break-word",
+					}}
+				>
+					{title}
+				</h1>
+
+				{/* サイト名 */}
+				<div
+					style={{
+						marginTop: "60px",
+						fontSize: "32px",
+						fontWeight: 600,
+						color: "#FF6B35",
+						display: "flex",
+					}}
+				>
+					burio16.com
+				</div>
+			</div>
+		</div>,
+		{
+			width: 1200,
+			height: 630,
+			fonts: fontData
+				? [
+						{
+							name: "Noto Sans JP",
+							data: fontData,
+							weight: 700,
+						},
+					]
+				: undefined,
+		},
+	);
 }
