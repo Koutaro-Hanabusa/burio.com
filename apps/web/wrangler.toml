@@ -1,9 +1,19 @@
 name = "burio-com"
 compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "dist"
+
+[vars]
+SERVER_URL = "http://localhost:3000"
 
 [env.production]
 name = "burio-com"
 
+[env.production.vars]
+SERVER_URL = "https://api.burio16.com"
+
 [env.preview]
 name = "burio-com-preview"
+
+[env.preview.vars]
+SERVER_URL = "https://api.burio16.com"
