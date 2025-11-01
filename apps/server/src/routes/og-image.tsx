@@ -41,24 +41,81 @@ export async function generateOgImage(c: Context) {
 
 		const postData = post[0];
 
-		// HTTPSから公開OGPテンプレート画像を取得
+		// R2バケットまたはHTTPSから公開OGPテンプレート画像を取得
 		let base64Image: string | undefined;
 		try {
-			const imageResponse = await fetch(
-				"https://burio16.com/burio.com_ogp.png",
-			);
-			if (imageResponse.ok) {
-				const imageData = await imageResponse.arrayBuffer();
-				// ArrayBufferをBase64に変換
+			let imageData: ArrayBuffer | undefined;
+
+			// まずR2バケットから取得を試みる
+			if (c.env?.R2_BUCKET) {
+				try {
+					console.log(
+						"Attempting to fetch OGP template from R2: burio.com_ogp.png",
+					);
+					const r2Object = await c.env.R2_BUCKET.get("burio.com_ogp.png");
+					if (r2Object) {
+						const fetchedData = await r2Object.arrayBuffer();
+						imageData = fetchedData;
+						console.log(
+							"Successfully fetched image from R2, size:",
+							fetchedData.byteLength,
+							"bytes",
+						);
+					} else {
+						console.log("Image not found in R2, falling back to HTTPS");
+					}
+				} catch (r2Error) {
+					console.error("Error fetching from R2:", r2Error);
+					console.log("Falling back to HTTPS");
+				}
+			}
+
+			// R2で取得できなかった場合はHTTPSから取得
+			if (!imageData) {
+				console.log(
+					"Fetching OGP template image from: https://burio16.com/burio.com_ogp.png",
+				);
+				const imageResponse = await fetch(
+					"https://burio16.com/burio.com_ogp.png",
+				);
+				console.log(
+					"Image fetch response status:",
+					imageResponse.status,
+					imageResponse.statusText,
+				);
+
+				if (imageResponse.ok) {
+					const fetchedData = await imageResponse.arrayBuffer();
+					imageData = fetchedData;
+					console.log("Image data size:", fetchedData.byteLength, "bytes");
+				} else {
+					console.error(
+						"Failed to fetch image, status:",
+						imageResponse.status,
+						imageResponse.statusText,
+					);
+				}
+			}
+
+			// 画像データをBase64に変換
+			if (imageData) {
 				const bytes = new Uint8Array(imageData);
 				let binary = "";
 				for (let i = 0; i < bytes.byteLength; i++) {
 					binary += String.fromCharCode(bytes[i]);
 				}
 				base64Image = btoa(binary);
+				console.log(
+					"Successfully converted image to base64, length:",
+					base64Image.length,
+				);
 			}
 		} catch (error) {
-			console.error("Error fetching OGP template from HTTPS:", error);
+			console.error("Error fetching OGP template:", error);
+			console.error(
+				"Error details:",
+				error instanceof Error ? error.message : String(error),
+			);
 			// テンプレート画像の取得に失敗してもフォールバックで処理を続行
 		}
 
