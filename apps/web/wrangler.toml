@@ -3,21 +3,17 @@ compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "dist"
 
-# D1 Database Configuration
-[[d1_databases]]
-binding = "DB"
-database_name = "burio-com-db"
+[vars]
+SERVER_URL = "http://localhost:3000"
 
 [env.production]
 name = "burio-com"
 
-[[env.production.d1_databases]]
-binding = "DB"
-database_name = "burio-com-db"
+[env.production.vars]
+SERVER_URL = "https://api.burio16.com"
 
 [env.preview]
 name = "burio-com-preview"
 
-[[env.preview.d1_databases]]
-binding = "DB"
-database_name = "burio-com-db"
+[env.preview.vars]
+SERVER_URL = "https://api.burio16.com"

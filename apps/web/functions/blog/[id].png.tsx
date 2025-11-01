@@ -1,154 +1,182 @@
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
-import type { D1Database, PagesFunction } from "@cloudflare/workers-types";
+import type { PagesFunction } from "@cloudflare/workers-types";
 
-// Noto Sans JPフォントをGoogle Fontsから取得
-async function getFont(): Promise<ArrayBuffer> {
-	const fontUrl =
-		"https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@700&display=swap";
-
-	// CSSからフォントファイルのURLを取得
-	const css = await fetch(fontUrl).then((res) => res.text());
-	const fontFileUrl = css.match(/url\((https:\/\/[^)]+\.woff2)\)/)?.[1];
-
-	if (!fontFileUrl) {
-		throw new Error("Failed to extract font URL from Google Fonts CSS");
-	}
-
-	// フォントファイルをダウンロード
-	const fontResponse = await fetch(fontFileUrl);
-	return fontResponse.arrayBuffer();
+interface BlogPost {
+	id: number;
+	title: string;
+	excerpt: string | null;
+	createdAt: string;
+	tags: string | null;
 }
 
-interface Env {
-	DB: D1Database;
-}
+export const onRequest: PagesFunction<{
+	SERVER_URL: string;
+}> = async (context) => {
+	const { id } = context.params;
 
-export const onRequest: PagesFunction<Env> = async (context) => {
+	// Get the blog post data from the API
+	const serverUrl = context.env.SERVER_URL || "https://api.burio16.com";
+
 	try {
-		const { id } = context.params;
-		const db = context.env.DB;
+		// Fetch blog post data from the tRPC API
+		const response = await fetch(
+			`${serverUrl}/trpc/blog.getById?input=${encodeURIComponent(JSON.stringify({ id: Number(id) }))}`,
+		);
 
-		let title = "burio.com";
-
-		// IDが指定されている場合は、データベースから記事を取得
-		if (id) {
-			const postId = Number.parseInt(id as string, 10);
-
-			if (!Number.isNaN(postId)) {
-				const result = await db
-					.prepare("SELECT title FROM posts WHERE id = ?")
-					.bind(postId)
-					.first<{ title: string }>();
-
-				if (result) {
-					title = result.title;
-				}
-			}
+		if (!response.ok) {
+			throw new Error(`Failed to fetch blog post: ${response.statusText}`);
 		}
 
-		// フォントを取得
-		const notoSansFont = await getFont();
+		const data = await response.json();
+		const post: BlogPost = data.result.data;
 
-		// ベース画像URL（フルパスで指定）
-		const baseImageUrl = "https://burio16.com/burio.com_ogp.png";
+		if (!post) {
+			return new Response("Blog post not found", { status: 404 });
+		}
 
-		// ImageResponseでOG画像を生成
-		const response = new ImageResponse(
-			<div
-				style={{
-					width: "100%",
-					height: "100%",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					backgroundImage: `url("${baseImageUrl}")`,
-					backgroundSize: "cover",
-					backgroundPosition: "center",
-					fontFamily: '"Noto Sans JP", sans-serif',
-					padding: "80px",
-					position: "relative",
-				}}
-			>
-				{/* 半透明オーバーレイ */}
-				<div
-					style={{
-						position: "absolute",
-						width: "100%",
-						height: "100%",
-						background: "rgba(0, 0, 0, 0.5)",
-						top: 0,
-						left: 0,
-					}}
-				/>
+		// Parse tags
+		const tags: string[] = post.tags ? JSON.parse(post.tags) : [];
 
-				{/* タイトル */}
-				<div
-					style={{
-						fontSize: "72px",
-						fontWeight: 700,
-						color: "white",
-						textAlign: "center",
-						lineHeight: 1.3,
-						maxWidth: "1000px",
-						zIndex: 10,
-						textShadow: "4px 4px 8px rgba(0, 0, 0, 0.9)",
-					}}
-				>
-					{title}
-				</div>
-			</div>,
-			{
-				width: 1200,
-				height: 630,
-				fonts: [
-					{
-						name: "Noto Sans JP",
-						data: notoSansFont,
-						style: "normal",
-						weight: 700,
-					},
-				],
-			},
-		);
+		// Format date
+		const date = new Date(post.createdAt).toLocaleDateString("ja-JP", {
+			year: "numeric",
+			month: "long",
+			day: "numeric",
+		});
 
-		// キャッシュヘッダーを設定（Cloudflareのキャッシュを効かせる）
-		response.headers.set(
-			"Cache-Control",
-			"public, max-age=31536000, immutable",
-		);
-		response.headers.set("Content-Type", "image/png");
-
-		return response;
-	} catch (error) {
-		console.error("OG Image generation error:", error);
-
-		// エラー時はシンプルなデフォルト画像を返す
 		return new ImageResponse(
 			<div
 				style={{
+					display: "flex",
+					flexDirection: "column",
 					width: "100%",
 					height: "100%",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
-					background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-					fontFamily: "sans-serif",
+					backgroundColor: "#0a0a0a",
+					padding: "80px",
+					fontFamily: "system-ui, sans-serif",
 				}}
 			>
+				{/* Header */}
 				<div
 					style={{
-						fontSize: "96px",
-						fontWeight: 700,
-						color: "white",
+						display: "flex",
+						justifyContent: "space-between",
+						alignItems: "center",
+						marginBottom: "60px",
 					}}
 				>
-					burio.com
+					<div
+						style={{
+							fontSize: "36px",
+							fontWeight: "bold",
+							color: "#ffffff",
+						}}
+					>
+						burio16.com
+					</div>
+					<div
+						style={{
+							fontSize: "24px",
+							color: "#888888",
+						}}
+					>
+						{date}
+					</div>
 				</div>
+
+				{/* Main content */}
+				<div
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						flex: 1,
+						justifyContent: "center",
+					}}
+				>
+					{/* Title */}
+					<h1
+						style={{
+							fontSize: "64px",
+							fontWeight: "bold",
+							color: "#ffffff",
+							lineHeight: 1.2,
+							marginBottom: "30px",
+							maxWidth: "100%",
+							overflow: "hidden",
+							textOverflow: "ellipsis",
+							display: "-webkit-box",
+							WebkitLineClamp: 3,
+							WebkitBoxOrient: "vertical",
+						}}
+					>
+						{post.title}
+					</h1>
+
+					{/* Excerpt */}
+					{post.excerpt && (
+						<p
+							style={{
+								fontSize: "32px",
+								color: "#888888",
+								lineHeight: 1.5,
+								marginBottom: "40px",
+								maxWidth: "100%",
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+								display: "-webkit-box",
+								WebkitLineClamp: 2,
+								WebkitBoxOrient: "vertical",
+							}}
+						>
+							{post.excerpt}
+						</p>
+					)}
+
+					{/* Tags */}
+					{tags.length > 0 && (
+						<div
+							style={{
+								display: "flex",
+								gap: "16px",
+								flexWrap: "wrap",
+							}}
+						>
+							{tags.slice(0, 3).map((tag) => (
+								<span
+									key={tag}
+									style={{
+										fontSize: "24px",
+										color: "#ffffff",
+										backgroundColor: "#1a1a1a",
+										padding: "12px 24px",
+										borderRadius: "8px",
+										border: "1px solid #333333",
+									}}
+								>
+									{tag}
+								</span>
+							))}
+						</div>
+					)}
+				</div>
+
+				{/* Footer - gradient line */}
+				<div
+					style={{
+						width: "100%",
+						height: "8px",
+						background: "linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899)",
+						borderRadius: "4px",
+					}}
+				/>
 			</div>,
 			{
 				width: 1200,
 				height: 630,
 			},
 		);
+	} catch (error) {
+		console.error("Error generating OG image:", error);
+		return new Response("Failed to generate OG image", { status: 500 });
 	}
 };
