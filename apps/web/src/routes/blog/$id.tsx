@@ -30,7 +30,6 @@ function BlogPostPage() {
 	const [copied, setCopied] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
 
-	const ogImageUrl = `https://burio16.com/blog/${id}.png`;
 	const pageUrl =
 		typeof window !== "undefined"
 			? window.location.href
@@ -161,17 +160,13 @@ function BlogPostPage() {
 				<meta property="og:type" content="article" />
 				<meta property="og:title" content={post.title} />
 				<meta property="og:description" content={post.excerpt || ""} />
-				<meta property="og:image" content={ogImageUrl} />
 				<meta property="og:url" content={pageUrl} />
-				<meta property="og:image:width" content="1200" />
-				<meta property="og:image:height" content="630" />
 				<meta property="og:site_name" content="burio16.com" />
 
 				{/* Twitter Card */}
-				<meta name="twitter:card" content="summary_large_image" />
+				<meta name="twitter:card" content="summary" />
 				<meta name="twitter:title" content={post.title} />
 				<meta name="twitter:description" content={post.excerpt || ""} />
-				<meta name="twitter:image" content={ogImageUrl} />
 			</Helmet>
 
 			<motion.article
