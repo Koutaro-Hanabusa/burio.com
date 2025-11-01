@@ -59,8 +59,14 @@ ogImageRouter.get("/", async (c) => {
 		// フォントを取得
 		const notoSansFont = await getFont();
 
-		// ベース画像URL
+		// ベース画像を取得してdata URIに変換
 		const baseImageUrl = "https://burio16.com/burio.com_ogp.png";
+		const imageResponse = await fetch(baseImageUrl);
+		const imageArrayBuffer = await imageResponse.arrayBuffer();
+		const imageBase64 = btoa(
+			String.fromCharCode(...new Uint8Array(imageArrayBuffer)),
+		);
+		const imageDataUri = `data:image/png;base64,${imageBase64}`;
 
 		// ImageResponseでOG画像を生成
 		return new ImageResponse(
@@ -74,7 +80,7 @@ ogImageRouter.get("/", async (c) => {
 			>
 				{/* ベース画像 */}
 				<img
-					src={baseImageUrl}
+					src={imageDataUri}
 					alt="Base"
 					width="1200"
 					height="630"
