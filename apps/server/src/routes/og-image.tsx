@@ -1,8 +1,8 @@
-import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og";
+import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import { Hono } from "hono";
-import type * as schema from "../db/schema";
+import * as schema from "../db/schema";
 import { posts } from "../db/schema";
 
 const ogImageRouter = new Hono<{
