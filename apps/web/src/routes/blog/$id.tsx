@@ -151,7 +151,7 @@ function BlogPostPage() {
 				description={post.excerpt || undefined}
 				image={
 					post.coverImage ||
-					`${import.meta.env.VITE_SERVER_URL}/blog/${id}/og-image`
+					`${import.meta.env.VITE_SERVER_URL?.trim() || ""}/blog/${id}/og-image`
 				}
 				url={`https://burio16.com/blog/${id}`}
 				type="article"
