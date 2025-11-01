@@ -104,9 +104,6 @@ export const onRequest: PagesFunction<{
 							maxWidth: "100%",
 							overflow: "hidden",
 							textOverflow: "ellipsis",
-							display: "-webkit-box",
-							WebkitLineClamp: 3,
-							WebkitBoxOrient: "vertical",
 						}}
 					>
 						{post.title}
@@ -123,9 +120,6 @@ export const onRequest: PagesFunction<{
 								maxWidth: "100%",
 								overflow: "hidden",
 								textOverflow: "ellipsis",
-								display: "-webkit-box",
-								WebkitLineClamp: 2,
-								WebkitBoxOrient: "vertical",
 							}}
 						>
 							{post.excerpt}
