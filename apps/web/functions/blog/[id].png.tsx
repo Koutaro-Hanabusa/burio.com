@@ -44,6 +44,17 @@ export const onRequest: PagesFunction<{
 			day: "numeric",
 		});
 
+		// Fetch the OGP template image and convert to base64
+		const baseUrl = new URL(context.request.url).origin;
+		const templateImageUrl = `${baseUrl}/burio.com_ogp.png`;
+
+		const imageResponse = await fetch(templateImageUrl);
+		const imageBuffer = await imageResponse.arrayBuffer();
+		const base64Image = btoa(
+			String.fromCharCode(...new Uint8Array(imageBuffer))
+		);
+		const dataUrl = `data:image/png;base64,${base64Image}`;
+
 		return new ImageResponse(
 			<div
 				style={{
@@ -51,7 +62,9 @@ export const onRequest: PagesFunction<{
 					flexDirection: "column",
 					width: "100%",
 					height: "100%",
-					backgroundColor: "#0a0a0a",
+					backgroundImage: `url(${dataUrl})`,
+					backgroundSize: "cover",
+					backgroundPosition: "center",
 					padding: "80px",
 					fontFamily: "system-ui, sans-serif",
 				}}
@@ -70,6 +83,7 @@ export const onRequest: PagesFunction<{
 							fontSize: "36px",
 							fontWeight: "bold",
 							color: "#ffffff",
+							textShadow: "0 2px 10px rgba(0,0,0,0.8)",
 						}}
 					>
 						burio16.com
@@ -77,7 +91,8 @@ export const onRequest: PagesFunction<{
 					<div
 						style={{
 							fontSize: "24px",
-							color: "#888888",
+							color: "#cccccc",
+							textShadow: "0 2px 8px rgba(0,0,0,0.8)",
 						}}
 					>
 						{date}
@@ -104,6 +119,7 @@ export const onRequest: PagesFunction<{
 							maxWidth: "100%",
 							overflow: "hidden",
 							textOverflow: "ellipsis",
+							textShadow: "0 4px 12px rgba(0,0,0,0.9)",
 						}}
 					>
 						{post.title}
@@ -114,12 +130,13 @@ export const onRequest: PagesFunction<{
 						<p
 							style={{
 								fontSize: "32px",
-								color: "#888888",
+								color: "#cccccc",
 								lineHeight: 1.5,
 								marginBottom: "40px",
 								maxWidth: "100%",
 								overflow: "hidden",
 								textOverflow: "ellipsis",
+								textShadow: "0 2px 10px rgba(0,0,0,0.8)",
 							}}
 						>
 							{post.excerpt}
@@ -141,10 +158,11 @@ export const onRequest: PagesFunction<{
 									style={{
 										fontSize: "24px",
 										color: "#ffffff",
-										backgroundColor: "#1a1a1a",
+										backgroundColor: "rgba(26, 26, 26, 0.9)",
 										padding: "12px 24px",
 										borderRadius: "8px",
-										border: "1px solid #333333",
+										border: "1px solid rgba(51, 51, 51, 0.8)",
+										textShadow: "0 1px 4px rgba(0,0,0,0.5)",
 									}}
 								>
 									{tag}
