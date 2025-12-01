@@ -81,7 +81,7 @@ describe("Heroコンポーネント", () => {
 			expect(twitterLink).toBeInTheDocument();
 			expect(twitterLink).toHaveAttribute(
 				"href",
-				"https://x.com/buri16_koutaro",
+				"https://x.com/burio_16",
 			);
 			expect(twitterLink).toHaveAttribute("target", "_blank");
 			expect(twitterLink).toHaveAttribute("rel", "noopener noreferrer");
