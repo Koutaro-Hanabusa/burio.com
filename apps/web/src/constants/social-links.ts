@@ -9,7 +9,7 @@ export const SOCIAL_LINKS: SocialLink[] = [
 	},
 	{
 		icon: Twitter,
-		href: "https://x.com/buri16_koutaro",
+		href: "https://x.com/burio_16",
 		label: "Twitter",
 	},
 	{
