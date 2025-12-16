@@ -3,6 +3,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import { Blog } from "@/components/home/blog";
 import { Favorites } from "@/components/home/favorites";
 import { Hero } from "@/components/home/hero";
+import { Lt } from "@/components/home/lt";
 
 // Lazy load the 3D background for better initial bundle size
 const ThreeBackground = lazy(() =>
@@ -51,6 +52,7 @@ function HomeComponent() {
 				{/* Main content - loads immediately for optimal LCP */}
 				<Hero />
 				<Favorites />
+				<Lt />
 				<Blog />
 			</main>
 		</>
