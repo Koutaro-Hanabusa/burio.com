@@ -24,7 +24,7 @@ export function Lt() {
 					transition={{ duration: 0.6 }}
 					viewport={{ once: true }}
 				>
-					LT 登壇・登壇資料
+					<a href="https://slide.burio16.com/">LT 登壇・登壇資料</a>
 				</motion.h2>
 
 				<iframe
