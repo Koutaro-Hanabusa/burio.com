@@ -99,7 +99,7 @@ function injectOGPMetaTags(
 
 const ogp = new Hono<{ Bindings: Env }>();
 
-ogp.get("/blog/:id.png", async (c: Context<{ Bindings: Env }>) => {
+ogp.get("/blog/:id/og.png", async (c: Context<{ Bindings: Env }>) => {
 	const id = c.req.param("id");
 	const r2PublicUrl = c.env.R2_PUBLIC_URL;
 	const bgImageUrl = `${r2PublicUrl}/burio.com_ogp.png`;
@@ -338,7 +338,7 @@ ogp.get("/blog/:id", async (c: Context<{ Bindings: Env }>) => {
 
 		// Inject OGP meta tags
 		const pageUrl = `https://burio16.com/blog/${post.id}`;
-		const ogImageUrl = `${apiUrl}/ogp/blog/${post.id}.png`;
+		const ogImageUrl = `${apiUrl}/ogp/blog/${post.id}/og.png`;
 		const modifiedHtml = injectOGPMetaTags(html, post, pageUrl, ogImageUrl);
 
 		// Return modified HTML
