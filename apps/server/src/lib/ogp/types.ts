@@ -7,7 +7,8 @@ export interface BlogPost {
 	published: number | null;
 }
 
-export interface OgpEnv {
+export type OgpEnv = {
 	R2_PUBLIC_URL: string;
 	PAGES_URL: string;
-}
+	[key: string]: unknown;
+};
