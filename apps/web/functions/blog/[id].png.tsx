@@ -14,7 +14,7 @@ interface BlogPost {
  */
 function truncateText(text: string, maxLength: number): string {
 	if (text.length <= maxLength) return text;
-	return text.slice(0, maxLength - 1) + "…";
+	return `${text.slice(0, maxLength - 1)}…`;
 }
 
 export const onRequest: PagesFunction<{
@@ -50,13 +50,6 @@ export const onRequest: PagesFunction<{
 		// Parse tags
 		const tags: string[] = post.tags ? JSON.parse(post.tags) : [];
 
-		// Format date
-		const date = new Date(post.createdAt).toLocaleDateString("ja-JP", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		});
-
 		// Truncate title and excerpt to prevent overflow
 		const title = truncateText(post.title, 50);
 		const excerpt = post.excerpt ? truncateText(post.excerpt, 80) : null;
@@ -66,120 +59,135 @@ export const onRequest: PagesFunction<{
 				style={{
 					display: "flex",
 					flexDirection: "column",
-					width: "100%",
-					height: "100%",
-					backgroundColor: "#0a0a0a",
-					padding: "80px",
+					width: "1200px",
+					height: "630px",
 					fontFamily: "'Noto Sans JP', system-ui, sans-serif",
+					position: "relative",
 				}}
 			>
-				{/* Header */}
+				{/* 背景画像 */}
+				<img
+					src="https://burio16.com/burio.com_ogp.png"
+					alt=""
+					width={1200}
+					height={630}
+					style={{
+						position: "absolute",
+						top: 0,
+						left: 0,
+					}}
+				/>
+				{/* 半透明オーバーレイ */}
 				<div
 					style={{
-						display: "flex",
-						justifyContent: "space-between",
-						alignItems: "center",
-						marginBottom: "60px",
+						position: "absolute",
+						top: 0,
+						left: 0,
+						width: "1200px",
+						height: "630px",
+						backgroundColor: "rgba(0, 0, 0, 0.6)",
 					}}
-				>
-					<div
-						style={{
-							fontSize: "36px",
-							fontWeight: "bold",
-							color: "#ffffff",
-						}}
-					>
-						burio16.com
-					</div>
-					<div
-						style={{
-							fontSize: "24px",
-							color: "#888888",
-						}}
-					>
-						{date}
-					</div>
-				</div>
+				/>
 
-				{/* Main content */}
+				{/* コンテンツ（前面） */}
 				<div
 					style={{
 						display: "flex",
 						flexDirection: "column",
-						flex: 1,
-						justifyContent: "center",
+						width: "100%",
+						height: "100%",
+						padding: "80px",
+						position: "relative",
 					}}
 				>
-					{/* Title */}
-					<h1
+					{/* Header */}
+					<div
 						style={{
-							fontSize: "64px",
-							fontWeight: "bold",
-							color: "#ffffff",
-							lineHeight: 1.2,
-							marginBottom: "30px",
-							maxWidth: "100%",
-							overflow: "hidden",
-							textOverflow: "ellipsis",
+							display: "flex",
+							marginBottom: "60px",
 						}}
 					>
-						{title}
-					</h1>
-
-					{/* Excerpt */}
-					{excerpt && (
-						<p
+						<div
 							style={{
-								fontSize: "32px",
-								color: "#888888",
-								lineHeight: 1.5,
-								marginBottom: "40px",
+								fontSize: "36px",
+								fontWeight: "bold",
+								color: "#ffffff",
+							}}
+						>
+							burio16.com
+						</div>
+					</div>
+
+					{/* Main content */}
+					<div
+						style={{
+							display: "flex",
+							flexDirection: "column",
+							flex: 1,
+							justifyContent: "center",
+						}}
+					>
+						{/* Title */}
+						<h1
+							style={{
+								fontSize: "64px",
+								fontWeight: "bold",
+								color: "#ffffff",
+								lineHeight: 1.2,
+								marginBottom: "30px",
 								maxWidth: "100%",
 								overflow: "hidden",
 								textOverflow: "ellipsis",
 							}}
 						>
-							{excerpt}
-						</p>
-					)}
+							{title}
+						</h1>
 
-					{/* Tags */}
-					{tags.length > 0 && (
-						<div
-							style={{
-								display: "flex",
-								gap: "16px",
-								flexWrap: "wrap",
-							}}
-						>
-							{tags.slice(0, 3).map((tag) => (
-								<span
-									key={tag}
-									style={{
-										fontSize: "24px",
-										color: "#ffffff",
-										backgroundColor: "#1a1a1a",
-										padding: "12px 24px",
-										borderRadius: "8px",
-										border: "1px solid #333333",
-									}}
-								>
-									{tag}
-								</span>
-							))}
-						</div>
-					)}
+						{/* Excerpt */}
+						{excerpt && (
+							<p
+								style={{
+									fontSize: "32px",
+									color: "#cccccc",
+									lineHeight: 1.5,
+									marginBottom: "40px",
+									maxWidth: "100%",
+									overflow: "hidden",
+									textOverflow: "ellipsis",
+								}}
+							>
+								{excerpt}
+							</p>
+						)}
+
+						{/* Tags */}
+						{tags.length > 0 && (
+							<div
+								style={{
+									display: "flex",
+									gap: "16px",
+									flexWrap: "wrap",
+								}}
+							>
+								{tags.slice(0, 3).map((tag) => (
+									<span
+										key={tag}
+										style={{
+											fontSize: "24px",
+											color: "#ffffff",
+											backgroundColor: "rgba(255, 255, 255, 0.2)",
+											padding: "12px 24px",
+											borderRadius: "8px",
+											border: "1px solid rgba(255, 255, 255, 0.3)",
+										}}
+									>
+										{tag}
+									</span>
+								))}
+							</div>
+						)}
+					</div>
 				</div>
-
-				{/* Footer - gradient line */}
-				<div
-					style={{
-						width: "100%",
-						height: "8px",
-						background: "linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899)",
-						borderRadius: "4px",
-					}}
-				/>
 			</div>,
 			{
 				width: 1200,
