@@ -25,7 +25,7 @@ export const onRequest: PagesFunction<{
 	const { id } = context.params;
 
 	// Get the blog post data from the API
-	const serverUrl = context.env.SERVER_URL || "https://api.burio16.com";
+	const serverUrl = context.env.SERVER_URL;
 
 	try {
 		// Fetch Japanese font for proper rendering
@@ -56,7 +56,7 @@ export const onRequest: PagesFunction<{
 		const title = truncateText(post.title, 50);
 		const excerpt = post.excerpt ? truncateText(post.excerpt, 80) : null;
 
-		return new ImageResponse(
+		const imageResponse = new ImageResponse(
 			<div
 				style={{
 					display: "flex",
@@ -204,6 +204,16 @@ export const onRequest: PagesFunction<{
 				],
 			},
 		);
+
+		// Add cache control headers to prevent caching
+		return new Response(imageResponse.body, {
+			headers: {
+				"Content-Type": "image/png",
+				"Cache-Control": "no-cache, no-store, must-revalidate",
+				Pragma: "no-cache",
+				Expires: "0",
+			},
+		});
 	} catch (error) {
 		console.error("Error generating OG image:", error);
 		return new Response("Failed to generate OG image", { status: 500 });
