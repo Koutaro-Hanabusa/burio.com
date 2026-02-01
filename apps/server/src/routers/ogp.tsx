@@ -1,14 +1,14 @@
+import { env } from "cloudflare:workers";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { eq } from "drizzle-orm";
-import type { Context } from "hono";
 import { Hono } from "hono";
 import { db } from "../db";
 import { posts } from "../db/schema";
 import { generateOgImage } from "../lib/ogp/image";
 import { injectOGPMetaTags } from "../lib/ogp/meta";
-import type { BlogPost, OgpEnv } from "../lib/ogp/types";
+import type { BlogPost } from "../lib/ogp/types";
 
-const ogp = new Hono<{ Bindings: OgpEnv }>();
+const ogp = new Hono();
 
 // シンプルなテストエンドポイント（外部リソースなし）
 ogp.get("/test.png", async (c) => {
@@ -60,9 +60,9 @@ async function fetchPagesHtml(pagesUrl: string, id: string): Promise<Response> {
 }
 
 // blog.burio16.com/:id/og.png - OGP画像
-ogp.get("/:id/og.png", async (c: Context<{ Bindings: OgpEnv }>) => {
+ogp.get("/:id/og.png", async (c) => {
 	const id = c.req.param("id");
-	const bgImageUrl = `${c.env.R2_PUBLIC_URL}/burio.com_ogp.png`;
+	const bgImageUrl = `${env.R2_PUBLIC_URL}/burio.com_ogp.png`;
 
 	try {
 		const post = await fetchBlogPost(id);
@@ -77,18 +77,30 @@ ogp.get("/:id/og.png", async (c: Context<{ Bindings: OgpEnv }>) => {
 });
 
 // blog.burio16.com/:id - ブログページ（メタタグ注入）
-ogp.get("/:id", async (c: Context<{ Bindings: OgpEnv }>) => {
+ogp.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const pagesUrl = c.env.PAGES_URL;
+	const pagesUrl = env.PAGES_URL;
+
+	console.log("OGP meta injection request:", { id, pagesUrl });
+
+	if (!pagesUrl) {
+		console.error("PAGES_URL is not set");
+		return c.text("PAGES_URL is not configured", 500);
+	}
 
 	try {
+		console.log("Fetching blog post and HTML...");
 		const [post, htmlResponse] = await Promise.all([
 			fetchBlogPost(id),
 			fetchPagesHtml(pagesUrl, id),
 		]);
+		console.log("Post found:", post ? "yes" : "no");
+		console.log("HTML response status:", htmlResponse.status);
+
 		const html = await htmlResponse.text();
 
 		if (!post || !post.published) {
+			console.log("Post not found or not published, returning original HTML");
 			return new Response(html, {
 				status: htmlResponse.status,
 				headers: htmlResponse.headers,
@@ -105,14 +117,20 @@ ogp.get("/:id", async (c: Context<{ Bindings: OgpEnv }>) => {
 		}
 		headers.set("Content-Type", "text/html; charset=utf-8");
 
+		console.log("Returning modified HTML with OGP tags");
 		return new Response(modifiedHtml, { status: htmlResponse.status, headers });
 	} catch (error) {
 		console.error("Error injecting OGP meta tags:", error);
-		const pagesResponse = await fetchPagesHtml(pagesUrl, id);
-		return new Response(pagesResponse.body, {
-			status: pagesResponse.status,
-			headers: pagesResponse.headers,
-		});
+		try {
+			const pagesResponse = await fetchPagesHtml(pagesUrl, id);
+			return new Response(pagesResponse.body, {
+				status: pagesResponse.status,
+				headers: pagesResponse.headers,
+			});
+		} catch (fallbackError) {
+			console.error("Fallback fetch also failed:", fallbackError);
+			return c.text(`Error: ${error}`, 500);
+		}
 	}
 });
 
