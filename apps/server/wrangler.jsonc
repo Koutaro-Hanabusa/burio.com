@@ -5,14 +5,41 @@
 	"name": "burio-com-server",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-06-15",
-	"compatibility_flags": ["nodejs_compat"],
+	"compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
 	"workers_dev": true,
 	"preview_urls": true,
+
+	// Observability
+	"observability": {
+		"enabled": false,
+		"head_sampling_rate": 1,
+		"logs": {
+			"enabled": true,
+			"head_sampling_rate": 1,
+			"persist": true,
+			"invocation_logs": true
+		},
+		"traces": {
+			"enabled": false,
+			"persist": true,
+			"head_sampling_rate": 1
+		}
+	},
+
+	// Custom Domain Routing
+	"routes": [
+		{ "pattern": "api.burio16.com/*", "zone_name": "burio16.com" },
+		{ "pattern": "blog.burio16.com/*", "zone_name": "burio16.com" }
+	],
+
 	"vars": {
 		"NODE_ENV": "production",
 		"CORS_ORIGIN": "https://burio16.com",
-		"BETTER_AUTH_URL": "https://api.burio16.com"
+		"BETTER_AUTH_URL": "https://api.burio16.com",
+		"PAGES_URL": "https://burio-com.pages.dev",
+		"R2_PUBLIC_URL": "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev"
 	},
+
 	// For sensitive data, use:
 	// wrangler secret put SECRET_NAME
 	// Don't add secrets to "vars" - they're visible in the dashboard!
@@ -24,6 +51,7 @@
 	// bun db:generate
 	// To apply migrations locally, run:
 	// wrangler d1 migrations apply YOUR_DB_NAME --local
+
 	"d1_databases": [
 		{
 			"binding": "DB",
@@ -41,6 +69,7 @@
 	],
 	"env": {
 		"dev": {
+			"workers_dev": true,
 			"d1_databases": [
 				{
 					"binding": "DB",
@@ -59,7 +88,9 @@
 			"vars": {
 				"NODE_ENV": "development",
 				"CORS_ORIGIN": "http://localhost:3001",
-				"BETTER_AUTH_URL": "http://localhost:3000"
+				"BETTER_AUTH_URL": "http://localhost:3000",
+				"R2_PUBLIC_URL": "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev",
+				"PAGES_URL": "http://localhost:3001"
 			}
 		}
 	}
