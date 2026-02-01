@@ -9,6 +9,14 @@ interface BlogPost {
 	tags: string | null;
 }
 
+/**
+ * Truncate text to a maximum length with ellipsis
+ */
+function truncateText(text: string, maxLength: number): string {
+	if (text.length <= maxLength) return text;
+	return text.slice(0, maxLength - 1) + "…";
+}
+
 export const onRequest: PagesFunction<{
 	SERVER_URL: string;
 }> = async (context) => {
@@ -18,6 +26,11 @@ export const onRequest: PagesFunction<{
 	const serverUrl = context.env.SERVER_URL || "https://api.burio16.com";
 
 	try {
+		// Fetch Japanese font for proper rendering
+		const fontData = await fetch(
+			"https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@5.0.1/files/noto-sans-jp-japanese-700-normal.woff",
+		).then((res) => res.arrayBuffer());
+
 		// Fetch blog post data from the tRPC API
 		const response = await fetch(
 			`${serverUrl}/trpc/blog.getById?input=${encodeURIComponent(JSON.stringify({ id: Number(id) }))}`,
@@ -44,6 +57,10 @@ export const onRequest: PagesFunction<{
 			day: "numeric",
 		});
 
+		// Truncate title and excerpt to prevent overflow
+		const title = truncateText(post.title, 50);
+		const excerpt = post.excerpt ? truncateText(post.excerpt, 80) : null;
+
 		return new ImageResponse(
 			<div
 				style={{
@@ -53,7 +70,7 @@ export const onRequest: PagesFunction<{
 					height: "100%",
 					backgroundColor: "#0a0a0a",
 					padding: "80px",
-					fontFamily: "system-ui, sans-serif",
+					fontFamily: "'Noto Sans JP', system-ui, sans-serif",
 				}}
 			>
 				{/* Header */}
@@ -106,11 +123,11 @@ export const onRequest: PagesFunction<{
 							textOverflow: "ellipsis",
 						}}
 					>
-						{post.title}
+						{title}
 					</h1>
 
 					{/* Excerpt */}
-					{post.excerpt && (
+					{excerpt && (
 						<p
 							style={{
 								fontSize: "32px",
@@ -122,7 +139,7 @@ export const onRequest: PagesFunction<{
 								textOverflow: "ellipsis",
 							}}
 						>
-							{post.excerpt}
+							{excerpt}
 						</p>
 					)}
 
@@ -167,6 +184,14 @@ export const onRequest: PagesFunction<{
 			{
 				width: 1200,
 				height: 630,
+				fonts: [
+					{
+						name: "Noto Sans JP",
+						data: fontData,
+						weight: 700,
+						style: "normal",
+					},
+				],
 			},
 		);
 	} catch (error) {
