@@ -118,7 +118,7 @@ export async function onRequest(context: PagesContext): Promise<Response> {
 	}
 
 	const postId = blogMatch[1];
-	const serverUrl = context.env.SERVER_URL || "https://api.burio16.com";
+	const serverUrl = context.env.SERVER_URL;
 	const baseUrl = `${url.protocol}//${url.host}`;
 
 	try {
