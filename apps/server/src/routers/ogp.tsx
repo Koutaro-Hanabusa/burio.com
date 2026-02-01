@@ -1,4 +1,4 @@
-import { env } from "cloudflare:workers";
+import { env as cloudflareEnv } from "cloudflare:workers";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
@@ -6,7 +6,10 @@ import { db } from "../db";
 import { posts } from "../db/schema";
 import { generateOgImage } from "../lib/ogp/image";
 import { injectOGPMetaTags } from "../lib/ogp/meta";
-import type { BlogPost } from "../lib/ogp/types";
+import type { BlogPost, OgpEnv } from "../lib/ogp/types";
+
+// wrangler.tomlの[vars]から読み込む環境変数
+const env = cloudflareEnv as typeof cloudflareEnv & OgpEnv;
 
 const ogp = new Hono();
 
