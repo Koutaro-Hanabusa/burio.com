@@ -19,8 +19,9 @@ function truncateText(text: string, maxLength: number): string {
 
 export const onRequest: PagesFunction<{
 	SERVER_URL: string;
-	ASSETS: { fetch: (request: Request | string) => Promise<Response> };
+	R2_PUBLIC_URL: string;
 }> = async (context) => {
+	const bgImageUrl = `${context.env.R2_PUBLIC_URL}/burio.com_ogp.png`;
 	const { id } = context.params;
 
 	// Get the blog post data from the API
@@ -31,13 +32,6 @@ export const onRequest: PagesFunction<{
 		const fontData = await fetch(
 			"https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@5.0.1/files/noto-sans-jp-japanese-700-normal.woff",
 		).then((res) => res.arrayBuffer());
-
-		// Fetch background image from static assets
-		const bgImageResponse = await context.env.ASSETS.fetch(
-			new Request(new URL("/burio.com_ogp.png", context.request.url)),
-		);
-		const bgImageBuffer = await bgImageResponse.arrayBuffer();
-		const bgImageBase64 = `data:image/png;base64,${btoa(String.fromCharCode(...new Uint8Array(bgImageBuffer)))}`;
 
 		// Fetch blog post data from the tRPC API
 		const response = await fetch(
@@ -75,7 +69,7 @@ export const onRequest: PagesFunction<{
 			>
 				{/* 背景画像 */}
 				<img
-					src={bgImageBase64}
+					src={bgImageUrl}
 					alt=""
 					width={1200}
 					height={630}
