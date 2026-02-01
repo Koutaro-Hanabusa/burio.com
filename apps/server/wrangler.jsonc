@@ -5,7 +5,10 @@
 	"name": "burio-com-server",
 	"main": "src/index.ts",
 	"compatibility_date": "2025-06-15",
-	"compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
+	"compatibility_flags": [
+		"nodejs_compat",
+		"nodejs_compat_populate_process_env"
+	],
 	"workers_dev": true,
 	"preview_urls": true,
 
@@ -29,9 +32,7 @@
 	"vars": {
 		"NODE_ENV": "production",
 		"CORS_ORIGIN": "https://burio16.com",
-		"BETTER_AUTH_URL": "https://api.burio16.com",
-		"PAGES_URL": "https://burio-com.pages.dev",
-		"R2_PUBLIC_URL": "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev"
+		"BETTER_AUTH_URL": "https://api.burio16.com"
 	},
 
 	// For sensitive data, use:
@@ -82,9 +83,7 @@
 			"vars": {
 				"NODE_ENV": "development",
 				"CORS_ORIGIN": "http://localhost:3001",
-				"BETTER_AUTH_URL": "http://localhost:3000",
-				"R2_PUBLIC_URL": "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev",
-				"PAGES_URL": "http://localhost:3001"
+				"BETTER_AUTH_URL": "http://localhost:3000"
 			}
 		}
 	}
