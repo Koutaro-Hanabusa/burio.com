@@ -5,7 +5,13 @@ import { truncateText } from "./utils";
 const FONT_URL =
 	"https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@5.0.1/files/noto-sans-jp-japanese-700-normal.woff";
 
-function OgImageContent({ post }: { post: BlogPost }) {
+function OgImageContent({
+	post,
+	bgImageUrl,
+}: {
+	post: BlogPost;
+	bgImageUrl: string;
+}) {
 	const title = truncateText(post.title, 50);
 	const excerpt = post.excerpt ? truncateText(post.excerpt, 80) : null;
 	const tags: string[] = post.tags ? JSON.parse(post.tags) : [];
@@ -19,10 +25,25 @@ function OgImageContent({ post }: { post: BlogPost }) {
 				height: "630px",
 				fontFamily: "'Noto Sans JP', system-ui, sans-serif",
 				position: "relative",
-				background:
-					"linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
 			}}
 		>
+			<img
+				src={bgImageUrl}
+				alt=""
+				width={1200}
+				height={630}
+				style={{ position: "absolute", top: 0, left: 0 }}
+			/>
+			<div
+				style={{
+					position: "absolute",
+					top: 0,
+					left: 0,
+					width: "1200px",
+					height: "630px",
+					backgroundColor: "rgba(0, 0, 0, 0.6)",
+				}}
+			/>
 			<div
 				style={{
 					display: "flex",
@@ -102,7 +123,10 @@ function OgImageContent({ post }: { post: BlogPost }) {
 	);
 }
 
-export async function generateOgImage(post: BlogPost): Promise<Response> {
+export async function generateOgImage(
+	post: BlogPost,
+	bgImageUrl: string,
+): Promise<Response> {
 	try {
 		// フォント取得
 		const fontData = await fetch(FONT_URL).then((res) => {
@@ -110,18 +134,21 @@ export async function generateOgImage(post: BlogPost): Promise<Response> {
 			return res.arrayBuffer();
 		});
 
-		const imageResponse = new ImageResponse(<OgImageContent post={post} />, {
-			width: 1200,
-			height: 630,
-			fonts: [
-				{
-					name: "Noto Sans JP",
-					data: fontData,
-					weight: 700,
-					style: "normal",
-				},
-			],
-		});
+		const imageResponse = new ImageResponse(
+			<OgImageContent post={post} bgImageUrl={bgImageUrl} />,
+			{
+				width: 1200,
+				height: 630,
+				fonts: [
+					{
+						name: "Noto Sans JP",
+						data: fontData,
+						weight: 700,
+						style: "normal",
+					},
+				],
+			},
+		);
 
 		return new Response(imageResponse.body, {
 			headers: {
