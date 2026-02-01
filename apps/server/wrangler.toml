@@ -4,6 +4,10 @@ compatibility_date = "2025-06-15"
 compatibility_flags = ["nodejs_compat"]
 workers_dev = true
 
+[observability.logs]
+enabled = true
+invocation_logs = true
+
 # Custom Domain Routing
 routes = [
   { pattern = "api.burio16.com/*", zone_name = "burio16.com" },

@@ -5,12 +5,13 @@ import { truncateText } from "./utils";
 const FONT_URL =
 	"https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@5.0.1/files/noto-sans-jp-japanese-700-normal.woff";
 
-interface OgImageProps {
+function OgImageContent({
+	post,
+	bgImageUrl,
+}: {
 	post: BlogPost;
 	bgImageUrl: string;
-}
-
-function OgImageContent({ post, bgImageUrl }: OgImageProps) {
+}) {
 	const title = truncateText(post.title, 50);
 	const excerpt = post.excerpt ? truncateText(post.excerpt, 80) : null;
 	const tags: string[] = post.tags ? JSON.parse(post.tags) : [];
@@ -122,36 +123,19 @@ function OgImageContent({ post, bgImageUrl }: OgImageProps) {
 	);
 }
 
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-	const bytes = new Uint8Array(buffer);
-	let binary = "";
-	for (let i = 0; i < bytes.byteLength; i++) {
-		binary += String.fromCharCode(bytes[i]);
-	}
-	return btoa(binary);
-}
-
 export async function generateOgImage(
 	post: BlogPost,
 	bgImageUrl: string,
 ): Promise<Response> {
 	try {
-		// フォントと背景画像を並列で取得
-		const [fontData, bgImageData] = await Promise.all([
-			fetch(FONT_URL).then((res) => {
-				if (!res.ok) throw new Error(`Font fetch failed: ${res.status}`);
-				return res.arrayBuffer();
-			}),
-			fetch(bgImageUrl).then(async (res) => {
-				if (!res.ok) throw new Error(`BG image fetch failed: ${res.status}`);
-				const buffer = await res.arrayBuffer();
-				const base64 = arrayBufferToBase64(buffer);
-				return `data:image/png;base64,${base64}`;
-			}),
-		]);
+		// フォント取得
+		const fontData = await fetch(FONT_URL).then((res) => {
+			if (!res.ok) throw new Error(`Font fetch failed: ${res.status}`);
+			return res.arrayBuffer();
+		});
 
 		const imageResponse = new ImageResponse(
-			<OgImageContent post={post} bgImageUrl={bgImageData} />,
+			<OgImageContent post={post} bgImageUrl={bgImageUrl} />,
 			{
 				width: 1200,
 				height: 630,
