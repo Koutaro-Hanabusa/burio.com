@@ -31,7 +31,7 @@ function BlogPost({
 	index,
 }: BlogPostProps) {
 	return (
-		<Link to="/blog/$id" params={{ id: String(id) }} className="block">
+		<a href={`https://blog.burio16.com/${id}`} className="block">
 			<motion.article
 				className="group cursor-pointer rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50"
 				initial="hidden"
@@ -62,7 +62,7 @@ function BlogPost({
 					</div>
 				)}
 			</motion.article>
-		</Link>
+		</a>
 	);
 }
 

@@ -165,9 +165,8 @@ function BlogListPage() {
 										boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
 									}}
 								>
-									<Link
-										to="/blog/$id"
-										params={{ id: String(post.id) }}
+									<a
+										href={`https://blog.burio16.com/${post.id}`}
 										className="block"
 									>
 										{post.coverImage && (
@@ -228,7 +227,7 @@ function BlogListPage() {
 											<span>続きを読む</span>
 											<RiArrowRightLine className="ml-1 h-4 w-4" />
 										</div>
-									</Link>
+									</a>
 								</motion.article>
 							))}
 						</div>
