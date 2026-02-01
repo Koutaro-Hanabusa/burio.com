@@ -1,6 +1,7 @@
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
+import { env } from "hono/adapter";
 import { db } from "../db";
 import { posts } from "../db/schema";
 import { generateOgImage } from "../lib/ogp/image";
@@ -61,7 +62,8 @@ async function fetchPagesHtml(pagesUrl: string, id: string): Promise<Response> {
 // blog.burio16.com/:id/og.png - OGP画像
 ogp.get("/:id/og.png", async (c) => {
 	const id = c.req.param("id");
-	const bgImageUrl = `${process.env.R2_PUBLIC_URL}/burio.com_ogp.png`;
+	const { R2_PUBLIC_URL } = env(c);
+	const bgImageUrl = `${R2_PUBLIC_URL}/burio.com_ogp.png`;
 
 	try {
 		const post = await fetchBlogPost(id);
@@ -78,7 +80,7 @@ ogp.get("/:id/og.png", async (c) => {
 // blog.burio16.com/:id - ブログページ（メタタグ注入）
 ogp.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const pagesUrl = process.env.PAGES_URL;
+	const { PAGES_URL: pagesUrl } = env(c);
 
 	console.log("OGP meta injection request:", { id, pagesUrl });
 

@@ -2,5 +2,10 @@
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "burio-com",
 	"compatibility_date": "2025-04-03",
-	"pages_build_output_dir": "dist"
+	"compatibility_flags": ["nodejs_compat"],
+	"pages_build_output_dir": "dist",
+	"vars": {
+		"SERVER_URL": "https://api.burio16.com",
+		"R2_PUBLIC_URL": "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev"
+	}
 }
