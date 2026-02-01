@@ -21,7 +21,10 @@ export const onRequest: PagesFunction<{
 	SERVER_URL: string;
 	R2_PUBLIC_URL: string;
 }> = async (context) => {
-	const bgImageUrl = `${context.env.R2_PUBLIC_URL}/burio.com_ogp.png`;
+	const r2PublicUrl =
+		context.env.R2_PUBLIC_URL ||
+		"https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev";
+	const bgImageUrl = `${r2PublicUrl}/burio.com_ogp.png`;
 	const { id } = context.params;
 
 	// Get the blog post data from the API
