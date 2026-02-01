@@ -26,12 +26,6 @@
 		}
 	},
 
-	// Custom Domain Routing
-	"routes": [
-		{ "pattern": "api.burio16.com/*", "zone_name": "burio16.com" },
-		{ "pattern": "blog.burio16.com/*", "zone_name": "burio16.com" }
-	],
-
 	"vars": {
 		"NODE_ENV": "production",
 		"CORS_ORIGIN": "https://burio16.com",
