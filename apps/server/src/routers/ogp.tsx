@@ -115,7 +115,13 @@ ogp.get("/:id", async (c) => {
 
 		const pageUrl = `https://blog.burio16.com/${post.id}`;
 		const ogImageUrl = `https://blog.burio16.com/${post.id}/og.png`;
-		const modifiedHtml = injectOGPMetaTags(html, post, pageUrl, ogImageUrl);
+		const modifiedHtml = injectOGPMetaTags(
+			html,
+			post,
+			pageUrl,
+			ogImageUrl,
+			"https://burio16.com",
+		);
 
 		const headers = new Headers();
 		for (const [key, value] of htmlResponse.headers.entries()) {
