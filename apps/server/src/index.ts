@@ -56,4 +56,12 @@ app.route("/ogp", ogp);
 // Blog routes for blog.burio16.com/* (via Cloudflare routing)
 app.route("", ogp);
 
-export default app;
+export default {
+	async fetch(
+		request: Request,
+		env: AppEnv["Bindings"],
+		ctx: ExecutionContext,
+	) {
+		return app.fetch(request, env, ctx);
+	},
+};
