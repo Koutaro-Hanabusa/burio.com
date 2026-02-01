@@ -122,6 +122,15 @@ function OgImageContent({ post, bgImageUrl }: OgImageProps) {
 	);
 }
 
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+	const bytes = new Uint8Array(buffer);
+	let binary = "";
+	for (let i = 0; i < bytes.byteLength; i++) {
+		binary += String.fromCharCode(bytes[i]);
+	}
+	return btoa(binary);
+}
+
 export async function generateOgImage(
 	post: BlogPost,
 	bgImageUrl: string,
@@ -136,7 +145,7 @@ export async function generateOgImage(
 			fetch(bgImageUrl).then(async (res) => {
 				if (!res.ok) throw new Error(`BG image fetch failed: ${res.status}`);
 				const buffer = await res.arrayBuffer();
-				const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+				const base64 = arrayBufferToBase64(buffer);
 				return `data:image/png;base64,${base64}`;
 			}),
 		]);
