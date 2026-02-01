@@ -1,6 +1,9 @@
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
+import { eq } from "drizzle-orm";
 import type { Context } from "hono";
 import { Hono } from "hono";
+import { db } from "../db";
+import { posts } from "../db/schema";
 import { generateOgImage } from "../lib/ogp/image";
 import { injectOGPMetaTags } from "../lib/ogp/meta";
 import type { BlogPost, OgpEnv } from "../lib/ogp/types";
@@ -36,16 +39,20 @@ ogp.get("/test.png", async (c) => {
 	}
 });
 
-async function fetchBlogPost(
-	baseUrl: string,
-	id: string,
-): Promise<BlogPost | null> {
-	const response = await fetch(
-		`${baseUrl}/trpc/blog.getById?input=${encodeURIComponent(JSON.stringify({ id: Number(id) }))}`,
-	);
-	if (!response.ok) return null;
-	const data = (await response.json()) as { result: { data: BlogPost | null } };
-	return data.result?.data ?? null;
+async function fetchBlogPost(id: string): Promise<BlogPost | null> {
+	const result = await db
+		.select({
+			id: posts.id,
+			title: posts.title,
+			excerpt: posts.excerpt,
+			createdAt: posts.createdAt,
+			tags: posts.tags,
+			published: posts.published,
+		})
+		.from(posts)
+		.where(eq(posts.id, Number(id)))
+		.limit(1);
+	return result[0] ?? null;
 }
 
 async function fetchPagesHtml(pagesUrl: string, id: string): Promise<Response> {
@@ -54,11 +61,10 @@ async function fetchPagesHtml(pagesUrl: string, id: string): Promise<Response> {
 
 ogp.get("/blog/:id/og.png", async (c: Context<{ Bindings: OgpEnv }>) => {
 	const id = c.req.param("id");
-	const baseUrl = new URL(c.req.url).origin;
 	const bgImageUrl = `${c.env.R2_PUBLIC_URL}/burio.com_ogp.png`;
 
 	try {
-		const post = await fetchBlogPost(baseUrl, id);
+		const post = await fetchBlogPost(id);
 		if (!post) {
 			return c.text("Blog post not found", 404);
 		}
@@ -76,7 +82,7 @@ ogp.get("/blog/:id", async (c: Context<{ Bindings: OgpEnv }>) => {
 
 	try {
 		const [post, htmlResponse] = await Promise.all([
-			fetchBlogPost(apiUrl, id),
+			fetchBlogPost(id),
 			fetchPagesHtml(pagesUrl, id),
 		]);
 		const html = await htmlResponse.text();
