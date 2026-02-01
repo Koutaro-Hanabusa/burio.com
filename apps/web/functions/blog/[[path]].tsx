@@ -1,4 +1,5 @@
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
+import React from "react";
 
 interface Env {
 	ASSETS: Fetcher;
