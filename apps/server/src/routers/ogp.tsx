@@ -1,4 +1,3 @@
-import { env as cloudflareEnv } from "cloudflare:workers";
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
@@ -8,10 +7,7 @@ import { generateOgImage } from "../lib/ogp/image";
 import { injectOGPMetaTags } from "../lib/ogp/meta";
 import type { BlogPost, OgpEnv } from "../lib/ogp/types";
 
-// wrangler.tomlの[vars]から読み込む環境変数
-const env = cloudflareEnv as typeof cloudflareEnv & OgpEnv;
-
-const ogp = new Hono();
+const ogp = new Hono<{ Bindings: OgpEnv }>();
 
 // シンプルなテストエンドポイント（外部リソースなし）
 ogp.get("/test.png", async (c) => {
@@ -65,7 +61,7 @@ async function fetchPagesHtml(pagesUrl: string, id: string): Promise<Response> {
 // blog.burio16.com/:id/og.png - OGP画像
 ogp.get("/:id/og.png", async (c) => {
 	const id = c.req.param("id");
-	const bgImageUrl = `${env.R2_PUBLIC_URL}/burio.com_ogp.png`;
+	const bgImageUrl = `${c.env.R2_PUBLIC_URL}/burio.com_ogp.png`;
 
 	try {
 		const post = await fetchBlogPost(id);
@@ -82,7 +78,7 @@ ogp.get("/:id/og.png", async (c) => {
 // blog.burio16.com/:id - ブログページ（メタタグ注入）
 ogp.get("/:id", async (c) => {
 	const id = c.req.param("id");
-	const pagesUrl = env.PAGES_URL;
+	const pagesUrl = c.env.PAGES_URL;
 
 	console.log("OGP meta injection request:", { id, pagesUrl });
 

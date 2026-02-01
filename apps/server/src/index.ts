@@ -7,7 +7,15 @@ import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
 import { ogp } from "./routers/ogp";
 
-const app = new Hono();
+type AppEnv = {
+	Bindings: {
+		PAGES_URL: string;
+		R2_PUBLIC_URL: string;
+		CORS_ORIGIN: string;
+	};
+};
+
+const app = new Hono<AppEnv>();
 
 app.use(logger());
 app.use(
