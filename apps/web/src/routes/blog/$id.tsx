@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/utils/trpc";
+import { getBlogOgImageUrl, getBlogPostUrl } from "@/utils/urls";
 
 export const Route = createFileRoute("/blog/$id")({
 	component: BlogPostPage,
@@ -30,9 +31,9 @@ function BlogPostPage() {
 	const [copied, setCopied] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
 
-	// OGPが効くblog.burio16.comのURLを使用
-	const shareUrl = `https://blog.burio16.com/${id}`;
-	const ogImageUrl = `https://blog.burio16.com/${id}/og.png`;
+	// OGPが効くblog.burio16.comのURLを使用（本番環境のみ）
+	const shareUrl = getBlogPostUrl(id);
+	const ogImageUrl = getBlogOgImageUrl(id);
 	const pageUrl = shareUrl;
 
 	useEffect(() => {

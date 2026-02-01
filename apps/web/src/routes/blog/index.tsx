@@ -8,6 +8,7 @@ import {
 	RiSearchLine,
 	RiTimeLine,
 } from "react-icons/ri";
+import { BlogLink } from "@/components/blog-link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -165,10 +166,7 @@ function BlogListPage() {
 										boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
 									}}
 								>
-									<a
-										href={`https://blog.burio16.com/${post.id}`}
-										className="block"
-									>
+									<BlogLink id={post.id} className="block">
 										{post.coverImage && (
 											<div className="mb-4 overflow-hidden rounded-lg">
 												<img
@@ -227,7 +225,7 @@ function BlogListPage() {
 											<span>続きを読む</span>
 											<RiArrowRightLine className="ml-1 h-4 w-4" />
 										</div>
-									</a>
+									</BlogLink>
 								</motion.article>
 							))}
 						</div>
