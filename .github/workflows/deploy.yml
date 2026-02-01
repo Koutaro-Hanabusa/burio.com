@@ -72,7 +72,8 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
           cp -r functions dist/
-          bunx wrangler pages deploy --project-name=burio-com
+          cp wrangler.toml dist/
+          cd dist && bunx wrangler pages deploy . --project-name=burio-com
 
       - name: Deployment Summary
         run: |
