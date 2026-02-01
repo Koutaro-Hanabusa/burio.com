@@ -18,6 +18,7 @@ app.use(
 			"https://burio-com.koutarouhanabusa.workers.dev",
 			"https://burio-com.pages.dev",
 			"https://*.burio-com.pages.dev",
+			"https://blog.burio16.com",
 			"http://localhost:3001",
 			"http://localhost:3002",
 		].filter(Boolean),
@@ -44,7 +45,7 @@ app.get("/", (c) => {
 // OGP routes for api.burio16.com/ogp/*
 app.route("/ogp", ogp);
 
-// Blog routes for burio16.com/blog/* (via Cloudflare routing)
+// Blog routes for blog.burio16.com/* (via Cloudflare routing)
 app.route("", ogp);
 
 export default app;

@@ -59,7 +59,8 @@ async function fetchPagesHtml(pagesUrl: string, id: string): Promise<Response> {
 	return fetch(`${pagesUrl}/blog/${id}`);
 }
 
-ogp.get("/blog/:id/og.png", async (c: Context<{ Bindings: OgpEnv }>) => {
+// blog.burio16.com/:id/og.png - OGP画像
+ogp.get("/:id/og.png", async (c: Context<{ Bindings: OgpEnv }>) => {
 	const id = c.req.param("id");
 	const bgImageUrl = `${c.env.R2_PUBLIC_URL}/burio.com_ogp.png`;
 
@@ -75,10 +76,10 @@ ogp.get("/blog/:id/og.png", async (c: Context<{ Bindings: OgpEnv }>) => {
 	}
 });
 
-ogp.get("/blog/:id", async (c: Context<{ Bindings: OgpEnv }>) => {
+// blog.burio16.com/:id - ブログページ（メタタグ注入）
+ogp.get("/:id", async (c: Context<{ Bindings: OgpEnv }>) => {
 	const id = c.req.param("id");
 	const pagesUrl = c.env.PAGES_URL;
-	const apiUrl = new URL(c.req.url).origin;
 
 	try {
 		const [post, htmlResponse] = await Promise.all([
@@ -94,8 +95,8 @@ ogp.get("/blog/:id", async (c: Context<{ Bindings: OgpEnv }>) => {
 			});
 		}
 
-		const pageUrl = `https://burio16.com/blog/${post.id}`;
-		const ogImageUrl = `${apiUrl}/ogp/blog/${post.id}/og.png`;
+		const pageUrl = `https://blog.burio16.com/${post.id}`;
+		const ogImageUrl = `https://blog.burio16.com/${post.id}/og.png`;
 		const modifiedHtml = injectOGPMetaTags(html, post, pageUrl, ogImageUrl);
 
 		const headers = new Headers();

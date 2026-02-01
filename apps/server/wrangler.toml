@@ -7,7 +7,7 @@ workers_dev = true
 # Custom Domain Routing
 routes = [
   { pattern = "api.burio16.com/*", zone_name = "burio16.com" },
-  { pattern = "burio16.com/blog/*", zone_name = "burio16.com" }
+  { pattern = "blog.burio16.com/*", zone_name = "burio16.com" }
 ]
 
 [vars]

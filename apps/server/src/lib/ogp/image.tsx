@@ -127,13 +127,22 @@ export async function generateOgImage(
 	bgImageUrl: string,
 ): Promise<Response> {
 	try {
-		const fontData = await fetch(FONT_URL).then((res) => {
-			if (!res.ok) throw new Error(`Font fetch failed: ${res.status}`);
-			return res.arrayBuffer();
-		});
+		// フォントと背景画像を並列で取得
+		const [fontData, bgImageData] = await Promise.all([
+			fetch(FONT_URL).then((res) => {
+				if (!res.ok) throw new Error(`Font fetch failed: ${res.status}`);
+				return res.arrayBuffer();
+			}),
+			fetch(bgImageUrl).then(async (res) => {
+				if (!res.ok) throw new Error(`BG image fetch failed: ${res.status}`);
+				const buffer = await res.arrayBuffer();
+				const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+				return `data:image/png;base64,${base64}`;
+			}),
+		]);
 
 		const imageResponse = new ImageResponse(
-			<OgImageContent post={post} bgImageUrl={bgImageUrl} />,
+			<OgImageContent post={post} bgImageUrl={bgImageData} />,
 			{
 				width: 1200,
 				height: 630,
