@@ -1,6 +1,7 @@
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
 
 interface Env {
+	ASSETS: Fetcher;
 	SERVER_URL: string;
 	R2_PUBLIC_URL: string;
 }
@@ -9,24 +10,25 @@ interface BlogPost {
 	id: number;
 	title: string;
 	excerpt: string | null;
+	createdAt: string | null;
 	tags: string | null;
+	published: boolean;
 }
 
-const FONT_URL =
-	"https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@5.0.1/files/noto-sans-jp-japanese-700-normal.woff";
+// ========== Shared Utils ==========
+
+function escapeHtml(str: string): string {
+	return str
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;");
+}
 
 function truncateText(text: string, maxLength: number): string {
 	if (text.length <= maxLength) return text;
 	return `${text.slice(0, maxLength - 3)}...`;
-}
-
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-	const bytes = new Uint8Array(buffer);
-	let binary = "";
-	for (let i = 0; i < bytes.length; i++) {
-		binary += String.fromCharCode(bytes[i]);
-	}
-	return btoa(binary);
 }
 
 async function fetchBlogPost(
@@ -43,6 +45,107 @@ async function fetchBlogPost(
 	} catch {
 		return null;
 	}
+}
+
+// ========== OGP Meta Injection ==========
+
+function injectOGPMetaTags(
+	html: string,
+	post: BlogPost,
+	pageUrl: string,
+	ogImageUrl: string,
+): string {
+	const title = escapeHtml(truncateText(post.title, 60));
+	const description = escapeHtml(truncateText(post.excerpt || "", 160));
+	const fullTitle = `${title} | burio16.com`;
+
+	return html
+		.replace(/<title>[^<]*<\/title>/, `<title>${fullTitle}</title>`)
+		.replace(
+			/<meta\s+name="description"\s+content="[^"]*"/,
+			`<meta name="description" content="${description}"`,
+		)
+		.replace(
+			/<meta\s+property="og:type"\s+content="[^"]*"/,
+			`<meta property="og:type" content="article"`,
+		)
+		.replace(
+			/<meta\s+property="og:title"\s+content="[^"]*"/,
+			`<meta property="og:title" content="${title}"`,
+		)
+		.replace(
+			/<meta\s+property="og:description"\s+content="[^"]*"/,
+			`<meta property="og:description" content="${description}"`,
+		)
+		.replace(
+			/<meta\s+property="og:url"\s+content="[^"]*"/,
+			`<meta property="og:url" content="${pageUrl}"`,
+		)
+		.replace(
+			/<meta\s+property="og:image"\s+content="[^"]*"/,
+			`<meta property="og:image" content="${ogImageUrl}"`,
+		)
+		.replace(
+			/<meta\s+name="twitter:title"\s+content="[^"]*"/,
+			`<meta name="twitter:title" content="${title}"`,
+		)
+		.replace(
+			/<meta\s+name="twitter:description"\s+content="[^"]*"/,
+			`<meta name="twitter:description" content="${description}"`,
+		)
+		.replace(
+			/<meta\s+name="twitter:image"\s+content="[^"]*"/,
+			`<meta name="twitter:image" content="${ogImageUrl}"`,
+		)
+		.replace(
+			/<meta\s+name="twitter:url"\s+content="[^"]*"/,
+			`<meta name="twitter:url" content="${pageUrl}"`,
+		)
+		.replace(
+			/<link\s+rel="canonical"\s+href="[^"]*"/,
+			`<link rel="canonical" href="${pageUrl}"`,
+		);
+}
+
+async function handleBlogPage(
+	env: Env,
+	request: Request,
+	id: string,
+): Promise<Response> {
+	const assetResponse = await env.ASSETS.fetch(
+		new Request(new URL("/", request.url)),
+	);
+	const html = await assetResponse.text();
+
+	const post = await fetchBlogPost(env.SERVER_URL, id);
+
+	if (!post || !post.published) {
+		return new Response(html, {
+			headers: { "Content-Type": "text/html; charset=utf-8" },
+		});
+	}
+
+	const pageUrl = `https://burio16.com/blog/${id}`;
+	const ogImageUrl = `https://burio16.com/blog/${id}/og.png`;
+	const modifiedHtml = injectOGPMetaTags(html, post, pageUrl, ogImageUrl);
+
+	return new Response(modifiedHtml, {
+		headers: { "Content-Type": "text/html; charset=utf-8" },
+	});
+}
+
+// ========== OGP Image Generation ==========
+
+const FONT_URL =
+	"https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@5.0.1/files/noto-sans-jp-japanese-700-normal.woff";
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+	const bytes = new Uint8Array(buffer);
+	let binary = "";
+	for (let i = 0; i < bytes.length; i++) {
+		binary += String.fromCharCode(bytes[i]);
+	}
+	return btoa(binary);
 }
 
 function OgImageContent({
@@ -163,10 +266,7 @@ function OgImageContent({
 	);
 }
 
-export const onRequest: PagesFunction<Env> = async (context) => {
-	const { params, env } = context;
-	const id = params.id as string;
-
+async function handleOgImage(env: Env, id: string): Promise<Response> {
 	const post = await fetchBlogPost(env.SERVER_URL, id);
 	if (!post) {
 		return new Response("Blog post not found", { status: 404 });
@@ -216,4 +316,31 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 		console.error("OG image generation error:", error);
 		return new Response("Failed to generate OG image", { status: 500 });
 	}
+}
+
+// ========== Main Handler ==========
+
+export const onRequest: PagesFunction<Env> = async (context) => {
+	const { params, env, request } = context;
+	const path = params.path as string[] | undefined;
+
+	// /blog → ブログ一覧（SPAで処理）
+	if (!path || path.length === 0) {
+		return env.ASSETS.fetch(request);
+	}
+
+	const id = path[0];
+
+	// /blog/:id/og.png → OGP画像生成
+	if (path.length === 2 && path[1] === "og.png") {
+		return handleOgImage(env, id);
+	}
+
+	// /blog/:id → ブログ記事ページ（OGPメタタグ注入）
+	if (path.length === 1) {
+		return handleBlogPage(env, request, id);
+	}
+
+	// その他はSPAにフォールバック
+	return env.ASSETS.fetch(request);
 };
