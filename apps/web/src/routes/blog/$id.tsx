@@ -17,6 +17,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/utils/trpc";
+import { getBlogOgImageUrl, getBlogPostUrl } from "@/utils/urls";
 
 export const Route = createFileRoute("/blog/$id")({
 	component: BlogPostPage,
@@ -30,11 +31,10 @@ function BlogPostPage() {
 	const [copied, setCopied] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
 
-	const ogImageUrl = `https://burio16.com/blog/${id}.png`;
-	const pageUrl =
-		typeof window !== "undefined"
-			? window.location.href
-			: `https://burio16.com/blog/${id}`;
+	// OGPが効くblog.burio16.comのURLを使用（本番環境のみ）
+	const shareUrl = getBlogPostUrl(id);
+	const ogImageUrl = getBlogOgImageUrl(id);
+	const pageUrl = shareUrl;
 
 	useEffect(() => {
 		if (post?.content) {
@@ -78,14 +78,12 @@ function BlogPostPage() {
 	};
 
 	const handleShare = async () => {
-		const url = window.location.href;
-
 		if (navigator.share) {
 			try {
 				await navigator.share({
 					title: post?.title,
 					text: post?.excerpt || "",
-					url,
+					url: shareUrl,
 				});
 			} catch (err) {
 				console.error("Share failed:", err);
@@ -98,7 +96,7 @@ function BlogPostPage() {
 
 	const handleCopyLink = async () => {
 		try {
-			await navigator.clipboard.writeText(window.location.href);
+			await navigator.clipboard.writeText(shareUrl);
 			setCopied(true);
 			toast.success("リンクをコピーしました");
 			setTimeout(() => setCopied(false), 2000);

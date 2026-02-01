@@ -1,17 +1,34 @@
 import type { BlogPost } from "./types";
 import { escapeHtml, truncateText } from "./utils";
 
+/**
+ * 相対パスを絶対パスに変換する
+ */
+function rewriteAssetPaths(html: string, baseUrl: string): string {
+	return html
+		.replace(/src="\/assets\//g, `src="${baseUrl}/assets/`)
+		.replace(/href="\/assets\//g, `href="${baseUrl}/assets/`)
+		.replace(/href="\/fonts\//g, `href="${baseUrl}/fonts/`)
+		.replace(/src="\/fonts\//g, `src="${baseUrl}/fonts/`)
+		.replace(/href="\/favicon/g, `href="${baseUrl}/favicon`)
+		.replace(/href="\/manifest/g, `href="${baseUrl}/manifest`)
+		.replace(/href="\/burio/g, `href="${baseUrl}/burio`);
+}
+
 export function injectOGPMetaTags(
 	html: string,
 	post: BlogPost,
 	pageUrl: string,
 	ogImageUrl: string,
+	pagesBaseUrl: string,
 ): string {
 	const title = escapeHtml(truncateText(post.title, 60));
 	const description = escapeHtml(truncateText(post.excerpt || "", 160));
 	const fullTitle = `${title} | burio16.com`;
 
-	return html
+	const rewrittenHtml = rewriteAssetPaths(html, pagesBaseUrl);
+
+	return rewrittenHtml
 		.replace(/<title>[^<]*<\/title>/, `<title>${fullTitle}</title>`)
 		.replace(
 			/<meta\s+name="description"\s+content="[^"]*"/,
