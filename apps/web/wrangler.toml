@@ -2,5 +2,6 @@ name = "burio-com"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = "dist"
+keep_vars = true
 
 # Environment variables are managed via Cloudflare Dashboard (Secrets)
