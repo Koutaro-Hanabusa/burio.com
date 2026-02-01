@@ -5,6 +5,7 @@ import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
+import { ogp } from "./routers/ogp";
 
 const app = new Hono();
 
@@ -39,5 +40,11 @@ app.use(
 app.get("/", (c) => {
 	return c.text("OK");
 });
+
+// OGP routes for api.burio16.com/ogp/*
+app.route("/ogp", ogp);
+
+// Blog routes for burio16.com/blog/* (via Cloudflare routing)
+app.route("", ogp);
 
 export default app;
