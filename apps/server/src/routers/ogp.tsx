@@ -62,14 +62,13 @@ async function fetchPagesHtml(pagesUrl: string, id: string): Promise<Response> {
 // blog.burio16.com/:id/og.png - OGP画像
 ogp.get("/:id/og.png", async (c: Context<{ Bindings: OgpEnv }>) => {
 	const id = c.req.param("id");
-	const bgImageUrl = `${c.env.R2_PUBLIC_URL}/burio.com_ogp.png`;
 
 	try {
 		const post = await fetchBlogPost(id);
 		if (!post) {
 			return c.text("Blog post not found", 404);
 		}
-		return generateOgImage(post, bgImageUrl);
+		return generateOgImage(post);
 	} catch (error) {
 		console.error("Error generating OG image:", error);
 		return c.text("Failed to generate OG image", 500);

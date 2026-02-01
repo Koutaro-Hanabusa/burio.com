@@ -5,12 +5,7 @@ import { truncateText } from "./utils";
 const FONT_URL =
 	"https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@5.0.1/files/noto-sans-jp-japanese-700-normal.woff";
 
-interface OgImageProps {
-	post: BlogPost;
-	bgImageUrl: string;
-}
-
-function OgImageContent({ post, bgImageUrl }: OgImageProps) {
+function OgImageContent({ post }: { post: BlogPost }) {
 	const title = truncateText(post.title, 50);
 	const excerpt = post.excerpt ? truncateText(post.excerpt, 80) : null;
 	const tags: string[] = post.tags ? JSON.parse(post.tags) : [];
@@ -24,25 +19,10 @@ function OgImageContent({ post, bgImageUrl }: OgImageProps) {
 				height: "630px",
 				fontFamily: "'Noto Sans JP', system-ui, sans-serif",
 				position: "relative",
+				background:
+					"linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
 			}}
 		>
-			<img
-				src={bgImageUrl}
-				alt=""
-				width={1200}
-				height={630}
-				style={{ position: "absolute", top: 0, left: 0 }}
-			/>
-			<div
-				style={{
-					position: "absolute",
-					top: 0,
-					left: 0,
-					width: "1200px",
-					height: "630px",
-					backgroundColor: "rgba(0, 0, 0, 0.6)",
-				}}
-			/>
 			<div
 				style={{
 					display: "flex",
@@ -122,49 +102,26 @@ function OgImageContent({ post, bgImageUrl }: OgImageProps) {
 	);
 }
 
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-	const bytes = new Uint8Array(buffer);
-	let binary = "";
-	for (let i = 0; i < bytes.byteLength; i++) {
-		binary += String.fromCharCode(bytes[i]);
-	}
-	return btoa(binary);
-}
-
-export async function generateOgImage(
-	post: BlogPost,
-	bgImageUrl: string,
-): Promise<Response> {
+export async function generateOgImage(post: BlogPost): Promise<Response> {
 	try {
-		// フォントと背景画像を並列で取得
-		const [fontData, bgImageData] = await Promise.all([
-			fetch(FONT_URL).then((res) => {
-				if (!res.ok) throw new Error(`Font fetch failed: ${res.status}`);
-				return res.arrayBuffer();
-			}),
-			fetch(bgImageUrl).then(async (res) => {
-				if (!res.ok) throw new Error(`BG image fetch failed: ${res.status}`);
-				const buffer = await res.arrayBuffer();
-				const base64 = arrayBufferToBase64(buffer);
-				return `data:image/png;base64,${base64}`;
-			}),
-		]);
+		// フォント取得
+		const fontData = await fetch(FONT_URL).then((res) => {
+			if (!res.ok) throw new Error(`Font fetch failed: ${res.status}`);
+			return res.arrayBuffer();
+		});
 
-		const imageResponse = new ImageResponse(
-			<OgImageContent post={post} bgImageUrl={bgImageData} />,
-			{
-				width: 1200,
-				height: 630,
-				fonts: [
-					{
-						name: "Noto Sans JP",
-						data: fontData,
-						weight: 700,
-						style: "normal",
-					},
-				],
-			},
-		);
+		const imageResponse = new ImageResponse(<OgImageContent post={post} />, {
+			width: 1200,
+			height: 630,
+			fonts: [
+				{
+					name: "Noto Sans JP",
+					data: fontData,
+					weight: 700,
+					style: "normal",
+				},
+			],
+		});
 
 		return new Response(imageResponse.body, {
 			headers: {
