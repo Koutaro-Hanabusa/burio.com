@@ -2,9 +2,9 @@ export interface BlogPost {
 	id: number;
 	title: string;
 	excerpt: string | null;
-	createdAt: string;
+	createdAt: Date | null;
 	tags: string | null;
-	published: number;
+	published: number | null;
 }
 
 export interface OgpEnv {
