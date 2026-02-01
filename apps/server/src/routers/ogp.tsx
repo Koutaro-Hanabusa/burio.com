@@ -81,14 +81,26 @@ ogp.get("/:id", async (c: Context<{ Bindings: OgpEnv }>) => {
 	const id = c.req.param("id");
 	const pagesUrl = c.env.PAGES_URL;
 
+	console.log("OGP meta injection request:", { id, pagesUrl });
+
+	if (!pagesUrl) {
+		console.error("PAGES_URL is not set");
+		return c.text("PAGES_URL is not configured", 500);
+	}
+
 	try {
+		console.log("Fetching blog post and HTML...");
 		const [post, htmlResponse] = await Promise.all([
 			fetchBlogPost(id),
 			fetchPagesHtml(pagesUrl, id),
 		]);
+		console.log("Post found:", post ? "yes" : "no");
+		console.log("HTML response status:", htmlResponse.status);
+
 		const html = await htmlResponse.text();
 
 		if (!post || !post.published) {
+			console.log("Post not found or not published, returning original HTML");
 			return new Response(html, {
 				status: htmlResponse.status,
 				headers: htmlResponse.headers,
@@ -105,14 +117,20 @@ ogp.get("/:id", async (c: Context<{ Bindings: OgpEnv }>) => {
 		}
 		headers.set("Content-Type", "text/html; charset=utf-8");
 
+		console.log("Returning modified HTML with OGP tags");
 		return new Response(modifiedHtml, { status: htmlResponse.status, headers });
 	} catch (error) {
 		console.error("Error injecting OGP meta tags:", error);
-		const pagesResponse = await fetchPagesHtml(pagesUrl, id);
-		return new Response(pagesResponse.body, {
-			status: pagesResponse.status,
-			headers: pagesResponse.headers,
-		});
+		try {
+			const pagesResponse = await fetchPagesHtml(pagesUrl, id);
+			return new Response(pagesResponse.body, {
+				status: pagesResponse.status,
+				headers: pagesResponse.headers,
+			});
+		} catch (fallbackError) {
+			console.error("Fallback fetch also failed:", fallbackError);
+			return c.text(`Error: ${error}`, 500);
+		}
 	}
 });
 
