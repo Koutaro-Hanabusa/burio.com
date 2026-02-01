@@ -5,15 +5,18 @@ pages_build_output_dir = "dist"
 
 [vars]
 SERVER_URL = "http://localhost:3000"
+R2_PUBLIC_URL = "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev"
 
 [env.production]
 name = "burio-com"
 
 [env.production.vars]
 SERVER_URL = "https://api.burio16.com"
+R2_PUBLIC_URL = "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev"
 
 [env.preview]
 name = "burio-com-preview"
 
 [env.preview.vars]
 SERVER_URL = "https://api.burio16.com"
+R2_PUBLIC_URL = "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev"
