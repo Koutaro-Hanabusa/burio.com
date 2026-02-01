@@ -11,7 +11,9 @@
 	"vars": {
 		"NODE_ENV": "production",
 		"CORS_ORIGIN": "https://burio16.com",
-		"BETTER_AUTH_URL": "https://api.burio16.com"
+		"BETTER_AUTH_URL": "https://api.burio16.com",
+		"PAGES_URL": "https://burio-com.pages.dev",
+		"R2_PUBLIC_URL": "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev"
 	},
 	// For sensitive data, use:
 	// wrangler secret put SECRET_NAME
