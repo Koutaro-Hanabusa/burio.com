@@ -79,10 +79,7 @@ describe("Heroコンポーネント", () => {
 			render(<Hero />);
 			const twitterLink = screen.getByLabelText("Twitter");
 			expect(twitterLink).toBeInTheDocument();
-			expect(twitterLink).toHaveAttribute(
-				"href",
-				"https://x.com/burio_16",
-			);
+			expect(twitterLink).toHaveAttribute("href", "https://x.com/burio_16");
 			expect(twitterLink).toHaveAttribute("target", "_blank");
 			expect(twitterLink).toHaveAttribute("rel", "noopener noreferrer");
 		});
