@@ -1,5 +1,4 @@
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
-import type { PagesFunction } from "@cloudflare/workers-types";
 
 interface BlogPost {
 	id: number;
@@ -7,6 +6,17 @@ interface BlogPost {
 	excerpt: string | null;
 	createdAt: string;
 	tags: string | null;
+}
+
+interface Env {
+	SERVER_URL: string;
+	R2_PUBLIC_URL: string;
+}
+
+interface PagesContext {
+	request: Request;
+	env: Env;
+	params: Record<string, string>;
 }
 
 /**
@@ -17,10 +27,7 @@ function truncateText(text: string, maxLength: number): string {
 	return `${text.slice(0, maxLength - 1)}…`;
 }
 
-export const onRequest: PagesFunction<{
-	SERVER_URL: string;
-	R2_PUBLIC_URL: string;
-}> = async (context) => {
+export async function onRequest(context: PagesContext): Promise<Response> {
 	const bgImageUrl = `${context.env.R2_PUBLIC_URL}/burio.com_ogp.png`;
 	const { id } = context.params;
 
@@ -218,4 +225,4 @@ export const onRequest: PagesFunction<{
 		console.error("Error generating OG image:", error);
 		return new Response("Failed to generate OG image", { status: 500 });
 	}
-};
+}
