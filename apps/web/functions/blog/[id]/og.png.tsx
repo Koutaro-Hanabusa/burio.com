@@ -1,13 +1,48 @@
 import { ImageResponse } from "@cloudflare/pages-plugin-vercel-og/api";
-import type { BlogPost } from "./types";
-import { truncateText } from "./utils";
+
+interface Env {
+	SERVER_URL: string;
+	R2_PUBLIC_URL: string;
+}
+
+interface BlogPost {
+	id: number;
+	title: string;
+	excerpt: string | null;
+	tags: string | null;
+}
 
 const FONT_URL =
 	"https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-jp@5.0.1/files/noto-sans-jp-japanese-700-normal.woff";
 
-// ArrayBufferをBase64に変換（nodejs_compat使用）
+function truncateText(text: string, maxLength: number): string {
+	if (text.length <= maxLength) return text;
+	return `${text.slice(0, maxLength - 3)}...`;
+}
+
 function arrayBufferToBase64(buffer: ArrayBuffer): string {
-	return Buffer.from(buffer).toString("base64");
+	const bytes = new Uint8Array(buffer);
+	let binary = "";
+	for (let i = 0; i < bytes.length; i++) {
+		binary += String.fromCharCode(bytes[i]);
+	}
+	return btoa(binary);
+}
+
+async function fetchBlogPost(
+	serverUrl: string,
+	id: string,
+): Promise<BlogPost | null> {
+	try {
+		const response = await fetch(
+			`${serverUrl}/trpc/blog.getById?input=${encodeURIComponent(JSON.stringify({ id: Number(id) }))}`,
+		);
+		if (!response.ok) return null;
+		const data = (await response.json()) as { result: { data: BlogPost } };
+		return data.result?.data ?? null;
+	} catch {
+		return null;
+	}
 }
 
 function OgImageContent({
@@ -128,12 +163,18 @@ function OgImageContent({
 	);
 }
 
-export async function generateOgImage(
-	post: BlogPost,
-	bgImageUrl: string,
-): Promise<Response> {
+export const onRequest: PagesFunction<Env> = async (context) => {
+	const { params, env } = context;
+	const id = params.id as string;
+
+	const post = await fetchBlogPost(env.SERVER_URL, id);
+	if (!post) {
+		return new Response("Blog post not found", { status: 404 });
+	}
+
+	const bgImageUrl = `${env.R2_PUBLIC_URL}/burio.com_ogp.png`;
+
 	try {
-		// フォントと背景画像を並列取得
 		const [fontData, bgImageBuffer] = await Promise.all([
 			fetch(FONT_URL).then((res) => {
 				if (!res.ok) throw new Error(`Font fetch failed: ${res.status}`);
@@ -146,7 +187,6 @@ export async function generateOgImage(
 			}),
 		]);
 
-		// 背景画像をBase64 data URLに変換
 		const bgImageBase64 = arrayBufferToBase64(bgImageBuffer);
 		const bgImageDataUrl = `data:image/png;base64,${bgImageBase64}`;
 
@@ -169,13 +209,11 @@ export async function generateOgImage(
 		return new Response(imageResponse.body, {
 			headers: {
 				"Content-Type": "image/png",
-				"Cache-Control": "no-cache, no-store, must-revalidate",
-				Pragma: "no-cache",
-				Expires: "0",
+				"Cache-Control": "public, max-age=86400",
 			},
 		});
 	} catch (error) {
-		console.error("generateOgImage error:", error);
-		throw error;
+		console.error("OG image generation error:", error);
+		return new Response("Failed to generate OG image", { status: 500 });
 	}
-}
+};

@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { BlogLink } from "@/components/blog-link";
 import {
 	cardHoverVariants,
 	fadeInUpVariants,
@@ -32,7 +31,7 @@ function BlogPost({
 	index,
 }: BlogPostProps) {
 	return (
-		<BlogLink id={id} className="block">
+		<Link to="/blog/$id" params={{ id: String(id) }} className="block">
 			<motion.article
 				className="group cursor-pointer rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50"
 				initial="hidden"
@@ -63,7 +62,7 @@ function BlogPost({
 					</div>
 				)}
 			</motion.article>
-		</BlogLink>
+		</Link>
 	);
 }
 
