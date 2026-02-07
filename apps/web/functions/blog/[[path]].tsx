@@ -218,11 +218,9 @@ function OgImageContent({
 							fontSize: "64px",
 							fontWeight: "bold",
 							color: "#ffffff",
-							lineHeight: 1.2,
+							lineHeight: 1.4,
 							marginBottom: "30px",
 							maxWidth: "100%",
-							overflow: "hidden",
-							textOverflow: "ellipsis",
 						}}
 					>
 						{title}
