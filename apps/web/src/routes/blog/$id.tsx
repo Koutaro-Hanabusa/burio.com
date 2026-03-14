@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import DOMPurify from "dompurify";
 import { motion } from "framer-motion";
 import { marked } from "marked";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import {
 	RiArrowLeftLine,
@@ -16,6 +16,10 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+	hydrateLinkPreviews,
+	linkPreviewExtension,
+} from "@/utils/link-preview";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/blog/$id")({
@@ -29,6 +33,7 @@ function BlogPostPage() {
 	});
 	const [copied, setCopied] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
+	const contentRef = useRef<HTMLDivElement>(null);
 
 	const pageUrl =
 		typeof window !== "undefined"
@@ -44,12 +49,13 @@ function BlogPostPage() {
 				breaks: true,
 				pedantic: false,
 			});
+			marked.use(linkPreviewExtension);
 
 			// Parse markdown and sanitize HTML
 			const rawHtml = marked(post.content) as string;
 			const cleanHtml = DOMPurify.sanitize(rawHtml, {
 				// 許可する属性を明示的に指定
-				ADD_ATTR: ["target", "rel"],
+				ADD_ATTR: ["target", "rel", "data-url"],
 				// 危険なタグを除去
 				FORBID_TAGS: ["script", "object", "embed", "form", "input"],
 				// 危険な属性を除去
@@ -60,6 +66,13 @@ function BlogPostPage() {
 			setHtmlContent(cleanHtml);
 		}
 	}, [post?.content]);
+
+	// Hydrate link previews after HTML is rendered
+	useEffect(() => {
+		if (htmlContent && contentRef.current) {
+			hydrateLinkPreviews(contentRef.current);
+		}
+	}, [htmlContent]);
 
 	const formatDate = (date: Date | string) => {
 		return new Date(date).toLocaleDateString("ja-JP", {
@@ -282,6 +295,7 @@ function BlogPostPage() {
 						transition={{ delay: 0.5, duration: 0.6 }}
 					>
 						<div
+							ref={contentRef}
 							dangerouslySetInnerHTML={{ __html: htmlContent }}
 							className="prose-h1:mt-8 prose-h2:mt-6 prose-h3:mt-4 prose-h1:mb-4 prose-h2:mb-3 prose-h3:mb-2 prose-li:mb-2 prose-p:mb-4 prose-ol:list-decimal prose-ul:list-disc prose-code:rounded-md prose-img:rounded-lg prose-pre:border prose-blockquote:border-primary prose-hr:border-border prose-pre:border-border prose-blockquote:border-l-4 prose-code:bg-accent/20 prose-pre:bg-accent/10 prose-code:px-1.5 prose-code:py-0.5 prose-blockquote:pl-4 prose-ol:pl-6 prose-ul:pl-6 prose-headings:font-bold prose-a:text-primary prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl prose-blockquote:italic prose-p:leading-relaxed prose-a:underline-offset-4 prose-img:shadow-lg prose-code:before:content-none prose-code:after:content-none hover:prose-a:text-primary/80"
 						/>
