@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useImageUpload } from "@/hooks/use-image-upload";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/admin/blog/$id/edit")({
@@ -26,6 +27,8 @@ function EditBlogPost() {
 	const [published, setPublished] = useState(false);
 	const [preview, setPreview] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
+
+	const { textareaProps } = useImageUpload(setContent);
 
 	// Generate unique IDs for form elements
 	const titleId = useId();
@@ -180,7 +183,8 @@ function EditBlogPost() {
 								value={content}
 								onChange={(e) => setContent(e.target.value)}
 								className="h-96 w-full resize-y rounded-md border bg-background p-3 text-foreground"
-								placeholder="Markdownで記事を書く..."
+								placeholder="Markdownで記事を書く... (画像をペーストまたはドラッグ&ドロップできます)"
+								{...textareaProps}
 							/>
 						</div>
 
