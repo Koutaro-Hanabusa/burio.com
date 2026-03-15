@@ -20,14 +20,14 @@ function AdminDashboard() {
 			title: "記事管理",
 			description: "ブログ記事の作成、編集、削除",
 			icon: RiArticleLine,
-			href: "/admin/posts",
+			href: "/admin/blog",
 			color: "bg-primary",
 		},
 		{
 			title: "新規記事作成",
 			description: "新しいブログ記事を作成",
 			icon: RiAddLine,
-			href: "/admin/posts/new",
+			href: "/admin/blog/new",
 			color: "bg-emerald-500",
 		},
 		{
@@ -113,13 +113,13 @@ function AdminDashboard() {
 							</h2>
 							<div className="flex flex-wrap gap-4">
 								<Button asChild>
-									<Link to="/admin/posts/new">
+									<Link to="/admin/blog/new">
 										<RiAddLine className="mr-2 h-4 w-4" />
 										新規記事作成
 									</Link>
 								</Button>
 								<Button variant="outline" asChild>
-									<Link to="/admin/posts">
+									<Link to="/admin/blog">
 										<RiArticleLine className="mr-2 h-4 w-4" />
 										記事一覧
 									</Link>

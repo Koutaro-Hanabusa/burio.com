@@ -2,13 +2,18 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import DOMPurify from "dompurify";
 import { motion } from "framer-motion";
 import { marked } from "marked";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { RiArrowLeftLine, RiEyeLine, RiSaveLine } from "react-icons/ri";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useImageUpload } from "@/hooks/use-image-upload";
+import {
+	hydrateLinkPreviews,
+	linkPreviewExtension,
+} from "@/utils/link-preview";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/admin/blog/$id/edit")({
@@ -26,6 +31,9 @@ function EditBlogPost() {
 	const [published, setPublished] = useState(false);
 	const [preview, setPreview] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
+
+	const { textareaProps } = useImageUpload(setContent);
+	const previewRef = useRef<HTMLDivElement>(null);
 
 	// Generate unique IDs for form elements
 	const titleId = useId();
@@ -70,8 +78,10 @@ function EditBlogPost() {
 				breaks: true,
 				pedantic: false,
 			});
+			marked.use(linkPreviewExtension);
 			const rawHtml = marked(content) as string;
 			const cleanHtml = DOMPurify.sanitize(rawHtml, {
+				ADD_ATTR: ["data-url", "target", "rel"],
 				// プレビュー用の安全な設定
 				FORBID_TAGS: ["script", "object", "embed", "form", "input"],
 				FORBID_ATTR: ["onerror", "onload", "onclick", "onmouseover"],
@@ -80,6 +90,12 @@ function EditBlogPost() {
 		}
 		setPreview(!preview);
 	};
+
+	useEffect(() => {
+		if (preview && htmlContent && previewRef.current) {
+			hydrateLinkPreviews(previewRef.current);
+		}
+	}, [preview, htmlContent]);
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -180,7 +196,8 @@ function EditBlogPost() {
 								value={content}
 								onChange={(e) => setContent(e.target.value)}
 								className="h-96 w-full resize-y rounded-md border bg-background p-3 text-foreground"
-								placeholder="Markdownで記事を書く..."
+								placeholder="Markdownで記事を書く... (画像をペーストまたはドラッグ&ドロップできます)"
+								{...textareaProps}
 							/>
 						</div>
 
@@ -242,6 +259,7 @@ function EditBlogPost() {
 								/>
 							)}
 							<div
+								ref={previewRef}
 								className="prose prose-lg dark:prose-invert max-w-none"
 								dangerouslySetInnerHTML={{ __html: htmlContent }}
 							/>

@@ -56,7 +56,7 @@ export default defineConfig({
 			"framer-motion",
 		],
 		exclude: [
-			"three", // Three.js benefits from dynamic loading
+			"three",
 			"@tanstack/react-query-devtools",
 			"@tanstack/react-router-devtools",
 		],
