@@ -34,6 +34,7 @@ function BlogPostPage() {
 	const [copied, setCopied] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
 	const contentRef = useRef<HTMLDivElement>(null);
+	const trackViewMutation = trpc.blog.trackView.useMutation();
 
 	const pageUrl =
 		typeof window !== "undefined"
@@ -73,6 +74,13 @@ function BlogPostPage() {
 			hydrateLinkPreviews(contentRef.current);
 		}
 	}, [htmlContent]);
+
+	// Track page view (fire once per page load)
+	useEffect(() => {
+		if (post?.id) {
+			trackViewMutation.mutate({ id: post.id });
+		}
+	}, [post?.id]);
 
 	const formatDate = (date: Date | string) => {
 		return new Date(date).toLocaleDateString("ja-JP", {

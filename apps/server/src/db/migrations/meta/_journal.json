@@ -15,6 +15,13 @@
       "when": 1760880553802,
       "tag": "0001_striped_rick_jones",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1774144745684,
+      "tag": "0002_dark_xavin",
+      "breakpoints": true
     }
   ]
 }

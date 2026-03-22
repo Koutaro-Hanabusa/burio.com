@@ -43,12 +43,10 @@ function EditBlogPost() {
 	const tagsId = useId();
 	const publishedId = useId();
 
-	// 既存記事データを取得
-	const { data: posts, isLoading } = trpc.blog.getAll.useQuery({
-		limit: 100,
+	// 既存記事データを取得（R2のコンテンツも含む）
+	const { data: post, isLoading } = trpc.blog.getById.useQuery({
+		id: Number(id),
 	});
-
-	const post = posts?.find((p) => p.id === Number(id));
 
 	useEffect(() => {
 		if (post) {
