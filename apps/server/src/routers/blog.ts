@@ -1,8 +1,9 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, gt, sql } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db";
-import { posts } from "../db/schema";
+import { posts, viewLogs } from "../db/schema";
 import { publicProcedure, router } from "../lib/trpc";
+import { getClientIP, isIPAllowed } from "../middleware/ip-restriction";
 
 const createSlug = (title: string): string => {
 	// 日本語を含むタイトルに対応するため、日本語文字をローマ字に変換するか、
@@ -93,17 +94,6 @@ export const blogRouter = router({
 					throw new Error("Post not found");
 				}
 
-				// Increment view count (don't fail if this errors)
-				try {
-					const currentViews = post[0].views || 0;
-					await db
-						.update(posts)
-						.set({ views: currentViews + 1 })
-						.where(eq(posts.id, input.id));
-				} catch (error) {
-					console.error("Failed to increment view count:", error);
-				}
-
 				// Fetch markdown content from R2 if needed
 				const postData = post[0];
 				console.log(`🔍 Attempting to fetch R2 content for id: ${postData.id}`);
@@ -137,6 +127,54 @@ export const blogRouter = router({
 			} catch (error) {
 				console.error(`❌ Error in getById for id ${input.id}:`, error);
 				throw error;
+			}
+		}),
+
+	trackView: publicProcedure
+		.input(z.object({ id: z.number() }))
+		.mutation(async ({ input, ctx }) => {
+			try {
+				const clientIP = ctx.req ? getClientIP(ctx.req) : "unknown";
+
+				// 管理者IPの場合はトラッキングしない
+				if (isIPAllowed(clientIP)) {
+					return { tracked: false };
+				}
+
+				// 1時間以内に同じIPから同じ記事を閲覧していないか確認
+				const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+				const existing = await db
+					.select()
+					.from(viewLogs)
+					.where(
+						and(
+							eq(viewLogs.postId, input.id),
+							eq(viewLogs.ipAddress, clientIP),
+							gt(viewLogs.viewedAt, oneHourAgo),
+						),
+					)
+					.limit(1);
+
+				if (existing.length > 0) {
+					return { tracked: false };
+				}
+
+				// view_logs に記録
+				await db.insert(viewLogs).values({
+					postId: input.id,
+					ipAddress: clientIP,
+				});
+
+				// posts.views をアトミックにインクリメント
+				await db
+					.update(posts)
+					.set({ views: sql`${posts.views} + 1` })
+					.where(eq(posts.id, input.id));
+
+				return { tracked: true };
+			} catch (error) {
+				console.error("Failed to track view:", error);
+				return { tracked: false };
 			}
 		}),
 
