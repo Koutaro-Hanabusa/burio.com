@@ -32,3 +32,15 @@ export const posts = sqliteTable("posts", {
 		() => new Date(),
 	),
 });
+
+// View logs table (for deduplication of view counts)
+export const viewLogs = sqliteTable("view_logs", {
+	id: integer("id").primaryKey({ autoIncrement: true }),
+	postId: integer("post_id")
+		.notNull()
+		.references(() => posts.id, { onDelete: "cascade" }),
+	ipAddress: text("ip_address").notNull(),
+	viewedAt: integer("viewed_at", { mode: "timestamp" }).$defaultFn(
+		() => new Date(),
+	),
+});
