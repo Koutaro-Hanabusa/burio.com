@@ -209,7 +209,7 @@ export const blogRouter = router({
 				.returning();
 
 			// Save markdown content to R2 if available (using post ID)
-			if (ctx.env?.R2_BUCKET && input.content && result[0]) {
+			if (ctx.env?.R2_BUCKET && input.content !== undefined && result[0]) {
 				try {
 					await ctx.env.R2_BUCKET.put(
 						`blog/${result[0].id}.md`,
