@@ -77,7 +77,7 @@ export function Hero() {
 				colors={["#ffffff", "#a0c4ff", "#c4b0ff", "#80e0d0"]}
 				shaderOpacity={0.4}
 				minPixelRatio={2}
-				contentClassName="flex h-full flex-col justify-between px-4 sm:gap-4 sm:p-6 md:p-12 w-full"
+				contentClassName="flex h-full flex-col justify-between px-4 py-2 sm:gap-4 sm:p-6 md:p-12 w-full"
 			>
 				<div>
 					<motion.div
