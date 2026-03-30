@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { MeshGradientCard } from "@/components/ui/mesh-gradient-card";
 import {
 	characterVariants,
 	fadeInUpVariants,
@@ -71,8 +72,13 @@ export function Hero() {
 			variants={sectionVariants}
 			transition={smoothTransition}
 		>
-			<div className="w-full max-w-4xl">
-				<div className="space-y-6">
+			<MeshGradientCard
+				className="aspect-[91/55] w-full max-w-4xl"
+				colors={["#ffffff", "#a0c4ff", "#c4b0ff", "#80e0d0"]}
+				shaderOpacity={0.4}
+				contentClassName="flex h-full flex-col justify-between p-8 md:p-12 w-full"
+			>
+				<div className="space-y-4">
 					<motion.div
 						className="inline-block whitespace-nowrap text-balance font-bold text-5xl tracking-tight md:text-7xl"
 						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
@@ -112,7 +118,9 @@ export function Hero() {
 					>
 						WEBエンジニア
 					</motion.p>
+				</div>
 
+				<div className="space-y-4">
 					<motion.p
 						className="max-w-2xl text-lg text-muted-foreground leading-relaxed"
 						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
@@ -174,7 +182,7 @@ export function Hero() {
 						))}
 					</motion.div>
 				</div>
-			</div>
+			</MeshGradientCard>
 		</motion.section>
 	);
 }
