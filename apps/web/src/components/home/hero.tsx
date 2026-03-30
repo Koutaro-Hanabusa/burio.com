@@ -77,9 +77,9 @@ export function Hero() {
 				colors={["#ffffff", "#a0c4ff", "#c4b0ff", "#80e0d0"]}
 				shaderOpacity={0.4}
 				minPixelRatio={2}
-				contentClassName="flex h-full flex-col justify-between gap-4 p-4 sm:p-6 md:p-12 w-full"
+				contentClassName="flex h-full flex-col justify-between px-4 sm:gap-4 sm:p-6 md:p-12 w-full"
 			>
-				<div className="space-y-4">
+				<div>
 					<motion.div
 						className="inline-block whitespace-nowrap text-balance font-bold text-3xl tracking-tight sm:text-5xl md:text-7xl"
 						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
@@ -108,7 +108,7 @@ export function Hero() {
 					</motion.div>
 				</div>
 
-				<div className="space-y-4">
+				<div className="space-y-1 sm:space-y-4">
 					<motion.p
 						className="text-muted-foreground text-sm sm:text-xl md:text-2xl"
 						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
