@@ -76,6 +76,7 @@ export function Hero() {
 				className="aspect-[91/55] w-full max-w-4xl"
 				colors={["#ffffff", "#a0c4ff", "#c4b0ff", "#80e0d0"]}
 				shaderOpacity={0.4}
+				minPixelRatio={2}
 				contentClassName="flex h-full flex-col justify-between gap-4 p-4 sm:p-6 md:p-12 w-full"
 			>
 				<div className="space-y-4">

@@ -36,8 +36,8 @@ const DEFAULT_STEPS: GradientStep[] = [
 	{
 		distortion: 0.3,
 		swirl: 0.1,
-		grainMixer: 0.16,
-		grainOverlay: 0.15,
+		grainMixer: 0.05,
+		grainOverlay: 0.05,
 		speed: 0.45,
 		scale: 1.0,
 		rotation: 0,
@@ -47,8 +47,8 @@ const DEFAULT_STEPS: GradientStep[] = [
 	{
 		distortion: 0.5,
 		swirl: 0.3,
-		grainMixer: 0.1,
-		grainOverlay: 0.1,
+		grainMixer: 0.04,
+		grainOverlay: 0.04,
 		speed: 0.55,
 		scale: 1.2,
 		rotation: 15,
@@ -58,8 +58,8 @@ const DEFAULT_STEPS: GradientStep[] = [
 	{
 		distortion: 0.4,
 		swirl: 0.8,
-		grainMixer: 0.2,
-		grainOverlay: 0.1,
+		grainMixer: 0.06,
+		grainOverlay: 0.04,
 		speed: 0.38,
 		scale: 0.9,
 		rotation: -10,
@@ -69,8 +69,8 @@ const DEFAULT_STEPS: GradientStep[] = [
 	{
 		distortion: 0.9,
 		swirl: 0.5,
-		grainMixer: 0.12,
-		grainOverlay: 0.2,
+		grainMixer: 0.05,
+		grainOverlay: 0.06,
 		speed: 0.65,
 		scale: 1.4,
 		rotation: 25,
@@ -80,8 +80,8 @@ const DEFAULT_STEPS: GradientStep[] = [
 	{
 		distortion: 0.25,
 		swirl: 0.2,
-		grainMixer: 0.6,
-		grainOverlay: 0.5,
+		grainMixer: 0.08,
+		grainOverlay: 0.06,
 		speed: 0.5,
 		scale: 1.1,
 		rotation: -5,
@@ -91,8 +91,8 @@ const DEFAULT_STEPS: GradientStep[] = [
 	{
 		distortion: 0.6,
 		swirl: 0.9,
-		grainMixer: 0.08,
-		grainOverlay: 0.05,
+		grainMixer: 0.03,
+		grainOverlay: 0.03,
 		speed: 0.3,
 		scale: 0.8,
 		rotation: 35,
@@ -102,8 +102,8 @@ const DEFAULT_STEPS: GradientStep[] = [
 	{
 		distortion: 0.15,
 		swirl: 0.05,
-		grainMixer: 0.5,
-		grainOverlay: 0.4,
+		grainMixer: 0.07,
+		grainOverlay: 0.05,
 		speed: 0.6,
 		scale: 1.3,
 		rotation: -20,
@@ -163,6 +163,8 @@ function MeshGradientCard({
 						{...shaderProps}
 					/>
 				</div>
+				<div className="absolute inset-0 rounded-4xl border border-white/20" />
+				<div className="absolute inset-0.75 inset-shadow-lg rounded-[calc(2rem-3px)] bg-card/30 backdrop-blur-sm" />
 				<div className={cn("relative", contentClassName)}>{children}</div>
 			</MeshGradientCardRoot>
 		</MeshGradientCardContext.Provider>
@@ -238,8 +240,8 @@ function useGradientCycler(
 			const to = steps[n];
 
 			animationRef.current = animate(from, to, {
-				duration: 0.6,
-				ease: "easeOut",
+				duration: 1.5,
+				ease: "easeInOut",
 				onUpdate: () => setConfig({ ...from }),
 			});
 
