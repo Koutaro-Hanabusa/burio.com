@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { MeshGradientCard } from "@/components/ui/mesh-gradient-card";
 import {
 	characterVariants,
 	fadeInUpVariants,
@@ -65,21 +66,22 @@ export function Hero() {
 
 	return (
 		<motion.section
-			className="flex h-[calc(100vh-4rem)] items-center justify-center px-6"
+			className="flex min-h-screen items-center justify-center px-6"
 			initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 			animate="visible"
 			variants={sectionVariants}
 			transition={smoothTransition}
 		>
-			<div className="relative flex aspect-[91/55] w-full max-w-4xl items-center overflow-hidden rounded-3xl border border-white/30 bg-gradient-to-br from-white/20 via-white/8 to-white/15 p-8 shadow-[0_8px_32px_rgba(0,0,0,0.2),inset_0_1px_1px_0_rgba(255,255,255,0.35),inset_0_-1px_1px_0_rgba(255,255,255,0.1)] backdrop-blur-[6px] backdrop-saturate-[140%] md:p-12 dark:border-white/20 dark:from-white/15 dark:via-white/5 dark:to-white/10 dark:shadow-[0_8px_32px_rgba(0,0,0,0.4),inset_0_1px_1px_0_rgba(255,255,255,0.25),inset_0_-1px_1px_0_rgba(255,255,255,0.08)]">
-				<img
-					src="/burio.com_transparent.png"
-					alt=""
-					className="pointer-events-none absolute right-4 bottom-4 size-28 md:right-8 md:bottom-8 md:size-40"
-				/>
-				<div className="relative z-10 space-y-6">
+			<MeshGradientCard
+				className="aspect-[91/55] w-full max-w-4xl"
+				colors={["#ffffff", "#a0c4ff", "#c4b0ff", "#80e0d0"]}
+				shaderOpacity={0.4}
+				minPixelRatio={2}
+				contentClassName="flex h-full flex-col justify-between gap-4 p-4 sm:p-6 md:p-12 w-full"
+			>
+				<div className="space-y-4">
 					<motion.div
-						className="inline-block whitespace-nowrap text-balance font-bold text-5xl tracking-tight md:text-7xl"
+						className="inline-block whitespace-nowrap text-balance font-bold text-3xl tracking-tight sm:text-5xl md:text-7xl"
 						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 						animate="visible"
 						whileHover="hover"
@@ -104,9 +106,11 @@ export function Hero() {
 							</motion.span>
 						))}
 					</motion.div>
+				</div>
 
+				<div className="space-y-4">
 					<motion.p
-						className="text-muted-foreground text-xl md:text-2xl"
+						className="text-muted-foreground text-sm sm:text-xl md:text-2xl"
 						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 						animate="visible"
 						variants={fadeInUpVariants}
@@ -119,7 +123,7 @@ export function Hero() {
 					</motion.p>
 
 					<motion.p
-						className="max-w-2xl text-lg text-muted-foreground leading-relaxed"
+						className="max-w-2xl text-muted-foreground text-xs leading-relaxed sm:text-base md:text-lg"
 						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 						animate="visible"
 						variants={fadeInUpVariants}
@@ -132,11 +136,11 @@ export function Hero() {
 						<a href="https://sencorp.co.jp/">千株式会社</a>
 						に新卒入社
 						<br />
-						最近はフロントエンドエンジニアを志し日々勉強中
+						フロントエンドエンジニアとしてデザインシステムの構築プロジェクトに参画中
 					</motion.p>
 
 					<motion.div
-						className="flex gap-6 pt-4"
+						className="flex gap-4 sm:gap-6"
 						initial={enableAnimations && !isMobile ? "hidden" : "visible"}
 						animate="visible"
 						variants={fadeInUpVariants}
@@ -172,14 +176,14 @@ export function Hero() {
 										aria-label={social.label}
 										onClick={() => handleSocialClick(social.label)}
 									>
-										<social.icon className="size-9" />
+										<social.icon className="size-6 sm:size-9" />
 									</a>
 								</Button>
 							</motion.div>
 						))}
 					</motion.div>
 				</div>
-			</div>
+			</MeshGradientCard>
 		</motion.section>
 	);
 }

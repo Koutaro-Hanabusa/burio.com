@@ -123,6 +123,8 @@ body {
 	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-ring: var(--sidebar-ring);
+	--inset-shadow-lg:
+		inset 0 10px 8px color-mix(in oklch, var(--background) 7%, transparent);
 }
 
 @layer base {
