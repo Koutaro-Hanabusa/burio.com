@@ -58,7 +58,8 @@ export function Hero() {
 		if (
 			platform === "github" ||
 			platform === "twitter" ||
-			platform === "instagram"
+			platform === "instagram" ||
+			platform === "youtrust"
 		) {
 			trackSocialClick(platform);
 		}

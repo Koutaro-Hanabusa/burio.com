@@ -18,6 +18,8 @@ export interface GTMDataLayerEvent {
 	access_github?: boolean;
 	/** Instagram link click flag - true when Instagram icon is clicked */
 	access_instagram?: boolean;
+	/** YouTrust link click flag - true when YouTrust icon is clicked */
+	access_youtrust?: boolean;
 }
 
 /**

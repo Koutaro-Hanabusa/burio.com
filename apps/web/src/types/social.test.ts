@@ -2,6 +2,7 @@ import { describe, expect, expectTypeOf, it } from "vitest";
 import { GithubIcon } from "@/components/icons/github";
 import { InstagramIcon } from "@/components/icons/instagram";
 import { TwitterIcon } from "@/components/icons/twitter";
+import { YoutrustIcon } from "@/components/icons/youtrust";
 import { SOCIAL_LINKS } from "@/constants/social-links";
 import type { SocialLink } from "./social";
 
@@ -76,6 +77,7 @@ describe("SocialLink型", () => {
 			expect(labels).toContain("GitHub");
 			expect(labels).toContain("Twitter");
 			expect(labels).toContain("Instagram");
+			expect(labels).toContain("YouTrust");
 		});
 	});
 
@@ -118,6 +120,13 @@ describe("SocialLink型", () => {
 			expect(instagram).toBeDefined();
 			expect(instagram?.href).toContain("instagram.com");
 			expect(instagram?.icon).toBe(InstagramIcon);
+		});
+
+		it("YouTrustリンクが正しいURLを持つ", () => {
+			const youtrust = SOCIAL_LINKS.find((link) => link.label === "YouTrust");
+			expect(youtrust).toBeDefined();
+			expect(youtrust?.href).toContain("youtrust.jp");
+			expect(youtrust?.icon).toBe(YoutrustIcon);
 		});
 
 		it("全てのリンクが外部リンクとして安全である（https使用）", () => {

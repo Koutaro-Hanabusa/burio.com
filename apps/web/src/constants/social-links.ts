@@ -1,6 +1,7 @@
 import { GithubIcon } from "@/components/icons/github";
 import { InstagramIcon } from "@/components/icons/instagram";
 import { TwitterIcon } from "@/components/icons/twitter";
+import { YoutrustIcon } from "@/components/icons/youtrust";
 import type { SocialLink } from "@/types/social";
 
 export const SOCIAL_LINKS: SocialLink[] = [
@@ -18,5 +19,10 @@ export const SOCIAL_LINKS: SocialLink[] = [
 		icon: InstagramIcon,
 		href: "https://www.instagram.com/buri_yellowtail?igsh=b2wyaTBpZ3dicmd0&utm_source=qr",
 		label: "Instagram",
+	},
+	{
+		icon: YoutrustIcon,
+		href: "https://youtrust.jp/users/koutaro-hanabusa",
+		label: "YouTrust",
 	},
 ];

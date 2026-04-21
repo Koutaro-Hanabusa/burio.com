@@ -41,7 +41,7 @@ export function dataPushLayer(data: GTMDataLayerEvent): void {
 /**
  * Social media platform type
  */
-export type SocialPlatform = "twitter" | "github" | "instagram";
+export type SocialPlatform = "twitter" | "github" | "instagram" | "youtrust";
 
 /**
  * Track social media link click
@@ -66,6 +66,9 @@ export function trackSocialClick(platform: SocialPlatform): void {
 			break;
 		case "instagram":
 			eventData.access_instagram = true;
+			break;
+		case "youtrust":
+			eventData.access_youtrust = true;
 			break;
 	}
 
