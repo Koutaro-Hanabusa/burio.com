@@ -1,5 +1,8 @@
-import { Github, Instagram, Twitter } from "lucide-react";
 import { describe, expect, expectTypeOf, it } from "vitest";
+import { GithubIcon } from "@/components/icons/github";
+import { InstagramIcon } from "@/components/icons/instagram";
+import { TwitterIcon } from "@/components/icons/twitter";
+import { YoutrustIcon } from "@/components/icons/youtrust";
 import { SOCIAL_LINKS } from "@/constants/social-links";
 import type { SocialLink } from "./social";
 
@@ -7,7 +10,7 @@ describe("SocialLink型", () => {
 	describe("型定義の整合性", () => {
 		it("SocialLinkインターフェースが正しいプロパティを持つ", () => {
 			const socialLink: SocialLink = {
-				icon: Github,
+				icon: GithubIcon,
 				href: "https://github.com/test",
 				label: "GitHub",
 			};
@@ -21,7 +24,7 @@ describe("SocialLink型", () => {
 
 		it("hrefプロパティは有効なURLである", () => {
 			const socialLink: SocialLink = {
-				icon: Twitter,
+				icon: TwitterIcon,
 				href: "https://twitter.com/test",
 				label: "Twitter",
 			};
@@ -29,14 +32,14 @@ describe("SocialLink型", () => {
 			expect(socialLink.href).toMatch(/^https?:\/\/.+/);
 		});
 
-		it("iconプロパティはLucideIconコンポーネントである", () => {
+		it("iconプロパティはSVGコンポーネントである", () => {
 			const socialLink: SocialLink = {
-				icon: Instagram,
+				icon: InstagramIcon,
 				href: "https://instagram.com/test",
 				label: "Instagram",
 			};
 
-			// Lucide iconはReactコンポーネント（オブジェクトまたは関数）である
+			// SVGアイコンはReactコンポーネント（関数コンポーネント）である
 			expect(typeof socialLink.icon).toMatch(/^(function|object)$/);
 		});
 	});
@@ -61,9 +64,9 @@ describe("SocialLink型", () => {
 			});
 		});
 
-		it("SOCIAL_LINKSのiconが全てLucideIconである", () => {
+		it("SOCIAL_LINKSのiconが全てReactコンポーネントである", () => {
 			SOCIAL_LINKS.forEach((link) => {
-				// Lucide iconはコンポーネント（オブジェクトまたは関数）
+				// 自前SVGアイコンはコンポーネント（関数またはオブジェクト）
 				const iconType = typeof link.icon;
 				expect(iconType === "function" || iconType === "object").toBe(true);
 			});
@@ -74,13 +77,14 @@ describe("SocialLink型", () => {
 			expect(labels).toContain("GitHub");
 			expect(labels).toContain("Twitter");
 			expect(labels).toContain("Instagram");
+			expect(labels).toContain("YouTrust");
 		});
 	});
 
 	describe("TypeScript型チェック", () => {
 		it("SocialLinkの型が正しく推論される", () => {
 			const link: SocialLink = {
-				icon: Github,
+				icon: GithubIcon,
 				href: "https://github.com",
 				label: "GitHub",
 			};
@@ -101,21 +105,28 @@ describe("SocialLink型", () => {
 			const github = SOCIAL_LINKS.find((link) => link.label === "GitHub");
 			expect(github).toBeDefined();
 			expect(github?.href).toContain("github.com");
-			expect(github?.icon).toBe(Github);
+			expect(github?.icon).toBe(GithubIcon);
 		});
 
 		it("Twitterリンクが正しいURLを持つ", () => {
 			const twitter = SOCIAL_LINKS.find((link) => link.label === "Twitter");
 			expect(twitter).toBeDefined();
 			expect(twitter?.href).toContain("x.com");
-			expect(twitter?.icon).toBe(Twitter);
+			expect(twitter?.icon).toBe(TwitterIcon);
 		});
 
 		it("Instagramリンクが正しいURLを持つ", () => {
 			const instagram = SOCIAL_LINKS.find((link) => link.label === "Instagram");
 			expect(instagram).toBeDefined();
 			expect(instagram?.href).toContain("instagram.com");
-			expect(instagram?.icon).toBe(Instagram);
+			expect(instagram?.icon).toBe(InstagramIcon);
+		});
+
+		it("YouTrustリンクが正しいURLを持つ", () => {
+			const youtrust = SOCIAL_LINKS.find((link) => link.label === "YouTrust");
+			expect(youtrust).toBeDefined();
+			expect(youtrust?.href).toContain("youtrust.jp");
+			expect(youtrust?.icon).toBe(YoutrustIcon);
 		});
 
 		it("全てのリンクが外部リンクとして安全である（https使用）", () => {
