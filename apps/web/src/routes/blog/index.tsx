@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { parseTagsFromJson } from "@/features/blog/utils/parse-tags";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/blog/")({
@@ -33,10 +34,9 @@ function BlogListPage() {
 			(post) =>
 				post.title.toLowerCase().includes(query) ||
 				post.excerpt?.toLowerCase().includes(query) ||
-				(post.tags &&
-					JSON.parse(post.tags).some((tag: string) =>
-						tag.toLowerCase().includes(query),
-					)),
+				parseTagsFromJson(post.tags).some((tag) =>
+					tag.toLowerCase().includes(query),
+				),
 		);
 	}, [posts, searchQuery]);
 
@@ -153,84 +153,89 @@ function BlogListPage() {
 						</motion.div>
 					) : (
 						<div className="space-y-6">
-							{filteredPosts.map((post, index) => (
-								<motion.article
-									key={post.id}
-									className="group rounded-lg border border-border bg-card p-6 transition-all hover:border-primary/50"
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{ delay: index * 0.1, duration: 0.6 }}
-									whileHover={{
-										y: -4,
-										boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
-									}}
-								>
-									<Link
-										to="/blog/$id"
-										params={{ id: String(post.id) }}
-										className="block"
+							{filteredPosts.map((post, index) => {
+								const postTags = parseTagsFromJson(post.tags);
+								return (
+									<motion.article
+										key={post.id}
+										className="group rounded-lg border border-border bg-card p-6 transition-all hover:border-primary/50"
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: index * 0.1, duration: 0.6 }}
+										whileHover={{
+											y: -4,
+											boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+										}}
 									>
-										{post.coverImage && (
-											<div className="mb-4 overflow-hidden rounded-lg">
-												<img
-													src={post.coverImage}
-													alt={post.title}
-													loading="lazy"
-													decoding="async"
-													className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
-												/>
-											</div>
-										)}
-
-										<h2 className="mb-3 font-semibold text-2xl transition-colors group-hover:text-primary">
-											{post.title}
-										</h2>
-
-										{post.excerpt && (
-											<p className="mb-4 line-clamp-2 text-muted-foreground">
-												{post.excerpt}
-											</p>
-										)}
-
-										<div className="mb-4 flex flex-wrap items-center gap-4 text-muted-foreground text-sm">
-											<div className="flex items-center gap-1">
-												<RiCalendarLine className="h-3.5 w-3.5" />
-												<time>
-													{post.createdAt ? formatDate(post.createdAt) : "N/A"}
-												</time>
-											</div>
-											<div className="flex items-center gap-1">
-												<RiTimeLine className="h-3.5 w-3.5" />
-												<span>{calculateReadTime(post.content || "")}</span>
-											</div>
-											{post.views != null && post.views > 0 && (
-												<div className="flex items-center gap-1">
-													<RiEyeLine className="h-3.5 w-3.5" />
-													<span>{post.views} views</span>
+										<Link
+											to="/blog/$id"
+											params={{ id: String(post.id) }}
+											className="block"
+										>
+											{post.coverImage && (
+												<div className="mb-4 overflow-hidden rounded-lg">
+													<img
+														src={post.coverImage}
+														alt={post.title}
+														loading="lazy"
+														decoding="async"
+														className="h-48 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+													/>
 												</div>
 											)}
-										</div>
 
-										{post.tags && JSON.parse(post.tags).length > 0 && (
-											<div className="mb-4 flex flex-wrap gap-2">
-												{JSON.parse(post.tags).map((tag: string) => (
-													<span
-														key={tag}
-														className="rounded-full bg-accent/20 px-2.5 py-0.5 text-accent-foreground text-xs"
-													>
-														{tag}
-													</span>
-												))}
+											<h2 className="mb-3 font-semibold text-2xl transition-colors group-hover:text-primary">
+												{post.title}
+											</h2>
+
+											{post.excerpt && (
+												<p className="mb-4 line-clamp-2 text-muted-foreground">
+													{post.excerpt}
+												</p>
+											)}
+
+											<div className="mb-4 flex flex-wrap items-center gap-4 text-muted-foreground text-sm">
+												<div className="flex items-center gap-1">
+													<RiCalendarLine className="h-3.5 w-3.5" />
+													<time>
+														{post.createdAt
+															? formatDate(post.createdAt)
+															: "N/A"}
+													</time>
+												</div>
+												<div className="flex items-center gap-1">
+													<RiTimeLine className="h-3.5 w-3.5" />
+													<span>{calculateReadTime(post.content || "")}</span>
+												</div>
+												{post.views != null && post.views > 0 && (
+													<div className="flex items-center gap-1">
+														<RiEyeLine className="h-3.5 w-3.5" />
+														<span>{post.views} views</span>
+													</div>
+												)}
 											</div>
-										)}
 
-										<div className="flex items-center font-medium text-primary transition-all group-hover:gap-2">
-											<span>続きを読む</span>
-											<RiArrowRightLine className="ml-1 h-4 w-4" />
-										</div>
-									</Link>
-								</motion.article>
-							))}
+											{postTags.length > 0 && (
+												<div className="mb-4 flex flex-wrap gap-2">
+													{postTags.map((tag) => (
+														<span
+															key={tag}
+															className="rounded-full bg-accent/20 px-2.5 py-0.5 text-accent-foreground text-xs"
+														>
+															{tag}
+														</span>
+													))}
+												</div>
+											)}
+
+											<div className="flex items-center font-medium text-primary transition-all group-hover:gap-2">
+												<span>続きを読む</span>
+												<RiArrowRightLine className="ml-1 h-4 w-4" />
+											</div>
+										</Link>
+									</motion.article>
+								);
+							})}
 						</div>
 					)}
 				</div>

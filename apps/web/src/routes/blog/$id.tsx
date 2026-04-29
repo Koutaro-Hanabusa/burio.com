@@ -1,8 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import DOMPurify from "dompurify";
 import { motion } from "framer-motion";
-import { marked } from "marked";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import {
 	RiArrowLeftLine,
@@ -16,10 +14,9 @@ import {
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-	hydrateLinkPreviews,
-	linkPreviewExtension,
-} from "@/utils/link-preview";
+import { renderMarkdownPreview } from "@/features/blog/utils/markdown-preview";
+import { parseTagsFromJson } from "@/features/blog/utils/parse-tags";
+import { hydrateLinkPreviews } from "@/utils/link-preview";
 import { trpc } from "@/utils/trpc";
 
 export const Route = createFileRoute("/blog/$id")({
@@ -44,29 +41,11 @@ function BlogPostPage() {
 
 	useEffect(() => {
 		if (post?.content) {
-			// Configure marked options
-			marked.setOptions({
-				gfm: true,
-				breaks: true,
-				pedantic: false,
-			});
-			marked.use(linkPreviewExtension);
-
-			// Parse markdown and sanitize HTML
-			const rawHtml = marked(post.content) as string;
-			const cleanHtml = DOMPurify.sanitize(rawHtml, {
-				// 許可する属性を明示的に指定
-				ADD_ATTR: ["target", "rel", "data-url"],
-				// 危険なタグを除去
-				FORBID_TAGS: ["script", "object", "embed", "form", "input"],
-				// 危険な属性を除去
-				FORBID_ATTR: ["onerror", "onload", "onclick", "onmouseover"],
-				// 外部リンクを安全に
-				ADD_URI_SAFE_ATTR: ["href", "src"],
-			});
-			setHtmlContent(cleanHtml);
+			setHtmlContent(renderMarkdownPreview(post.content));
 		}
 	}, [post?.content]);
+
+	const postTags = useMemo(() => parseTagsFromJson(post?.tags), [post?.tags]);
 
 	// Hydrate link previews after HTML is rendered
 	useEffect(() => {
@@ -250,9 +229,9 @@ function BlogPostPage() {
 							)}
 						</div>
 
-						{post.tags && JSON.parse(post.tags).length > 0 && (
+						{postTags.length > 0 && (
 							<div className="mb-6 flex flex-wrap gap-2">
-								{JSON.parse(post.tags).map((tag: string) => (
+								{postTags.map((tag) => (
 									<span
 										key={tag}
 										className="rounded-full bg-accent/20 px-3 py-1 text-accent-foreground text-sm"
