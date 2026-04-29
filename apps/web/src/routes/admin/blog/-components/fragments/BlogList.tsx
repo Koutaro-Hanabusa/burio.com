@@ -1,4 +1,6 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { getQueryKey } from "@trpc/react-query";
 import { motion } from "framer-motion";
 import {
 	RiAddLine,
@@ -9,23 +11,26 @@ import {
 } from "react-icons/ri";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { trpc } from "@/utils/trpc";
 
-export function BlogList() {
-	const {
-		data: posts,
-		isLoading,
-		refetch,
-	} = trpc.blog.getAll.useQuery({
-		limit: 100,
-	});
+const ADMIN_BLOG_LIST_INPUT = { limit: 100 } as const;
+
+export const BlogList = () => {
+	const queryClient = useQueryClient();
+	const [posts] = trpc.blog.getAll.useSuspenseQuery(ADMIN_BLOG_LIST_INPUT);
+
+	const invalidateBlogList = () => {
+		// getAll 配下のキャッシュをまとめて再取得（admin / 公開どちらの input でも対象）
+		queryClient.invalidateQueries({
+			queryKey: getQueryKey(trpc.blog.getAll),
+		});
+	};
 
 	const deletePost = trpc.blog.delete.useMutation({
 		onSuccess: () => {
 			console.log("Delete successful");
 			toast.success("記事を削除しました");
-			refetch();
+			invalidateBlogList();
 		},
 		onError: (error) => {
 			console.error("Delete error:", error);
@@ -36,7 +41,7 @@ export function BlogList() {
 	const togglePublish = trpc.blog.update.useMutation({
 		onSuccess: () => {
 			toast.success("公開状態を更新しました");
-			refetch();
+			invalidateBlogList();
 		},
 		onError: (error) => {
 			toast.error(`エラー: ${error.message}`);
@@ -85,16 +90,7 @@ export function BlogList() {
 				</Button>
 			</div>
 
-			{isLoading ? (
-				<div className="space-y-4">
-					{[1, 2, 3].map((i) => (
-						<div key={i} className="rounded-lg border p-4">
-							<Skeleton className="mb-2 h-6 w-3/4" />
-							<Skeleton className="h-4 w-1/2" />
-						</div>
-					))}
-				</div>
-			) : posts && posts.length > 0 ? (
+			{posts.length > 0 ? (
 				<div className="overflow-x-auto">
 					<table className="w-full border-collapse">
 						<thead>
@@ -185,4 +181,4 @@ export function BlogList() {
 			)}
 		</motion.div>
 	);
-}
+};

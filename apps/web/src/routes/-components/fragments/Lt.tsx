@@ -5,7 +5,7 @@ import {
 	smoothTransition,
 } from "@/constants/animations";
 
-export function Lt() {
+export const Lt = () => {
 	return (
 		<motion.section
 			className="px-6 py-20 md:px-12 lg:px-24"
@@ -40,4 +40,4 @@ export function Lt() {
 			</div>
 		</motion.section>
 	);
-}
+};

@@ -21,14 +21,14 @@ type BlogFormProps = {
 	submitPendingLabel: string;
 };
 
-export function BlogForm({
+export const BlogForm = ({
 	initialData,
 	onSubmit,
 	isPending,
 	headingText,
 	submitLabel,
 	submitPendingLabel,
-}: BlogFormProps) {
+}: BlogFormProps) => {
 	const navigate = useNavigate();
 	const {
 		title,
@@ -174,4 +174,4 @@ export function BlogForm({
 			)}
 		</motion.div>
 	);
-}
+};

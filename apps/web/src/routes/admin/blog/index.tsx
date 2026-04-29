@@ -1,14 +1,27 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BlogList } from "./-components/BlogList";
+import { getQueryKey } from "@trpc/react-query";
+import { trpc, trpcClient } from "@/utils/trpc";
+import { BlogListError } from "./-components/fallbacks/BlogListError";
+import { BlogListPending } from "./-components/fallbacks/BlogListPending";
+import { BlogList } from "./-components/fragments/BlogList";
 
-export const Route = createFileRoute("/admin/blog/")({
-	component: BlogAdmin,
-});
+const ADMIN_BLOG_LIST_INPUT = { limit: 100 } as const;
 
-function BlogAdmin() {
+const BlogAdmin = () => {
 	return (
 		<main className="min-h-screen px-6 py-20 md:px-12 lg:px-24">
 			<BlogList />
 		</main>
 	);
-}
+};
+
+export const Route = createFileRoute("/admin/blog/")({
+	loader: ({ context }) =>
+		context.queryClient.ensureQueryData({
+			queryKey: getQueryKey(trpc.blog.getAll, ADMIN_BLOG_LIST_INPUT, "query"),
+			queryFn: () => trpcClient.blog.getAll.query(ADMIN_BLOG_LIST_INPUT),
+		}),
+	pendingComponent: BlogListPending,
+	errorComponent: BlogListError,
+	component: BlogAdmin,
+});
