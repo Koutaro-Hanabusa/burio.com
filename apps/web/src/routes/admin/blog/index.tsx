@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getQueryKey } from "@trpc/react-query";
 import { trpc, trpcClient } from "@/utils/trpc";
-import { BlogList } from "./-components/BlogList";
-import { BlogListError } from "./-components/BlogListError";
-import { BlogListPending } from "./-components/BlogListPending";
+import { BlogListError } from "./-components/fallbacks/BlogListError";
+import { BlogListPending } from "./-components/fallbacks/BlogListPending";
+import { BlogList } from "./-components/fragments/BlogList";
 
 const ADMIN_BLOG_LIST_INPUT = { limit: 100 } as const;
 

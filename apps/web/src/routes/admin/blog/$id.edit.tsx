@@ -1,10 +1,10 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { getQueryKey } from "@trpc/react-query";
 import { trpc, trpcClient } from "@/utils/trpc";
-import { BlogEditError } from "./-components/BlogEditError";
-import { BlogEditPage } from "./-components/BlogEditPage";
-import { BlogEditPending } from "./-components/BlogEditPending";
-import { BlogNotFound } from "./-components/BlogNotFound";
+import { BlogEditError } from "./-components/fallbacks/BlogEditError";
+import { BlogEditPending } from "./-components/fallbacks/BlogEditPending";
+import { BlogNotFound } from "./-components/fallbacks/BlogNotFound";
+import { BlogEditPage } from "./-components/pages/BlogEditPage";
 
 const EditRoute = () => {
 	const { id } = Route.useParams();

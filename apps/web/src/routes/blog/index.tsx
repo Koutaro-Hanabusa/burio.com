@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getQueryKey } from "@trpc/react-query";
 import { trpc, trpcClient } from "@/utils/trpc";
-import { BlogIndexError } from "./-components/BlogIndexError";
-import { BlogIndexPending } from "./-components/BlogIndexPending";
-import { BlogListPage } from "./-components/BlogListPage";
+import { BlogIndexError } from "./-components/fallbacks/BlogIndexError";
+import { BlogIndexPending } from "./-components/fallbacks/BlogIndexPending";
+import { BlogListPage } from "./-components/pages/BlogListPage";
 
 const PUBLIC_BLOG_LIST_INPUT = { limit: 50, published: true } as const;
 

@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import type { BlogFormInitialData } from "@/features/admin-blog/hooks/use-blog-form";
 import { stringifyTagsForm } from "@/features/blog/utils/parse-tags";
 import { trpc } from "@/utils/trpc";
-import { BlogForm } from "./BlogForm";
+import { BlogForm } from "../fragments/BlogForm";
 
 type BlogEditPageProps = {
 	id: number;

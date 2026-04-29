@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { trpc } from "@/utils/trpc";
-import { BlogForm } from "./BlogForm";
+import { BlogForm } from "../fragments/BlogForm";
 
 export const BlogNewPage = () => {
 	const navigate = useNavigate();

@@ -1,10 +1,10 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { getQueryKey } from "@trpc/react-query";
 import { trpc, trpcClient } from "@/utils/trpc";
-import { BlogPostError } from "./-components/BlogPostError";
-import { BlogPostNotFound } from "./-components/BlogPostNotFound";
-import { BlogPostPage } from "./-components/BlogPostPage";
-import { BlogPostPending } from "./-components/BlogPostPending";
+import { BlogPostError } from "./-components/fallbacks/BlogPostError";
+import { BlogPostNotFound } from "./-components/fallbacks/BlogPostNotFound";
+import { BlogPostPending } from "./-components/fallbacks/BlogPostPending";
+import { BlogPostPage } from "./-components/pages/BlogPostPage";
 
 const PostRoute = () => {
 	const { id } = Route.useParams();
