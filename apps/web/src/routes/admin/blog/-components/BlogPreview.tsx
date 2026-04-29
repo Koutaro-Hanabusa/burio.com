@@ -9,14 +9,14 @@ type BlogPreviewProps = {
 	previewRef: RefObject<HTMLDivElement | null>;
 };
 
-export function BlogPreview({
+export const BlogPreview = ({
 	title,
 	excerpt,
 	coverImage,
 	htmlContent,
 	tags,
 	previewRef,
-}: BlogPreviewProps) {
+}: BlogPreviewProps) => {
 	return (
 		<div className="space-y-6">
 			<div className="rounded-lg border bg-card p-6">
@@ -52,4 +52,4 @@ export function BlogPreview({
 			</div>
 		</div>
 	);
-}
+};
