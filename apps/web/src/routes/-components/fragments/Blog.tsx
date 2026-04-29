@@ -22,14 +22,14 @@ interface BlogPostProps {
 	index: number;
 }
 
-function BlogPost({
+const BlogPost = ({
 	id,
 	title,
 	excerpt,
 	createdAt,
 	views,
 	index,
-}: BlogPostProps) {
+}: BlogPostProps) => {
 	return (
 		<Link to="/blog/$id" params={{ id: String(id) }} className="block">
 			<motion.article
@@ -64,9 +64,9 @@ function BlogPost({
 			</motion.article>
 		</Link>
 	);
-}
+};
 
-function BlogHeader({ isAdmin }: { isAdmin: boolean }) {
+const BlogHeader = ({ isAdmin }: { isAdmin: boolean }) => {
 	return (
 		<div className="mb-12 flex items-center justify-between">
 			<motion.h2
@@ -103,9 +103,9 @@ function BlogHeader({ isAdmin }: { isAdmin: boolean }) {
 			</motion.div>
 		</div>
 	);
-}
+};
 
-function BlogLoading() {
+const BlogLoading = () => {
 	return (
 		<motion.section
 			className="bg-muted/30 px-6 py-20 md:px-12 lg:px-24"
@@ -121,9 +121,9 @@ function BlogLoading() {
 			</div>
 		</motion.section>
 	);
-}
+};
 
-export function Blog() {
+export const Blog = () => {
 	const {
 		data: posts,
 		isLoading,
@@ -176,4 +176,4 @@ export function Blog() {
 			</div>
 		</motion.section>
 	);
-}
+};
