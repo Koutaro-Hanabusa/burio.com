@@ -9,7 +9,7 @@ import {
 } from "@/constants/animations";
 import { FAVORITES } from "@/constants/favorites";
 
-export function Favorites() {
+export const Favorites = () => {
 	return (
 		<motion.section
 			className="px-6 py-20 md:px-12 lg:px-24"
@@ -91,4 +91,4 @@ export function Favorites() {
 			</div>
 		</motion.section>
 	);
-}
+};

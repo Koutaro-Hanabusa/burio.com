@@ -18,7 +18,7 @@ import { type SocialPlatform, trackSocialClick } from "@/utils/analytics";
 
 const NAME_CHARACTERS = ["ぶ", "り", "お"] as const;
 
-export function Hero() {
+export const Hero = () => {
 	const [enableAnimations, setEnableAnimations] = useState(false);
 	const [isMobile, setIsMobile] = useState(false);
 
@@ -187,4 +187,4 @@ export function Hero() {
 			</MeshGradientCard>
 		</motion.section>
 	);
-}
+};
