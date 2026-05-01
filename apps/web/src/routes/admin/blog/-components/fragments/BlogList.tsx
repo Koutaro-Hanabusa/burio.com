@@ -7,12 +7,45 @@ import {
 	RiEyeLine,
 	RiEyeOffLine,
 } from "react-icons/ri";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { useAdminBlogList } from "@/features/admin-blog/hooks/use-admin-blog-list";
+import { useDeleteBlogPost } from "@/features/admin-blog/api/delete-blog-post";
+import { useAdminBlogPosts } from "@/features/admin-blog/api/get-admin-blog-posts";
+import { useTogglePublishBlogPost } from "@/features/admin-blog/api/toggle-publish-blog-post";
 import { formatDateShort } from "@/utils/format-date-short";
 
 export const BlogList = () => {
-	const { posts, handleDelete, handleTogglePublish } = useAdminBlogList();
+	const posts = useAdminBlogPosts();
+	const deletePost = useDeleteBlogPost({
+		mutationConfig: {
+			onSuccess: () => {
+				toast.success("記事を削除しました");
+			},
+			onError: (error) => {
+				toast.error(`エラー: ${error.message}`);
+			},
+		},
+	});
+	const togglePublish = useTogglePublishBlogPost({
+		mutationConfig: {
+			onSuccess: () => {
+				toast.success("公開状態を更新しました");
+			},
+			onError: (error) => {
+				toast.error(`エラー: ${error.message}`);
+			},
+		},
+	});
+
+	const handleDelete = (id: number, title: string) => {
+		if (confirm(`「${title}」を削除してよろしいですか？`)) {
+			deletePost.mutate({ id });
+		}
+	};
+
+	const handleTogglePublish = (id: number, currentStatus: boolean) => {
+		togglePublish.mutate({ id, currentPublished: currentStatus });
+	};
 
 	return (
 		<motion.div

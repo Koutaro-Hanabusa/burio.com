@@ -7,7 +7,7 @@ import {
 	getStaggerDelay,
 	smoothTransition,
 } from "@/constants/animations";
-import { useRecentBlogPosts } from "@/features/blog/hooks/use-recent-blog-posts";
+import { useRecentBlogPosts } from "@/features/blog/api/get-recent-blog-posts";
 import { useAdminAccess } from "@/hooks/use-admin-access";
 import { formatDate } from "@/utils/date";
 

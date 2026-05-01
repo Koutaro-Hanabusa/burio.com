@@ -1,6 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { getQueryKey } from "@trpc/react-query";
-import { trpc, trpcClient } from "@/utils/trpc";
+import { getBlogPostQueryOptions } from "@/features/blog/api/get-blog-post";
 import { BlogPostError } from "./-components/fallbacks/BlogPostError";
 import { BlogPostNotFound } from "./-components/fallbacks/BlogPostNotFound";
 import { BlogPostPending } from "./-components/fallbacks/BlogPostPending";
@@ -15,10 +14,9 @@ export const Route = createFileRoute("/blog/$id")({
 	loader: async ({ params, context }) => {
 		const id = Number(params.id);
 		try {
-			return await context.queryClient.ensureQueryData({
-				queryKey: getQueryKey(trpc.blog.getById, { id }, "query"),
-				queryFn: () => trpcClient.blog.getById.query({ id }),
-			});
+			return await context.queryClient.ensureQueryData(
+				getBlogPostQueryOptions(id),
+			);
 		} catch (error) {
 			if (error instanceof Error && /not found/i.test(error.message)) {
 				throw notFound();

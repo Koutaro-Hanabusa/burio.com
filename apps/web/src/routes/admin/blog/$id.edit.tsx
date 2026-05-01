@@ -1,6 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { getQueryKey } from "@trpc/react-query";
-import { trpc, trpcClient } from "@/utils/trpc";
+import { getAdminBlogPostQueryOptions } from "@/features/admin-blog/api/get-admin-blog-post";
 import { BlogEditError } from "./-components/fallbacks/BlogEditError";
 import { BlogEditPending } from "./-components/fallbacks/BlogEditPending";
 import { BlogNotFound } from "./-components/fallbacks/BlogNotFound";
@@ -15,10 +14,9 @@ export const Route = createFileRoute("/admin/blog/$id/edit")({
 	loader: async ({ params, context }) => {
 		const id = Number(params.id);
 		try {
-			return await context.queryClient.ensureQueryData({
-				queryKey: getQueryKey(trpc.blog.getById, { id }, "query"),
-				queryFn: () => trpcClient.blog.getById.query({ id }),
-			});
+			return await context.queryClient.ensureQueryData(
+				getAdminBlogPostQueryOptions(id),
+			);
 		} catch (error) {
 			// サーバ側で記事未発見時は "Post not found" を throw する
 			if (error instanceof Error && /not found/i.test(error.message)) {

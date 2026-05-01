@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import {
 	RiArrowLeftLine,
@@ -12,7 +12,8 @@ import {
 	RiTimeLine,
 } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
-import { useBlogPost } from "@/features/blog/hooks/use-blog-post";
+import { useBlogPost } from "@/features/blog/api/get-blog-post";
+import { useTrackBlogPostView } from "@/features/blog/api/track-blog-post-view";
 import { useRenderedMarkdown } from "@/features/blog/hooks/use-rendered-markdown";
 import { useSharePost } from "@/features/blog/hooks/use-share-post";
 import { parseTagsFromJson } from "@/features/blog/utils/parse-tags";
@@ -27,6 +28,13 @@ export const BlogPostPage = ({ id }: BlogPostPageProps) => {
 	const post = useBlogPost(id);
 	const { htmlContent, contentRef } = useRenderedMarkdown(post.content);
 	const { copied, handleShare, handleCopyLink } = useSharePost(post);
+	const trackView = useTrackBlogPostView();
+
+	// Track page view (fire once per page load / per post)
+	// biome-ignore lint/correctness/useExhaustiveDependencies: track once per post id
+	useEffect(() => {
+		trackView.mutate({ id: post.id });
+	}, [post.id]);
 
 	const pageUrl =
 		typeof window !== "undefined"

@@ -1,9 +1,23 @@
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { useCreateBlogPost } from "@/features/admin-blog/api/create-blog-post";
 import type { BlogFormValues } from "@/features/admin-blog/hooks/use-blog-form";
-import { useCreateBlogPost } from "@/features/admin-blog/hooks/use-create-blog-post";
 import { BlogForm } from "../fragments/BlogForm";
 
 export const BlogNewPage = () => {
-	const createPost = useCreateBlogPost();
+	const navigate = useNavigate();
+
+	const createPost = useCreateBlogPost({
+		mutationConfig: {
+			onSuccess: (data) => {
+				toast.success("記事を作成しました");
+				navigate({ to: `/blog/${data.id}` });
+			},
+			onError: (error) => {
+				toast.error(`エラー: ${error.message}`);
+			},
+		},
+	});
 
 	const submit = (values: BlogFormValues) => {
 		createPost.mutate({

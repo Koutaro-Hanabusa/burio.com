@@ -9,7 +9,7 @@ import {
 } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useBlogPosts } from "@/features/blog/hooks/use-blog-posts";
+import { useBlogPosts } from "@/features/blog/api/get-blog-posts";
 import { useBlogSearch } from "@/features/blog/hooks/use-blog-search";
 import { parseTagsFromJson } from "@/features/blog/utils/parse-tags";
 import { calculateReadTime } from "@/utils/calculate-read-time";
