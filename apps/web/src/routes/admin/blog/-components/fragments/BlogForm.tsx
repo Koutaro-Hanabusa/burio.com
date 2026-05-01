@@ -31,18 +31,7 @@ export const BlogForm = ({
 }: BlogFormProps) => {
 	const navigate = useNavigate();
 	const {
-		title,
-		setTitle,
-		content,
-		setContent,
-		excerpt,
-		setExcerpt,
-		coverImage,
-		setCoverImage,
-		tags,
-		setTags,
-		published,
-		setPublished,
+		form,
 		preview,
 		htmlContent,
 		previewRef,
@@ -54,13 +43,7 @@ export const BlogForm = ({
 		tagsId,
 		publishedId,
 		handlePreview,
-		getFormValues,
-	} = useBlogForm(initialData);
-
-	const handleSubmit = (e: React.FormEvent) => {
-		e.preventDefault();
-		onSubmit(getFormValues());
-	};
+	} = useBlogForm({ initialData, onSubmit });
 
 	return (
 		<motion.div
@@ -87,73 +70,110 @@ export const BlogForm = ({
 			</div>
 
 			{!preview ? (
-				<form onSubmit={handleSubmit} className="space-y-6">
-					<div>
-						<Label htmlFor={titleId}>タイトル *</Label>
-						<Input
-							id={titleId}
-							value={title}
-							onChange={(e) => setTitle(e.target.value)}
-							required
-							placeholder="記事のタイトル"
-						/>
-					</div>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						form.handleSubmit();
+					}}
+					className="space-y-6"
+				>
+					<form.Field name="title">
+						{(field) => (
+							<div>
+								<Label htmlFor={titleId}>タイトル *</Label>
+								<Input
+									id={titleId}
+									value={field.state.value}
+									onChange={(e) => field.handleChange(e.target.value)}
+									onBlur={field.handleBlur}
+									required
+									placeholder="記事のタイトル"
+								/>
+							</div>
+						)}
+					</form.Field>
 
-					<div>
-						<Label htmlFor={excerptId}>概要</Label>
-						<Input
-							id={excerptId}
-							value={excerpt}
-							onChange={(e) => setExcerpt(e.target.value)}
-							placeholder="記事の概要（一覧ページに表示されます）"
-						/>
-					</div>
+					<form.Field name="excerpt">
+						{(field) => (
+							<div>
+								<Label htmlFor={excerptId}>概要</Label>
+								<Input
+									id={excerptId}
+									value={field.state.value}
+									onChange={(e) => field.handleChange(e.target.value)}
+									onBlur={field.handleBlur}
+									placeholder="記事の概要（一覧ページに表示されます）"
+								/>
+							</div>
+						)}
+					</form.Field>
 
-					<div>
-						<Label htmlFor={contentId}>本文（Markdown）</Label>
-						<textarea
-							id={contentId}
-							value={content}
-							onChange={(e) => setContent(e.target.value)}
-							className="h-96 w-full resize-y rounded-md border bg-background p-3 text-foreground"
-							placeholder="Markdownで記事を書く... (画像をペーストまたはドラッグ&ドロップできます)"
-							{...textareaProps}
-						/>
-					</div>
+					<form.Field name="content">
+						{(field) => (
+							<div>
+								<Label htmlFor={contentId}>本文（Markdown）</Label>
+								<textarea
+									id={contentId}
+									value={field.state.value}
+									onChange={(e) => field.handleChange(e.target.value)}
+									onBlur={field.handleBlur}
+									className="h-96 w-full resize-y rounded-md border bg-background p-3 text-foreground"
+									placeholder="Markdownで記事を書く... (画像をペーストまたはドラッグ&ドロップできます)"
+									{...textareaProps}
+								/>
+							</div>
+						)}
+					</form.Field>
 
-					<div>
-						<Label htmlFor={coverImageId}>カバー画像URL</Label>
-						<Input
-							id={coverImageId}
-							value={coverImage}
-							onChange={(e) => setCoverImage(e.target.value)}
-							placeholder="https://example.com/image.jpg"
-							type="url"
-						/>
-					</div>
+					<form.Field name="coverImage">
+						{(field) => (
+							<div>
+								<Label htmlFor={coverImageId}>カバー画像URL</Label>
+								<Input
+									id={coverImageId}
+									value={field.state.value}
+									onChange={(e) => field.handleChange(e.target.value)}
+									onBlur={field.handleBlur}
+									placeholder="https://example.com/image.jpg"
+									type="url"
+								/>
+							</div>
+						)}
+					</form.Field>
 
-					<div>
-						<Label htmlFor={tagsId}>タグ（カンマ区切り）</Label>
-						<Input
-							id={tagsId}
-							value={tags}
-							onChange={(e) => setTags(e.target.value)}
-							placeholder="React, TypeScript, Web開発"
-						/>
-					</div>
+					<form.Field name="tags">
+						{(field) => (
+							<div>
+								<Label htmlFor={tagsId}>タグ（カンマ区切り）</Label>
+								<Input
+									id={tagsId}
+									value={field.state.value}
+									onChange={(e) => field.handleChange(e.target.value)}
+									onBlur={field.handleBlur}
+									placeholder="React, TypeScript, Web開発"
+								/>
+							</div>
+						)}
+					</form.Field>
 
-					<div className="flex items-center gap-2">
-						<input
-							id={publishedId}
-							type="checkbox"
-							checked={published}
-							onChange={(e) => setPublished(e.target.checked)}
-							className="h-4 w-4"
-						/>
-						<Label htmlFor={publishedId} className="cursor-pointer">
-							公開する
-						</Label>
-					</div>
+					<form.Field name="published">
+						{(field) => (
+							<div className="flex items-center gap-2">
+								<input
+									id={publishedId}
+									type="checkbox"
+									checked={field.state.value}
+									onChange={(e) => field.handleChange(e.target.checked)}
+									onBlur={field.handleBlur}
+									className="h-4 w-4"
+								/>
+								<Label htmlFor={publishedId} className="cursor-pointer">
+									公開する
+								</Label>
+							</div>
+						)}
+					</form.Field>
 
 					<div className="flex gap-4">
 						<Button type="submit" disabled={isPending}>
@@ -163,14 +183,18 @@ export const BlogForm = ({
 					</div>
 				</form>
 			) : (
-				<BlogPreview
-					title={title}
-					excerpt={excerpt}
-					coverImage={coverImage}
-					htmlContent={htmlContent}
-					tags={tags}
-					previewRef={previewRef}
-				/>
+				<form.Subscribe selector={(s) => s.values}>
+					{(values) => (
+						<BlogPreview
+							title={values.title}
+							excerpt={values.excerpt}
+							coverImage={values.coverImage}
+							htmlContent={htmlContent}
+							tags={values.tags}
+							previewRef={previewRef}
+						/>
+					)}
+				</form.Subscribe>
 			)}
 		</motion.div>
 	);
