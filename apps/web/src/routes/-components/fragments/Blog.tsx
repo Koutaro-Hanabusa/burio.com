@@ -7,11 +7,9 @@ import {
 	getStaggerDelay,
 	smoothTransition,
 } from "@/constants/animations";
+import { useRecentBlogPosts } from "@/features/blog/api/get-recent-blog-posts";
 import { useAdminAccess } from "@/hooks/use-admin-access";
 import { formatDate } from "@/utils/date";
-import { trpc } from "@/utils/trpc";
-
-const BLOG_POST_LIMIT = 3;
 
 interface BlogPostProps {
 	id: number;
@@ -31,7 +29,7 @@ const BlogPost = ({
 	index,
 }: BlogPostProps) => {
 	return (
-		<Link to="/blog/$id" params={{ id: String(id) }} className="block">
+		<Link to="/blog/$id" params={{ id }} className="block">
 			<motion.article
 				className="group cursor-pointer rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50"
 				initial="hidden"
@@ -124,14 +122,7 @@ const BlogLoading = () => {
 };
 
 export const Blog = () => {
-	const {
-		data: posts,
-		isLoading,
-		error,
-	} = trpc.blog.getAll.useQuery({
-		limit: BLOG_POST_LIMIT,
-		published: true,
-	});
+	const { data: posts, isLoading, error } = useRecentBlogPosts();
 
 	const { isAdmin } = useAdminAccess();
 

@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import {
 	RiArrowLeftLine,
@@ -11,24 +11,30 @@ import {
 	RiShareLine,
 	RiTimeLine,
 } from "react-icons/ri";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { renderMarkdownPreview } from "@/features/blog/utils/markdown-preview";
+import { useBlogPost } from "@/features/blog/api/get-blog-post";
+import { useTrackBlogPostView } from "@/features/blog/api/track-blog-post-view";
+import { useRenderedMarkdown } from "@/features/blog/hooks/use-rendered-markdown";
+import { useSharePost } from "@/features/blog/hooks/use-share-post";
 import { parseTagsFromJson } from "@/features/blog/utils/parse-tags";
-import { hydrateLinkPreviews } from "@/utils/link-preview";
-import { trpc } from "@/utils/trpc";
+import { calculateReadTime } from "@/utils/calculate-read-time";
+import { formatDate } from "@/utils/date";
 
 type BlogPostPageProps = {
 	id: number;
 };
 
 export const BlogPostPage = ({ id }: BlogPostPageProps) => {
-	const [post] = trpc.blog.getById.useSuspenseQuery({ id });
+	const post = useBlogPost(id);
+	const { htmlContent, contentRef } = useRenderedMarkdown(post.content);
+	const { copied, handleShare, handleCopyLink } = useSharePost(post);
+	const trackView = useTrackBlogPostView();
 
-	const [copied, setCopied] = useState(false);
-	const [htmlContent, setHtmlContent] = useState("");
-	const contentRef = useRef<HTMLDivElement>(null);
-	const trackViewMutation = trpc.blog.trackView.useMutation();
+	// Track page view (fire once per page load / per post)
+	// biome-ignore lint/correctness/useExhaustiveDependencies: track once per post id
+	useEffect(() => {
+		trackView.mutate({ id: post.id });
+	}, [post.id]);
 
 	const pageUrl =
 		typeof window !== "undefined"
@@ -36,71 +42,7 @@ export const BlogPostPage = ({ id }: BlogPostPageProps) => {
 			: `https://burio16.com/blog/${id}`;
 	const ogImageUrl = `https://burio16.com/blog/${id}/og.png`;
 
-	useEffect(() => {
-		if (post.content) {
-			setHtmlContent(renderMarkdownPreview(post.content));
-		}
-	}, [post.content]);
-
 	const postTags = useMemo(() => parseTagsFromJson(post.tags), [post.tags]);
-
-	// Hydrate link previews after HTML is rendered
-	useEffect(() => {
-		if (htmlContent && contentRef.current) {
-			hydrateLinkPreviews(contentRef.current);
-		}
-	}, [htmlContent]);
-
-	// Track page view (fire once per page load)
-	useEffect(() => {
-		trackViewMutation.mutate({ id: post.id });
-	}, [post.id]);
-
-	const formatDate = (date: Date | string) => {
-		return new Date(date).toLocaleDateString("ja-JP", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		});
-	};
-
-	const calculateReadTime = (content?: string) => {
-		if (!content) return "1 min read";
-		const wordsPerMinute = 200;
-		const wordCount = content.split(/\s+/).length;
-		const minutes = Math.ceil(wordCount / wordsPerMinute);
-		return `${minutes} min read`;
-	};
-
-	const handleShare = async () => {
-		const url = window.location.href;
-
-		if (navigator.share) {
-			try {
-				await navigator.share({
-					title: post.title,
-					text: post.excerpt || "",
-					url,
-				});
-			} catch (err) {
-				console.error("Share failed:", err);
-			}
-		} else {
-			// Fallback: Copy to clipboard
-			await handleCopyLink();
-		}
-	};
-
-	const handleCopyLink = async () => {
-		try {
-			await navigator.clipboard.writeText(window.location.href);
-			setCopied(true);
-			toast.success("リンクをコピーしました");
-			setTimeout(() => setCopied(false), 2000);
-		} catch (_err) {
-			toast.error("コピーに失敗しました");
-		}
-	};
 
 	return (
 		<main className="min-h-screen">
@@ -171,7 +113,7 @@ export const BlogPostPage = ({ id }: BlogPostPageProps) => {
 							</div>
 							<div className="flex items-center gap-1">
 								<RiTimeLine className="h-4 w-4" />
-								<span>{calculateReadTime(post.content || "")}</span>
+								<span>{calculateReadTime(post.content)}</span>
 							</div>
 							{post.views != null && post.views > 0 && (
 								<div className="flex items-center gap-1">
