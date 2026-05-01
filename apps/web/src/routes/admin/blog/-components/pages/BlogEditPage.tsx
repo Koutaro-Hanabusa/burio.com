@@ -1,9 +1,13 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { toast } from "sonner";
-import type { BlogFormInitialData } from "@/features/admin-blog/hooks/use-blog-form";
+import { useAdminBlogPost } from "@/features/admin-blog/api/get-admin-blog-post";
+import { useUpdateBlogPost } from "@/features/admin-blog/api/update-blog-post";
+import type {
+	BlogFormInitialData,
+	BlogFormValues,
+} from "@/features/admin-blog/hooks/use-blog-form";
 import { stringifyTagsForm } from "@/features/blog/utils/parse-tags";
-import { trpc } from "@/utils/trpc";
 import { BlogForm } from "../fragments/BlogForm";
 
 type BlogEditPageProps = {
@@ -12,16 +16,17 @@ type BlogEditPageProps = {
 
 export const BlogEditPage = ({ id }: BlogEditPageProps) => {
 	const navigate = useNavigate();
+	const post = useAdminBlogPost(id);
 
-	const [post] = trpc.blog.getById.useSuspenseQuery({ id });
-
-	const updatePost = trpc.blog.update.useMutation({
-		onSuccess: (data) => {
-			toast.success("記事を更新しました");
-			navigate({ to: `/blog/${data.id}` });
-		},
-		onError: (error) => {
-			toast.error(`エラー: ${error.message}`);
+	const updatePost = useUpdateBlogPost({
+		mutationConfig: {
+			onSuccess: (data) => {
+				toast.success("記事を更新しました");
+				navigate({ to: `/blog/${data.id}` });
+			},
+			onError: (error) => {
+				toast.error(`エラー: ${error.message}`);
+			},
 		},
 	});
 
@@ -37,22 +42,24 @@ export const BlogEditPage = ({ id }: BlogEditPageProps) => {
 		[post],
 	);
 
+	const submit = (values: BlogFormValues) => {
+		updatePost.mutate({
+			id,
+			title: values.title,
+			content: values.content,
+			excerpt: values.excerpt || undefined,
+			coverImage: values.coverImage || undefined,
+			tags: values.tags.length > 0 ? values.tags : undefined,
+			published: values.published,
+		});
+	};
+
 	return (
 		<main className="min-h-screen px-6 py-20 md:px-12 lg:px-24">
 			<BlogForm
 				mode="edit"
 				initialData={initialData}
-				onSubmit={(values) => {
-					updatePost.mutate({
-						id,
-						title: values.title,
-						content: values.content,
-						excerpt: values.excerpt || undefined,
-						coverImage: values.coverImage || undefined,
-						tags: values.tags.length > 0 ? values.tags : undefined,
-						published: values.published,
-					});
-				}}
+				onSubmit={submit}
 				isPending={updatePost.isPending}
 				headingText="記事を編集"
 				submitLabel="記事を更新"

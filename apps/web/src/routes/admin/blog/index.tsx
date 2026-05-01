@@ -1,11 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getQueryKey } from "@trpc/react-query";
-import { trpc, trpcClient } from "@/utils/trpc";
+import { getAdminBlogPostsQueryOptions } from "@/features/admin-blog/api/get-admin-blog-posts";
 import { BlogListError } from "./-components/fallbacks/BlogListError";
 import { BlogListPending } from "./-components/fallbacks/BlogListPending";
 import { BlogList } from "./-components/fragments/BlogList";
-
-const ADMIN_BLOG_LIST_INPUT = { limit: 100 } as const;
 
 const BlogAdmin = () => {
 	return (
@@ -17,10 +14,7 @@ const BlogAdmin = () => {
 
 export const Route = createFileRoute("/admin/blog/")({
 	loader: ({ context }) =>
-		context.queryClient.ensureQueryData({
-			queryKey: getQueryKey(trpc.blog.getAll, ADMIN_BLOG_LIST_INPUT, "query"),
-			queryFn: () => trpcClient.blog.getAll.query(ADMIN_BLOG_LIST_INPUT),
-		}),
+		context.queryClient.ensureQueryData(getAdminBlogPostsQueryOptions()),
 	pendingComponent: BlogListPending,
 	errorComponent: BlogListError,
 	component: BlogAdmin,
