@@ -1,4 +1,6 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useForm } from "@tanstack/react-form";
+import type React from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { renderMarkdownPreview } from "@/features/blog/utils/markdown-preview";
 import { parseTagsInput } from "@/features/blog/utils/parse-tags";
 import { useImageUpload } from "@/hooks/use-image-upload";
@@ -22,24 +24,66 @@ export type BlogFormValues = {
 	published: boolean;
 };
 
+type BlogFormFields = {
+	title: string;
+	content: string;
+	excerpt: string;
+	coverImage: string;
+	tags: string;
+	published: boolean;
+};
+
+const EMPTY_FIELDS: BlogFormFields = {
+	title: "",
+	content: "",
+	excerpt: "",
+	coverImage: "",
+	tags: "",
+	published: false,
+};
+
+type UseBlogFormParams = {
+	initialData?: BlogFormInitialData;
+	onSubmit: (values: BlogFormValues) => void;
+};
+
 /**
- * ブログ記事の作成・編集フォームで共通利用する state / 振る舞いをまとめたフック。
+ * ブログ記事の作成・編集フォームで共通利用するフォームインスタンス / 振る舞いをまとめたフック。
  * initialData が後から（非同期で）渡された場合にも内部 state を反映する。
  */
-export function useBlogForm(initialData?: BlogFormInitialData) {
-	const [title, setTitle] = useState(initialData?.title ?? "");
-	const [content, setContent] = useState(initialData?.content ?? "");
-	const [excerpt, setExcerpt] = useState(initialData?.excerpt ?? "");
-	const [coverImage, setCoverImage] = useState(initialData?.coverImage ?? "");
-	const [tags, setTags] = useState(initialData?.tags ?? "");
-	const [published, setPublished] = useState(initialData?.published ?? false);
+export function useBlogForm({ initialData, onSubmit }: UseBlogFormParams) {
+	const form = useForm({
+		defaultValues: initialData ?? EMPTY_FIELDS,
+		onSubmit: ({ value }) => {
+			onSubmit({
+				title: value.title,
+				content: value.content,
+				excerpt: value.excerpt,
+				coverImage: value.coverImage,
+				tags: parseTagsInput(value.tags),
+				published: value.published,
+			});
+		},
+	});
+
 	const [preview, setPreview] = useState(false);
 	const [htmlContent, setHtmlContent] = useState("");
-
-	const { textareaProps } = useImageUpload(setContent);
 	const previewRef = useRef<HTMLDivElement>(null);
 
-	// フォーム要素用の一意な ID を生成
+	const setContent = useCallback<React.Dispatch<React.SetStateAction<string>>>(
+		(value) => {
+			const current = form.getFieldValue("content");
+			const next =
+				typeof value === "function"
+					? (value as (prev: string) => string)(current)
+					: value;
+			form.setFieldValue("content", next);
+		},
+		[form],
+	);
+
+	const { textareaProps } = useImageUpload(setContent);
+
 	const titleId = useId();
 	const excerptId = useId();
 	const contentId = useId();
@@ -47,68 +91,37 @@ export function useBlogForm(initialData?: BlogFormInitialData) {
 	const tagsId = useId();
 	const publishedId = useId();
 
-	// initialData（編集対象記事）が後から取得された場合に state を反映する
 	useEffect(() => {
 		if (!initialData) return;
-		setTitle(initialData.title);
-		setContent(initialData.content);
-		setExcerpt(initialData.excerpt);
-		setCoverImage(initialData.coverImage);
-		setTags(initialData.tags);
-		setPublished(initialData.published);
-	}, [initialData]);
+		form.reset(initialData);
+	}, [initialData, form]);
 
 	const handlePreview = () => {
+		const content = form.getFieldValue("content");
 		if (content) {
 			setHtmlContent(renderMarkdownPreview(content));
 		}
 		setPreview((prev) => !prev);
 	};
 
-	// プレビュー切替後に link preview を hydrate する
 	useEffect(() => {
 		if (preview && htmlContent && previewRef.current) {
 			hydrateLinkPreviews(previewRef.current);
 		}
 	}, [preview, htmlContent]);
 
-	const getFormValues = (): BlogFormValues => ({
-		title,
-		content,
-		excerpt,
-		coverImage,
-		tags: parseTagsInput(tags),
-		published,
-	});
-
 	return {
-		// state
-		title,
-		setTitle,
-		content,
-		setContent,
-		excerpt,
-		setExcerpt,
-		coverImage,
-		setCoverImage,
-		tags,
-		setTags,
-		published,
-		setPublished,
+		form,
 		preview,
 		htmlContent,
-		// refs / props
 		previewRef,
 		textareaProps,
-		// IDs
 		titleId,
 		excerptId,
 		contentId,
 		coverImageId,
 		tagsId,
 		publishedId,
-		// handlers
 		handlePreview,
-		getFormValues,
 	};
 }
