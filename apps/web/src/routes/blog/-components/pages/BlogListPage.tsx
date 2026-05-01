@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useMemo, useState } from "react";
 import {
 	RiArrowRightLine,
 	RiCalendarLine,
@@ -10,44 +9,16 @@ import {
 } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useBlogPosts } from "@/features/blog/hooks/use-blog-posts";
+import { useBlogSearch } from "@/features/blog/hooks/use-blog-search";
 import { parseTagsFromJson } from "@/features/blog/utils/parse-tags";
-import { trpc } from "@/utils/trpc";
-
-const PUBLIC_BLOG_LIST_INPUT = { limit: 50, published: true } as const;
+import { calculateReadTime } from "@/utils/calculate-read-time";
+import { formatDate } from "@/utils/date";
 
 export const BlogListPage = () => {
-	const [searchQuery, setSearchQuery] = useState("");
-	const [posts] = trpc.blog.getAll.useSuspenseQuery(PUBLIC_BLOG_LIST_INPUT);
-
-	const filteredPosts = useMemo(() => {
-		if (!searchQuery.trim()) return posts;
-
-		const query = searchQuery.toLowerCase();
-		return posts.filter(
-			(post) =>
-				post.title.toLowerCase().includes(query) ||
-				post.excerpt?.toLowerCase().includes(query) ||
-				parseTagsFromJson(post.tags).some((tag) =>
-					tag.toLowerCase().includes(query),
-				),
-		);
-	}, [posts, searchQuery]);
-
-	const formatDate = (date: Date | string) => {
-		return new Date(date).toLocaleDateString("ja-JP", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		});
-	};
-
-	const calculateReadTime = (content?: string) => {
-		if (!content) return "1 min read";
-		const wordsPerMinute = 200;
-		const wordCount = content.split(/\s+/).length;
-		const minutes = Math.ceil(wordCount / wordsPerMinute);
-		return `${minutes} min read`;
-	};
+	const posts = useBlogPosts();
+	const { searchQuery, setSearchQuery, clearSearch, filteredPosts } =
+		useBlogSearch(posts);
 
 	return (
 		<main className="min-h-screen">
@@ -105,7 +76,7 @@ export const BlogListPage = () => {
 									</p>
 									<Button
 										variant="outline"
-										onClick={() => setSearchQuery("")}
+										onClick={clearSearch}
 										className="mt-4"
 									>
 										検索をクリア
@@ -183,7 +154,7 @@ export const BlogListPage = () => {
 												</div>
 												<div className="flex items-center gap-1">
 													<RiTimeLine className="h-3.5 w-3.5" />
-													<span>{calculateReadTime(post.content || "")}</span>
+													<span>{calculateReadTime(post.content)}</span>
 												</div>
 												{post.views != null && post.views > 0 && (
 													<div className="flex items-center gap-1">

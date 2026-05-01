@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getQueryKey } from "@trpc/react-query";
+import { PUBLIC_BLOG_LIST_INPUT } from "@/features/blog/constants/queries";
 import { trpc, trpcClient } from "@/utils/trpc";
 import { BlogIndexError } from "./-components/fallbacks/BlogIndexError";
 import { BlogIndexPending } from "./-components/fallbacks/BlogIndexPending";
 import { BlogListPage } from "./-components/pages/BlogListPage";
-
-const PUBLIC_BLOG_LIST_INPUT = { limit: 50, published: true } as const;
 
 export const Route = createFileRoute("/blog/")({
 	loader: ({ context }) =>

@@ -1,6 +1,4 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { getQueryKey } from "@trpc/react-query";
 import { motion } from "framer-motion";
 import {
 	RiAddLine,
@@ -9,69 +7,12 @@ import {
 	RiEyeLine,
 	RiEyeOffLine,
 } from "react-icons/ri";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { trpc } from "@/utils/trpc";
-
-const ADMIN_BLOG_LIST_INPUT = { limit: 100 } as const;
+import { useAdminBlogList } from "@/features/admin-blog/hooks/use-admin-blog-list";
+import { formatDateShort } from "@/utils/format-date-short";
 
 export const BlogList = () => {
-	const queryClient = useQueryClient();
-	const [posts] = trpc.blog.getAll.useSuspenseQuery(ADMIN_BLOG_LIST_INPUT);
-
-	const invalidateBlogList = () => {
-		// getAll 配下のキャッシュをまとめて再取得（admin / 公開どちらの input でも対象）
-		queryClient.invalidateQueries({
-			queryKey: getQueryKey(trpc.blog.getAll),
-		});
-	};
-
-	const deletePost = trpc.blog.delete.useMutation({
-		onSuccess: () => {
-			console.log("Delete successful");
-			toast.success("記事を削除しました");
-			invalidateBlogList();
-		},
-		onError: (error) => {
-			console.error("Delete error:", error);
-			toast.error(`エラー: ${error.message}`);
-		},
-	});
-
-	const togglePublish = trpc.blog.update.useMutation({
-		onSuccess: () => {
-			toast.success("公開状態を更新しました");
-			invalidateBlogList();
-		},
-		onError: (error) => {
-			toast.error(`エラー: ${error.message}`);
-		},
-	});
-
-	const handleDelete = (id: number, title: string) => {
-		console.log(`Attempting to delete post: ${id} - ${title}`);
-		if (confirm(`「${title}」を削除してよろしいですか？`)) {
-			console.log(`User confirmed deletion for: ${id}`);
-			deletePost.mutate({ id });
-		} else {
-			console.log(`User cancelled deletion for: ${id}`);
-		}
-	};
-
-	const handleTogglePublish = (id: number, currentStatus: boolean) => {
-		togglePublish.mutate({
-			id,
-			published: !currentStatus,
-		});
-	};
-
-	const formatDate = (date: Date | string) => {
-		return new Date(date).toLocaleDateString("ja-JP", {
-			year: "numeric",
-			month: "2-digit",
-			day: "2-digit",
-		});
-	};
+	const { posts, handleDelete, handleTogglePublish } = useAdminBlogList();
 
 	return (
 		<motion.div
@@ -141,7 +82,7 @@ export const BlogList = () => {
 									</td>
 									<td className="p-4 text-center">{post.views ?? 0}</td>
 									<td className="p-4 text-sm">
-										{post.createdAt ? formatDate(post.createdAt) : "N/A"}
+										{post.createdAt ? formatDateShort(post.createdAt) : "N/A"}
 									</td>
 									<td className="p-4">
 										<div className="flex justify-center gap-2">
