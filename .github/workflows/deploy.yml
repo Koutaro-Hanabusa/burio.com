@@ -19,6 +19,7 @@ permissions:
 
 env:
   BUN_VERSION: '1.2.23'
+  NODE_VERSION: '24'
 
 jobs:
   deploy:
@@ -34,6 +35,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
