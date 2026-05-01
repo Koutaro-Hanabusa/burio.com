@@ -118,7 +118,7 @@ export const BlogListPage = () => {
 									>
 										<Link
 											to="/blog/$id"
-											params={{ id: String(post.id) }}
+											params={{ id: post.id }}
 											className="block"
 										>
 											{post.coverImage && (

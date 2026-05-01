@@ -89,7 +89,7 @@ export const BlogList = () => {
 									<td className="p-4">
 										<Link
 											to="/blog/$id"
-											params={{ id: String(post.id) }}
+											params={{ id: post.id }}
 											className="font-medium hover:text-primary"
 										>
 											{post.title}
@@ -122,7 +122,7 @@ export const BlogList = () => {
 											<Button variant="ghost" size="sm" asChild>
 												<Link
 													to="/admin/blog/$id/edit"
-													params={{ id: String(post.id) }}
+													params={{ id: post.id }}
 												>
 													<RiEditLine className="h-4 w-4" />
 												</Link>
