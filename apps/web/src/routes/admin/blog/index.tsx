@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getAdminBlogPostsQueryOptions } from "@/features/blog/api/get-admin-blog-posts";
 import { AdminBlogList } from "@/features/blog/components/admin-blog-list";
-import { BlogListError } from "./-components/fallbacks/BlogListError";
-import { BlogListPending } from "./-components/fallbacks/BlogListPending";
+import { BlogListError } from "./-components/BlogListError";
+import { BlogListPending } from "./-components/BlogListPending";
 
 const BlogAdmin = () => {
 	return (
