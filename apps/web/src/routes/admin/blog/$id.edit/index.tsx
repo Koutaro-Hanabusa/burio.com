@@ -1,9 +1,9 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { z } from "zod";
 import { getAdminBlogPostQueryOptions } from "@/features/blog/api/get-admin-blog-post";
-import { AdminBlogEditError } from "@/features/blog/components/fallbacks/AdminBlogEditError";
-import { AdminBlogEditNotFound } from "@/features/blog/components/fallbacks/AdminBlogEditNotFound";
-import { AdminBlogEditPending } from "@/features/blog/components/fallbacks/AdminBlogEditPending";
+import { AdminBlogEditError } from "./-components/AdminBlogEditError";
+import { AdminBlogEditNotFound } from "./-components/AdminBlogEditNotFound";
+import { AdminBlogEditPending } from "./-components/AdminBlogEditPending";
 import { UpdateBlogPostPage } from "./-components/UpdateBlogPostPage";
 
 const paramsSchema = z.object({
