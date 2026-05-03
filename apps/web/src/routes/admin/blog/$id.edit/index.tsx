@@ -5,7 +5,7 @@ import { getAdminBlogPostQueryOptions } from "@/features/blog/api/get-admin-blog
 import { AdminBlogEditError } from "@/features/blog/components/fallbacks/AdminBlogEditError";
 import { AdminBlogEditNotFound } from "@/features/blog/components/fallbacks/AdminBlogEditNotFound";
 import { AdminBlogEditPending } from "@/features/blog/components/fallbacks/AdminBlogEditPending";
-import { UpdateBlogPost } from "@/features/blog/components/UpdateBlogPost";
+import { UpdateBlogPost } from "./-components/UpdateBlogPost";
 
 const paramsSchema = z.object({
 	id: z.coerce.number().int().positive(),
@@ -20,7 +20,7 @@ const UpdateBlogPostRoute = () => {
 	);
 };
 
-export const Route = createFileRoute("/admin/blog/$id/edit")({
+export const Route = createFileRoute("/admin/blog/$id/edit/")({
 	params: {
 		parse: paramsSchema.parse,
 		stringify: ({ id }) => ({ id: String(id) }),

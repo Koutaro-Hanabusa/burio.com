@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ContentLayout } from "@/components/layouts/ContentLayout";
-import { CreateBlogPost } from "@/features/blog/components/CreateBlogPost";
+import { CreateBlogPost } from "./-components/CreateBlogPost";
 
 const CreateBlogPostRoute = () => (
 	<ContentLayout>
@@ -8,6 +8,6 @@ const CreateBlogPostRoute = () => (
 	</ContentLayout>
 );
 
-export const Route = createFileRoute("/admin/blog/new")({
+export const Route = createFileRoute("/admin/blog/new/")({
 	component: CreateBlogPostRoute,
 });
