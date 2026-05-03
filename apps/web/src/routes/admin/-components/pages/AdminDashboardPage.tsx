@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { AdminGuard } from "@/components/admin-guard";
-import { AdminNavCards } from "../fragments/AdminNavCards";
-import { AdminQuickActions } from "../fragments/AdminQuickActions";
+import { AdminNavCards } from "@/features/admin/components/admin-nav-cards";
+import { AdminQuickActions } from "@/features/admin/components/admin-quick-actions";
 
 export const AdminDashboardPage = () => {
 	return (

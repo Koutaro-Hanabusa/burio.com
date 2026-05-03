@@ -121,7 +121,7 @@ const BlogLoading = () => {
 	);
 };
 
-export const Blog = () => {
+export const BlogSection = () => {
 	const { data: posts, isLoading, error } = useRecentBlogPosts();
 
 	const { isAdmin } = useAdminAccess();

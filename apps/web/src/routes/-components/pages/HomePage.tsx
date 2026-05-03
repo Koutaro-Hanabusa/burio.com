@@ -1,8 +1,8 @@
 import { lazy, Suspense, useEffect, useState } from "react";
-import { Blog } from "../fragments/Blog";
-import { Favorites } from "../fragments/Favorites";
-import { Hero } from "../fragments/Hero";
-import { Lt } from "../fragments/Lt";
+import { Favorites } from "@/features/home/components/favorites";
+import { Hero } from "@/features/home/components/hero";
+import { BlogSection } from "@/features/home/components/home-blog-section";
+import { Lt } from "@/features/home/components/lt";
 
 // Lazy load the 3D background for better initial bundle size
 const ThreeBackground = lazy(() =>
@@ -48,7 +48,7 @@ export const HomePage = () => {
 				<Hero />
 				<Favorites />
 				<Lt />
-				<Blog />
+				<BlogSection />
 			</main>
 		</>
 	);
