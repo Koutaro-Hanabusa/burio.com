@@ -14,7 +14,7 @@ import { useAdminBlogPosts } from "@/features/blog/api/get-admin-blog-posts";
 import { useTogglePublishBlogPost } from "@/features/blog/api/toggle-publish-blog-post";
 import { formatDateShort } from "@/utils/format-date-short";
 
-export const BlogList = () => {
+export const AdminBlogList = () => {
 	const posts = useAdminBlogPosts();
 	const deletePost = useDeleteBlogPost({
 		mutationConfig: {

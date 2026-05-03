@@ -9,9 +9,9 @@ import {
 	type BlogFormValues,
 	useBlogForm,
 } from "@/features/blog/hooks/use-blog-form";
-import { BlogPreview } from "./BlogPreview";
+import { AdminBlogPreview } from "./admin-blog-preview";
 
-type BlogFormProps = {
+type AdminBlogFormProps = {
 	mode: "new" | "edit";
 	initialData?: BlogFormInitialData;
 	onSubmit: (values: BlogFormValues) => void;
@@ -21,14 +21,14 @@ type BlogFormProps = {
 	submitPendingLabel: string;
 };
 
-export const BlogForm = ({
+export const AdminBlogForm = ({
 	initialData,
 	onSubmit,
 	isPending,
 	headingText,
 	submitLabel,
 	submitPendingLabel,
-}: BlogFormProps) => {
+}: AdminBlogFormProps) => {
 	const navigate = useNavigate();
 	const {
 		form,
@@ -185,7 +185,7 @@ export const BlogForm = ({
 			) : (
 				<form.Subscribe selector={(s) => s.values}>
 					{(values) => (
-						<BlogPreview
+						<AdminBlogPreview
 							title={values.title}
 							excerpt={values.excerpt}
 							coverImage={values.coverImage}

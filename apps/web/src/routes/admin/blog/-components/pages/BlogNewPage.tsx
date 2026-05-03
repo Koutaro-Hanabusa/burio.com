@@ -1,8 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useCreateBlogPost } from "@/features/blog/api/create-blog-post";
+import { AdminBlogForm } from "@/features/blog/components/admin-blog-form";
 import type { BlogFormValues } from "@/features/blog/hooks/use-blog-form";
-import { BlogForm } from "../fragments/BlogForm";
 
 export const BlogNewPage = () => {
 	const navigate = useNavigate();
@@ -32,7 +32,7 @@ export const BlogNewPage = () => {
 
 	return (
 		<main className="min-h-screen px-6 py-20 md:px-12 lg:px-24">
-			<BlogForm
+			<AdminBlogForm
 				mode="new"
 				onSubmit={submit}
 				isPending={createPost.isPending}

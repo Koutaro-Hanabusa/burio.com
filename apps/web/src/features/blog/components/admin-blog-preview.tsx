@@ -1,6 +1,6 @@
 import type { RefObject } from "react";
 
-type BlogPreviewProps = {
+type AdminBlogPreviewProps = {
 	title: string;
 	excerpt: string;
 	coverImage: string;
@@ -9,14 +9,14 @@ type BlogPreviewProps = {
 	previewRef: RefObject<HTMLDivElement | null>;
 };
 
-export const BlogPreview = ({
+export const AdminBlogPreview = ({
 	title,
 	excerpt,
 	coverImage,
 	htmlContent,
 	tags,
 	previewRef,
-}: BlogPreviewProps) => {
+}: AdminBlogPreviewProps) => {
 	return (
 		<div className="space-y-6">
 			<div className="rounded-lg border bg-card p-6">

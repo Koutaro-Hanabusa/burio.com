@@ -3,12 +3,12 @@ import { useMemo } from "react";
 import { toast } from "sonner";
 import { useAdminBlogPost } from "@/features/blog/api/get-admin-blog-post";
 import { useUpdateBlogPost } from "@/features/blog/api/update-blog-post";
+import { AdminBlogForm } from "@/features/blog/components/admin-blog-form";
 import type {
 	BlogFormInitialData,
 	BlogFormValues,
 } from "@/features/blog/hooks/use-blog-form";
 import { stringifyTagsForm } from "@/features/blog/utils/parse-tags";
-import { BlogForm } from "../fragments/BlogForm";
 
 type BlogEditPageProps = {
 	id: number;
@@ -56,7 +56,7 @@ export const BlogEditPage = ({ id }: BlogEditPageProps) => {
 
 	return (
 		<main className="min-h-screen px-6 py-20 md:px-12 lg:px-24">
-			<BlogForm
+			<AdminBlogForm
 				mode="edit"
 				initialData={initialData}
 				onSubmit={submit}
