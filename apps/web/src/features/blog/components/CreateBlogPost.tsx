@@ -1,10 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { useCreateBlogPost } from "@/features/blog/api/create-blog-post";
-import { AdminBlogForm } from "@/features/blog/components/admin-blog-form";
+import { AdminBlogForm } from "@/features/blog/components/AdminBlogForm";
 import type { BlogFormValues } from "@/features/blog/hooks/use-blog-form";
 
-export const BlogNewPage = () => {
+export const CreateBlogPost = () => {
 	const navigate = useNavigate();
 
 	const createPost = useCreateBlogPost({
@@ -31,15 +31,13 @@ export const BlogNewPage = () => {
 	};
 
 	return (
-		<main className="min-h-screen px-6 py-20 md:px-12 lg:px-24">
-			<AdminBlogForm
-				mode="new"
-				onSubmit={submit}
-				isPending={createPost.isPending}
-				headingText="新しい記事を作成"
-				submitLabel="記事を作成"
-				submitPendingLabel="保存中..."
-			/>
-		</main>
+		<AdminBlogForm
+			mode="new"
+			onSubmit={submit}
+			isPending={createPost.isPending}
+			headingText="新しい記事を作成"
+			submitLabel="記事を作成"
+			submitPendingLabel="保存中..."
+		/>
 	);
 };

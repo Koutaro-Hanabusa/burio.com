@@ -20,17 +20,16 @@ import { parseTagsFromJson } from "@/features/blog/utils/parse-tags";
 import { calculateReadTime } from "@/utils/calculate-read-time";
 import { formatDate } from "@/utils/date";
 
-type BlogPostPageProps = {
+type BlogPostViewProps = {
 	id: number;
 };
 
-export const BlogPostPage = ({ id }: BlogPostPageProps) => {
+export const BlogPostView = ({ id }: BlogPostViewProps) => {
 	const post = useBlogPost(id);
 	const { htmlContent, contentRef } = useRenderedMarkdown(post.content);
 	const { copied, handleShare, handleCopyLink } = useSharePost(post);
 	const trackView = useTrackBlogPostView();
 
-	// Track page view (fire once per page load / per post)
 	// biome-ignore lint/correctness/useExhaustiveDependencies: track once per post id
 	useEffect(() => {
 		trackView.mutate({ id: post.id });
@@ -45,13 +44,12 @@ export const BlogPostPage = ({ id }: BlogPostPageProps) => {
 	const postTags = useMemo(() => parseTagsFromJson(post.tags), [post.tags]);
 
 	return (
-		<main className="min-h-screen">
+		<>
 			<Helmet>
 				<title>{post.title}</title>
 				<meta name="description" content={post.excerpt || ""} />
 				<link rel="canonical" href={pageUrl} />
 
-				{/* Open Graph Protocol */}
 				<meta property="og:type" content="article" />
 				<meta property="og:title" content={post.title} />
 				<meta property="og:description" content={post.excerpt || ""} />
@@ -61,7 +59,6 @@ export const BlogPostPage = ({ id }: BlogPostPageProps) => {
 				<meta property="og:image:height" content="630" />
 				<meta property="og:site_name" content="burio16.com" />
 
-				{/* Twitter Card */}
 				<meta name="twitter:card" content="summary_large_image" />
 				<meta name="twitter:title" content={post.title} />
 				<meta name="twitter:description" content={post.excerpt || ""} />
@@ -69,7 +66,6 @@ export const BlogPostPage = ({ id }: BlogPostPageProps) => {
 			</Helmet>
 
 			<motion.article
-				className="px-6 py-20 md:px-12 lg:px-24"
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.8 }}
@@ -211,6 +207,6 @@ export const BlogPostPage = ({ id }: BlogPostPageProps) => {
 					</motion.footer>
 				</div>
 			</motion.article>
-		</main>
+		</>
 	);
 };

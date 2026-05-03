@@ -1,6 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BlogNewPage } from "./-components/BlogNewPage";
+import { ContentLayout } from "@/components/layouts/ContentLayout";
+import { CreateBlogPost } from "@/features/blog/components/CreateBlogPost";
+
+const CreateBlogPostRoute = () => (
+	<ContentLayout>
+		<CreateBlogPost />
+	</ContentLayout>
+);
 
 export const Route = createFileRoute("/admin/blog/new")({
-	component: BlogNewPage,
+	component: CreateBlogPostRoute,
 });

@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 
-export const BlogNotFound = () => {
+export const AdminBlogEditNotFound = () => {
 	const navigate = useNavigate();
 
 	return (

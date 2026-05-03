@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const BlogEditPending = () => {
+export const AdminBlogEditPending = () => {
 	return (
 		<main className="min-h-screen px-6 py-20 md:px-12 lg:px-24">
 			<div className="mx-auto max-w-4xl space-y-6">

@@ -9,7 +9,7 @@ import {
 	type BlogFormValues,
 	useBlogForm,
 } from "@/features/blog/hooks/use-blog-form";
-import { AdminBlogPreview } from "./admin-blog-preview";
+import { AdminBlogPreview } from "./AdminBlogPreview";
 
 type AdminBlogFormProps = {
 	mode: "new" | "edit";

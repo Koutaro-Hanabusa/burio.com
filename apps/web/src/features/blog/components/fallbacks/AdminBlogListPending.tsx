@@ -4,7 +4,7 @@ import { RiAddLine } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const BlogListPending = () => {
+export const AdminBlogListPending = () => {
 	return (
 		<main className="min-h-screen px-6 py-20 md:px-12 lg:px-24">
 			<motion.div

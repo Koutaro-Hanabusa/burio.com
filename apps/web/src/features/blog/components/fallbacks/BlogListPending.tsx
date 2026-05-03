@@ -3,7 +3,7 @@ import { RiSearchLine } from "react-icons/ri";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export const BlogIndexPending = () => {
+export const BlogListPending = () => {
 	return (
 		<main className="min-h-screen">
 			<motion.div

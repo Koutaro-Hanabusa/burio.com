@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import { AdminGuard } from "@/components/admin-guard";
-import { AdminNavCards } from "@/features/admin/components/admin-nav-cards";
-import { AdminQuickActions } from "@/features/admin/components/admin-quick-actions";
+import { AdminNavCards } from "@/features/admin/components/AdminNavCards";
+import { AdminQuickActions } from "@/features/admin/components/AdminQuickActions";
 
-export const AdminDashboardPage = () => {
+export const AdminDashboard = () => {
 	return (
 		<AdminGuard>
 			<main className="min-h-screen bg-background">

@@ -1,18 +1,23 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { z } from "zod";
+import { ContentLayout } from "@/components/layouts/ContentLayout";
 import { getBlogPostQueryOptions } from "@/features/blog/api/get-blog-post";
-import { BlogPostError } from "./-components/BlogPostError";
-import { BlogPostNotFound } from "./-components/BlogPostNotFound";
-import { BlogPostPage } from "./-components/BlogPostPage";
-import { BlogPostPending } from "./-components/BlogPostPending";
+import { BlogPostView } from "@/features/blog/components/BlogPostView";
+import { BlogPostError } from "@/features/blog/components/fallbacks/BlogPostError";
+import { BlogPostNotFound } from "@/features/blog/components/fallbacks/BlogPostNotFound";
+import { BlogPostPending } from "@/features/blog/components/fallbacks/BlogPostPending";
 
 const paramsSchema = z.object({
 	id: z.coerce.number().int().positive(),
 });
 
-const PostRoute = () => {
+const BlogPostViewRoute = () => {
 	const { id } = Route.useParams();
-	return <BlogPostPage id={id} />;
+	return (
+		<ContentLayout>
+			<BlogPostView id={id} />
+		</ContentLayout>
+	);
 };
 
 export const Route = createFileRoute("/blog/$id")({
@@ -35,5 +40,5 @@ export const Route = createFileRoute("/blog/$id")({
 	pendingComponent: BlogPostPending,
 	errorComponent: BlogPostError,
 	notFoundComponent: BlogPostNotFound,
-	component: PostRoute,
+	component: BlogPostViewRoute,
 });

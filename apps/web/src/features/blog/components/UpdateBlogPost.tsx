@@ -3,18 +3,18 @@ import { useMemo } from "react";
 import { toast } from "sonner";
 import { useAdminBlogPost } from "@/features/blog/api/get-admin-blog-post";
 import { useUpdateBlogPost } from "@/features/blog/api/update-blog-post";
-import { AdminBlogForm } from "@/features/blog/components/admin-blog-form";
+import { AdminBlogForm } from "@/features/blog/components/AdminBlogForm";
 import type {
 	BlogFormInitialData,
 	BlogFormValues,
 } from "@/features/blog/hooks/use-blog-form";
 import { stringifyTagsForm } from "@/features/blog/utils/parse-tags";
 
-type BlogEditPageProps = {
+type UpdateBlogPostProps = {
 	id: number;
 };
 
-export const BlogEditPage = ({ id }: BlogEditPageProps) => {
+export const UpdateBlogPost = ({ id }: UpdateBlogPostProps) => {
 	const navigate = useNavigate();
 	const post = useAdminBlogPost(id);
 
@@ -55,16 +55,14 @@ export const BlogEditPage = ({ id }: BlogEditPageProps) => {
 	};
 
 	return (
-		<main className="min-h-screen px-6 py-20 md:px-12 lg:px-24">
-			<AdminBlogForm
-				mode="edit"
-				initialData={initialData}
-				onSubmit={submit}
-				isPending={updatePost.isPending}
-				headingText="記事を編集"
-				submitLabel="記事を更新"
-				submitPendingLabel="更新中..."
-			/>
-		</main>
+		<AdminBlogForm
+			mode="edit"
+			initialData={initialData}
+			onSubmit={submit}
+			isPending={updatePost.isPending}
+			headingText="記事を編集"
+			submitLabel="記事を更新"
+			submitPendingLabel="更新中..."
+		/>
 	);
 };

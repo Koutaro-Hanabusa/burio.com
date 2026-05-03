@@ -1,21 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ContentLayout } from "@/components/layouts/ContentLayout";
 import { getAdminBlogPostsQueryOptions } from "@/features/blog/api/get-admin-blog-posts";
-import { AdminBlogList } from "@/features/blog/components/admin-blog-list";
-import { BlogListError } from "./-components/BlogListError";
-import { BlogListPending } from "./-components/BlogListPending";
+import { AdminBlogList } from "@/features/blog/components/AdminBlogList";
+import { AdminBlogListError } from "@/features/blog/components/fallbacks/AdminBlogListError";
+import { AdminBlogListPending } from "@/features/blog/components/fallbacks/AdminBlogListPending";
 
-const BlogAdmin = () => {
-	return (
-		<main className="min-h-screen px-6 py-20 md:px-12 lg:px-24">
-			<AdminBlogList />
-		</main>
-	);
-};
+const AdminBlogListRoute = () => (
+	<ContentLayout>
+		<AdminBlogList />
+	</ContentLayout>
+);
 
 export const Route = createFileRoute("/admin/blog/")({
 	loader: ({ context }) =>
 		context.queryClient.ensureQueryData(getAdminBlogPostsQueryOptions()),
-	pendingComponent: BlogListPending,
-	errorComponent: BlogListError,
-	component: BlogAdmin,
+	pendingComponent: AdminBlogListPending,
+	errorComponent: AdminBlogListError,
+	component: AdminBlogListRoute,
 });

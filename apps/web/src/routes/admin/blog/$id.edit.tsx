@@ -1,18 +1,23 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { z } from "zod";
+import { ContentLayout } from "@/components/layouts/ContentLayout";
 import { getAdminBlogPostQueryOptions } from "@/features/blog/api/get-admin-blog-post";
-import { BlogEditError } from "./-components/BlogEditError";
-import { BlogEditPage } from "./-components/BlogEditPage";
-import { BlogEditPending } from "./-components/BlogEditPending";
-import { BlogNotFound } from "./-components/BlogNotFound";
+import { AdminBlogEditError } from "@/features/blog/components/fallbacks/AdminBlogEditError";
+import { AdminBlogEditNotFound } from "@/features/blog/components/fallbacks/AdminBlogEditNotFound";
+import { AdminBlogEditPending } from "@/features/blog/components/fallbacks/AdminBlogEditPending";
+import { UpdateBlogPost } from "@/features/blog/components/UpdateBlogPost";
 
 const paramsSchema = z.object({
 	id: z.coerce.number().int().positive(),
 });
 
-const EditRoute = () => {
+const UpdateBlogPostRoute = () => {
 	const { id } = Route.useParams();
-	return <BlogEditPage id={id} />;
+	return (
+		<ContentLayout>
+			<UpdateBlogPost id={id} />
+		</ContentLayout>
+	);
 };
 
 export const Route = createFileRoute("/admin/blog/$id/edit")({
@@ -26,15 +31,14 @@ export const Route = createFileRoute("/admin/blog/$id/edit")({
 				getAdminBlogPostQueryOptions(params.id),
 			);
 		} catch (error) {
-			// サーバ側で記事未発見時は "Post not found" を throw する
 			if (error instanceof Error && /not found/i.test(error.message)) {
 				throw notFound();
 			}
 			throw error;
 		}
 	},
-	pendingComponent: BlogEditPending,
-	errorComponent: BlogEditError,
-	notFoundComponent: BlogNotFound,
-	component: EditRoute,
+	pendingComponent: AdminBlogEditPending,
+	errorComponent: AdminBlogEditError,
+	notFoundComponent: AdminBlogEditNotFound,
+	component: UpdateBlogPostRoute,
 });
