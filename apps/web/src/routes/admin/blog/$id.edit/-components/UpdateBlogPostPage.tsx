@@ -1,6 +1,7 @@
-import { useNavigate } from "@tanstack/react-router";
+import { getRouteApi, useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { toast } from "sonner";
+import { ContentLayout } from "@/components/layouts/ContentLayout";
 import { useAdminBlogPost } from "@/features/blog/api/get-admin-blog-post";
 import { useUpdateBlogPost } from "@/features/blog/api/update-blog-post";
 import { AdminBlogForm } from "@/features/blog/components/AdminBlogForm";
@@ -10,11 +11,10 @@ import type {
 } from "@/features/blog/hooks/use-blog-form";
 import { stringifyTagsForm } from "@/features/blog/utils/parse-tags";
 
-type UpdateBlogPostProps = {
-	id: number;
-};
+const route = getRouteApi("/admin/blog/$id/edit");
 
-export const UpdateBlogPost = ({ id }: UpdateBlogPostProps) => {
+export const UpdateBlogPostPage = () => {
+	const { id } = route.useParams();
 	const navigate = useNavigate();
 	const post = useAdminBlogPost(id);
 
@@ -55,14 +55,16 @@ export const UpdateBlogPost = ({ id }: UpdateBlogPostProps) => {
 	};
 
 	return (
-		<AdminBlogForm
-			mode="edit"
-			initialData={initialData}
-			onSubmit={submit}
-			isPending={updatePost.isPending}
-			headingText="記事を編集"
-			submitLabel="記事を更新"
-			submitPendingLabel="更新中..."
-		/>
+		<ContentLayout>
+			<AdminBlogForm
+				mode="edit"
+				initialData={initialData}
+				onSubmit={submit}
+				isPending={updatePost.isPending}
+				headingText="記事を編集"
+				submitLabel="記事を更新"
+				submitPendingLabel="更新中..."
+			/>
+		</ContentLayout>
 	);
 };
