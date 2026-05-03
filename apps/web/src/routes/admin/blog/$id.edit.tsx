@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { z } from "zod";
-import { getAdminBlogPostQueryOptions } from "@/features/admin-blog/api/get-admin-blog-post";
+import { getAdminBlogPostQueryOptions } from "@/features/blog/api/get-admin-blog-post";
 import { BlogEditError } from "./-components/fallbacks/BlogEditError";
 import { BlogEditPending } from "./-components/fallbacks/BlogEditPending";
 import { BlogNotFound } from "./-components/fallbacks/BlogNotFound";

@@ -1,12 +1,12 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { toast } from "sonner";
-import { useAdminBlogPost } from "@/features/admin-blog/api/get-admin-blog-post";
-import { useUpdateBlogPost } from "@/features/admin-blog/api/update-blog-post";
+import { useAdminBlogPost } from "@/features/blog/api/get-admin-blog-post";
+import { useUpdateBlogPost } from "@/features/blog/api/update-blog-post";
 import type {
 	BlogFormInitialData,
 	BlogFormValues,
-} from "@/features/admin-blog/hooks/use-blog-form";
+} from "@/features/blog/hooks/use-blog-form";
 import { stringifyTagsForm } from "@/features/blog/utils/parse-tags";
 import { BlogForm } from "../fragments/BlogForm";
 

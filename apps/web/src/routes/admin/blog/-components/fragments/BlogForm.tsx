@@ -8,7 +8,7 @@ import {
 	type BlogFormInitialData,
 	type BlogFormValues,
 	useBlogForm,
-} from "@/features/admin-blog/hooks/use-blog-form";
+} from "@/features/blog/hooks/use-blog-form";
 import { BlogPreview } from "./BlogPreview";
 
 type BlogFormProps = {

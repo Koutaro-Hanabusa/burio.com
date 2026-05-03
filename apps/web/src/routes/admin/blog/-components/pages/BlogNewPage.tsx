@@ -1,7 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useCreateBlogPost } from "@/features/admin-blog/api/create-blog-post";
-import type { BlogFormValues } from "@/features/admin-blog/hooks/use-blog-form";
+import { useCreateBlogPost } from "@/features/blog/api/create-blog-post";
+import type { BlogFormValues } from "@/features/blog/hooks/use-blog-form";
 import { BlogForm } from "../fragments/BlogForm";
 
 export const BlogNewPage = () => {

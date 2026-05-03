@@ -9,9 +9,9 @@ import {
 } from "react-icons/ri";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { useDeleteBlogPost } from "@/features/admin-blog/api/delete-blog-post";
-import { useAdminBlogPosts } from "@/features/admin-blog/api/get-admin-blog-posts";
-import { useTogglePublishBlogPost } from "@/features/admin-blog/api/toggle-publish-blog-post";
+import { useDeleteBlogPost } from "@/features/blog/api/delete-blog-post";
+import { useAdminBlogPosts } from "@/features/blog/api/get-admin-blog-posts";
+import { useTogglePublishBlogPost } from "@/features/blog/api/toggle-publish-blog-post";
 import { formatDateShort } from "@/utils/format-date-short";
 
 export const BlogList = () => {
