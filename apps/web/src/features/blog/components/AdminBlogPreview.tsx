@@ -20,7 +20,9 @@ export const AdminBlogPreview = ({
 	return (
 		<div className="space-y-6">
 			<div className="rounded-lg border bg-card p-6">
-				<h2 className="mb-4 font-bold text-2xl">{title || "タイトル未設定"}</h2>
+				<h1 className="mb-4 font-bold text-4xl leading-tight md:text-5xl">
+					{title || "タイトル未設定"}
+				</h1>
 				{excerpt && <p className="mb-4 text-muted-foreground">{excerpt}</p>}
 				{coverImage && (
 					<img
