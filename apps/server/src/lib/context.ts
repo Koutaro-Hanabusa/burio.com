@@ -5,10 +5,14 @@ export type CreateContextOptions = {
 };
 
 export async function createContext({ context }: CreateContextOptions) {
+	// tRPC mutation から Set-Cookie を返す経路。index.ts の responseMeta でレスポンスにマージする。
+	const responseHeaders = new Headers();
+
 	return {
 		session: null,
-		env: context.env, // Cloudflare環境変数とバインディング
-		req: context.req.raw, // 元のRequestオブジェクト
+		env: context.env,
+		req: context.req.raw,
+		responseHeaders,
 	};
 }
 
