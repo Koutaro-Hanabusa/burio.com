@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getBlogPosts } from "@/features/blog/server/get-blog-posts";
+import { getBlogPosts } from "@/features/blog/api/get-blog-posts";
 import { BlogPostsPage } from "./-components/BlogPostsPage";
 import { BlogListError } from "./-components/fallbacks/BlogListError";
 import { BlogListPending } from "./-components/fallbacks/BlogListPending";

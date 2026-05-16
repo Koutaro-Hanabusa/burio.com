@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { z } from "zod";
-import { getBlogPost } from "@/features/blog/server/get-blog-post";
+import { getBlogPost } from "@/features/blog/api/get-blog-post";
 import { buildBlogPostHead } from "@/features/blog/utils/build-blog-post-head";
 import { BlogPostPage } from "./-components/BlogPostPage";
 import { BlogPostError } from "./-components/fallbacks/BlogPostError";

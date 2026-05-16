@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { env } from "cloudflare:workers";
-import { buildOgResponse } from "@/features/og/server/build-og-response";
+import { buildOgResponse } from "@/features/og/api/build-og-response";
 
 export const Route = createFileRoute("/api/og/blog/$id")({
 	server: {
