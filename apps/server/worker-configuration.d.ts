@@ -14,6 +14,12 @@ declare namespace Cloudflare {
 		BETTER_AUTH_SECRET: string;
 		BETTER_AUTH_URL: string;
 		DB: D1Database;
+		// 管理者トークン署名用シークレット。wrangler secret put ADMIN_TOKEN_SECRET で設定する。
+		ADMIN_TOKEN_SECRET: string;
+		// 管理者 IP 許可リスト（カンマ区切り）。未設定時はローカル IP のみ許可。
+		ADMIN_ALLOWED_IPS?: string;
+		// R2 バケット
+		R2_BUCKET?: R2Bucket;
 	}
 }
 interface CloudflareBindings extends Cloudflare.Env {}

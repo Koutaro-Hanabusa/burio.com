@@ -40,6 +40,18 @@ app.use(
 		createContext: (_opts, context) => {
 			return createContext({ context });
 		},
+		// tRPC middleware が ctx.responseHeaders に積んだ Set-Cookie を
+		// fetchRequestHandler のレスポンスにマージする経路。
+		// Express/Lambda では代わりにレスポンスオブジェクトへ直接 appendHeader する。
+		responseMeta: ({ ctx }) => {
+			const headers = new Headers();
+			if (ctx?.responseHeaders) {
+				for (const [key, value] of ctx.responseHeaders.entries()) {
+					headers.append(key, value);
+				}
+			}
+			return { headers };
+		},
 	}),
 );
 
