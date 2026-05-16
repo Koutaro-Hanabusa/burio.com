@@ -1,9 +1,3 @@
-// このファイルは Web Crypto API (crypto.subtle) のみ使用しているため、
-// AWS Lambda (Node.js 18+) / Express / Vercel Edge / Bun / Deno などに
-// そのままコピーして移植可能。外部依存ゼロ。
-
-// --- base64url helpers ---
-
 function base64urlEncode(data: ArrayBuffer): string {
 	return btoa(String.fromCharCode(...new Uint8Array(data)))
 		.replace(/\+/g, "-")
@@ -31,8 +25,6 @@ function base64urlDecode(str: string): Uint8Array<ArrayBuffer> {
 	return view;
 }
 
-// --- internal ---
-
 async function importKey(secret: string): Promise<CryptoKey> {
 	const encoded = new TextEncoder().encode(secret);
 	return crypto.subtle.importKey(
@@ -44,8 +36,6 @@ async function importKey(secret: string): Promise<CryptoKey> {
 	);
 }
 
-// --- public API ---
-
 export interface AdminTokenPayload {
 	sub: string;
 	iat: number;
@@ -56,10 +46,7 @@ const HEADER = base64urlEncodeString(
 	JSON.stringify({ alg: "HS256", typ: "JWT" }),
 );
 
-/**
- * HS256 JWT を生成する。
- * secret は環境変数から渡すこと。最低 32 バイト以上を推奨。
- */
+// secret は最低 32 バイト以上を推奨
 export async function signAdminToken(
 	secret: string,
 	payload: AdminTokenPayload,
@@ -77,10 +64,7 @@ export async function signAdminToken(
 	return `${signingInput}.${base64urlEncode(signatureBuffer)}`;
 }
 
-/**
- * HS256 JWT を検証し、有効なペイロードを返す。
- * 署名不正・期限切れ・形式不正はすべて null を返す（例外は投げない）。
- */
+// 署名不正・期限切れ・形式不正はすべて null（例外は投げない）
 export async function verifyAdminToken(
 	secret: string,
 	token: string,
@@ -120,12 +104,10 @@ export async function verifyAdminToken(
 
 		const typed = payload as AdminTokenPayload;
 
-		// exp チェック: Math.floor(Date.now() / 1000) と比較
 		if (typed.exp < Math.floor(Date.now() / 1000)) return null;
 
 		return typed;
 	} catch {
-		// JSON.parse 失敗 / base64 デコード失敗などは null で返す
 		return null;
 	}
 }

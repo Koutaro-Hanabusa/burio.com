@@ -3,7 +3,11 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db";
 import { posts } from "../db/schema";
-import { buildAdminCookie, buildClearAdminCookie } from "../lib/admin-cookie";
+import {
+	buildAdminCookie,
+	buildClearAdminCookie,
+	parseAdminToken,
+} from "../lib/admin-cookie";
 import { signAdminToken, verifyAdminToken } from "../lib/admin-token";
 import { publicProcedure, router } from "../lib/trpc";
 import { adminAuthMiddleware } from "../middleware/admin-auth";
@@ -15,12 +19,9 @@ import {
 
 const TOKEN_TTL_SECONDS = 3600;
 
-// Cookie 検証ベースの管理者専用プロシージャ
 const adminProcedure = publicProcedure.use(adminAuthMiddleware);
 
 export const adminRouter = router({
-	// IP チェックを経由してトークンを発行し、HttpOnly Cookie にセットする。
-	// フロントは Server Function 経由でこの mutation を一度だけ呼び出す。
 	authenticate: publicProcedure.mutation(async ({ ctx }) => {
 		const secret = ctx.env?.ADMIN_TOKEN_SECRET;
 		if (!secret) {
@@ -49,30 +50,22 @@ export const adminRouter = router({
 		return { authenticated: true, expiresAt: exp * 1000 };
 	}),
 
-	// Cookie を削除してサインアウトする。
 	signOut: publicProcedure.mutation(({ ctx }) => {
 		ctx.responseHeaders.append("Set-Cookie", buildClearAdminCookie());
 		return { success: true };
 	}),
 
-	// Cookie トークンの有効性を確認する。
-	// フロントの AdminGuard がこのレスポンスで表示を切り替える。
 	checkAccess: publicProcedure.query(async ({ ctx }) => {
 		const secret = ctx.env?.ADMIN_TOKEN_SECRET;
-		if (!secret) {
-			return { authenticated: false };
-		}
+		if (!secret) return { authenticated: false };
 
-		const cookieHeader = ctx.req.headers.get("Cookie");
-		const { parseAdminToken } = await import("../lib/admin-cookie");
-		const token = parseAdminToken(cookieHeader);
+		const token = parseAdminToken(ctx.req.headers.get("Cookie"));
 		if (!token) return { authenticated: false };
 
 		const payload = await verifyAdminToken(secret, token);
 		return { authenticated: payload !== null };
 	}),
 
-	// 管理者専用：全ての記事取得（下書きも含む）
 	getAllPosts: adminProcedure
 		.input(
 			z.object({
@@ -91,7 +84,6 @@ export const adminRouter = router({
 			return result;
 		}),
 
-	// 管理者専用：記事作成
 	createPost: adminProcedure
 		.input(
 			z.object({
@@ -132,7 +124,6 @@ export const adminRouter = router({
 			return result[0];
 		}),
 
-	// 管理者専用：記事更新
 	updatePost: adminProcedure
 		.input(
 			z.object({
@@ -191,7 +182,6 @@ export const adminRouter = router({
 			return result[0];
 		}),
 
-	// 管理者専用：記事削除
 	deletePost: adminProcedure
 		.input(z.object({ id: z.number() }))
 		.mutation(async ({ input, ctx }) => {

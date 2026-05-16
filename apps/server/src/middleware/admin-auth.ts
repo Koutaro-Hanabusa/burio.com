@@ -1,18 +1,9 @@
-// tRPC middleware として実装しているが、概念は他環境でも同一:
-//   Hono:    app.use("/admin/*", async (c, next) => { ... })
-//   Express: app.use("/admin", (req, res, next) => { ... })
-//   Lambda:  ハンドラのラッパー関数でトークン検証を実行
-//   NestJS:  @Injectable() class AdminAuthGuard implements CanActivate { ... }
-
 import { TRPCError } from "@trpc/server";
 import { buildAdminCookie, parseAdminToken } from "../lib/admin-cookie";
 import { signAdminToken, verifyAdminToken } from "../lib/admin-token";
 import { t } from "../lib/trpc";
 
-// トークン期限まで 15 分以内であれば自動リフレッシュする閾値 (秒)
 const REFRESH_THRESHOLD_SECONDS = 15 * 60;
-
-// リフレッシュ後のトークン有効期間 (秒)
 const TOKEN_TTL_SECONDS = 3600;
 
 export const adminAuthMiddleware = t.middleware(async ({ ctx, next }) => {
@@ -36,7 +27,6 @@ export const adminAuthMiddleware = t.middleware(async ({ ctx, next }) => {
 		throw new TRPCError({ code: "UNAUTHORIZED" });
 	}
 
-	// 期限まで REFRESH_THRESHOLD_SECONDS 以内なら自動リフレッシュ
 	const now = Math.floor(Date.now() / 1000);
 	if (payload.exp - now < REFRESH_THRESHOLD_SECONDS) {
 		const iat = now;

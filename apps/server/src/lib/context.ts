@@ -5,13 +5,7 @@ export type CreateContextOptions = {
 };
 
 export async function createContext({ context }: CreateContextOptions) {
-	// responseHeaders は tRPC mutation が Set-Cookie を返すための口。
-	// Hono 側の responseMeta コールバックでこの Headers をレスポンスにマージする。
-	//
-	// 他環境での対応:
-	//   Express: res.setHeader / res.appendHeader を直接呼ぶラッパーを渡す
-	//   AWS Lambda: ハンドラが返す multiValueHeaders に追記する
-	//   NestJS: ExecutionContext.switchToHttp().getResponse() 経由で appendHeader
+	// tRPC mutation から Set-Cookie を返す経路。index.ts の responseMeta でレスポンスにマージする。
 	const responseHeaders = new Headers();
 
 	return {

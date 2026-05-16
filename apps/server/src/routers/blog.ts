@@ -9,21 +9,6 @@ import {
 	isIPAllowed,
 } from "../middleware/client-ip";
 
-const createSlug = (title: string): string => {
-	const baseSlug = title
-		.toLowerCase()
-		.replace(/[^\p{L}\p{N}\s-]/gu, "")
-		.replace(/\s+/g, "-")
-		.replace(/-+/g, "-")
-		.trim();
-
-	if (!baseSlug) {
-		return `post-${Date.now()}`;
-	}
-
-	return baseSlug;
-};
-
 export const blogRouter = router({
 	getAll: publicProcedure
 		.input(
@@ -195,6 +180,3 @@ export const blogRouter = router({
 			return result;
 		}),
 });
-
-// createSlug は将来の拡張のためエクスポートしておく
-export { createSlug };
