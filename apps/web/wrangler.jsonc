@@ -1,9 +1,12 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "burio-com",
-	"compatibility_date": "2025-04-03",
+	"main": "./src/server.ts",
+	"compatibility_date": "2026-05-14",
 	"compatibility_flags": ["nodejs_compat"],
-	"pages_build_output_dir": "dist",
+	"observability": {
+		"enabled": true,
+	},
 	"vars": {
 		"SERVER_URL": "https://api.burio16.com",
 		"R2_PUBLIC_URL": "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev",
