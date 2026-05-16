@@ -26,10 +26,10 @@ const TanStackRouterDevtools =
 			)
 		: () => null;
 
-import Header from "@/components/header";
+import Header from "@/components/layouts/header";
 import Loader from "@/components/loader";
 import NotFound from "@/components/not-found";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import type { trpc } from "@/utils/trpc";
 import "../index.css";
