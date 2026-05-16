@@ -5,10 +5,10 @@ import { BlogPostView } from "@/features/blog/components/BlogPostView";
 const route = getRouteApi("/blog/$id/");
 
 export const BlogPostPage = () => {
-	const { id } = route.useParams();
+	const post = route.useLoaderData();
 	return (
 		<ContentLayout>
-			<BlogPostView id={id} />
+			<BlogPostView post={post} />
 		</ContentLayout>
 	);
 };
