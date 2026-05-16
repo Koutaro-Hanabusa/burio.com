@@ -7,7 +7,7 @@
 	"compatibility_date": "2025-06-15",
 	"compatibility_flags": [
 		"nodejs_compat",
-		"nodejs_compat_populate_process_env"
+		"nodejs_compat_populate_process_env",
 	],
 	"workers_dev": true,
 	"preview_urls": true,
@@ -20,19 +20,19 @@
 			"enabled": true,
 			"head_sampling_rate": 1,
 			"persist": true,
-			"invocation_logs": true
+			"invocation_logs": true,
 		},
 		"traces": {
 			"enabled": false,
 			"persist": true,
-			"head_sampling_rate": 1
-		}
+			"head_sampling_rate": 1,
+		},
 	},
 
 	"vars": {
 		"NODE_ENV": "production",
 		"CORS_ORIGIN": "https://burio16.com",
-		"BETTER_AUTH_URL": "https://api.burio16.com"
+		"BETTER_AUTH_URL": "https://api.burio16.com",
 	},
 
 	// For sensitive data, use:
@@ -53,14 +53,14 @@
 			"database_name": "burio-com-db",
 			"database_id": "7390edad-195a-4da4-80a8-90209083afcc",
 			"preview_database_id": "02de547d-2aa5-4183-933a-25503971e540",
-			"migrations_dir": "./src/db/migrations"
-		}
+			"migrations_dir": "./src/db/migrations",
+		},
 	],
 	"r2_buckets": [
 		{
 			"binding": "R2_BUCKET",
-			"bucket_name": "burio-com-blog"
-		}
+			"bucket_name": "burio-com-blog",
+		},
 	],
 	"env": {
 		"dev": {
@@ -71,20 +71,20 @@
 					"database_name": "burio-com-dev",
 					"database_id": "02de547d-2aa5-4183-933a-25503971e540",
 					"preview_database_id": "02de547d-2aa5-4183-933a-25503971e540",
-					"migrations_dir": "./src/db/migrations"
-				}
+					"migrations_dir": "./src/db/migrations",
+				},
 			],
 			"r2_buckets": [
 				{
 					"binding": "R2_BUCKET",
-					"bucket_name": "burio-com-blog-dev"
-				}
+					"bucket_name": "burio-com-blog-dev",
+				},
 			],
 			"vars": {
 				"NODE_ENV": "development",
 				"CORS_ORIGIN": "http://localhost:3001",
-				"BETTER_AUTH_URL": "http://localhost:3000"
-			}
-		}
-	}
+				"BETTER_AUTH_URL": "http://localhost:3000",
+			},
+		},
+	},
 }

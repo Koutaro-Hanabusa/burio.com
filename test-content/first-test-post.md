@@ -16,11 +16,11 @@
 
 さらに多くのコンテンツをテストするためのセクションです。
 
-**太字テキスト** と *斜体テキスト* の表示も確認できます。
+**太字テキスト** と _斜体テキスト_ の表示も確認できます。
 
 ```javascript
 // コードブロックのテスト
-console.log('Hello from R2 content!');
+console.log("Hello from R2 content!");
 ```
 
 ## 結論

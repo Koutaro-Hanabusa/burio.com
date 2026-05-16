@@ -4,9 +4,9 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.vscode/**'
+      - "**.md"
+      - "docs/**"
+      - ".vscode/**"
   workflow_dispatch:
 
 concurrency:
@@ -18,8 +18,8 @@ permissions:
   deployments: write
 
 env:
-  BUN_VERSION: '1.3.14'
-  NODE_VERSION: '24'
+  BUN_VERSION: "1.3.14"
+  NODE_VERSION: "24"
 
 jobs:
   deploy:
