@@ -11,7 +11,7 @@ export function useAdminAccess() {
 	);
 
 	return {
-		isAdmin: accessCheck?.authenticated ?? false,
+		isAdmin: accessCheck?.allowed ?? false,
 		isLoading,
 	};
 }

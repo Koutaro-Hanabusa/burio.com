@@ -3,12 +3,8 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "../db";
 import { posts } from "../db/schema";
-import {
-	buildAdminCookie,
-	buildClearAdminCookie,
-	parseAdminToken,
-} from "../lib/admin-cookie";
-import { signAdminToken, verifyAdminToken } from "../lib/admin-token";
+import { buildAdminCookie, buildClearAdminCookie } from "../lib/admin-cookie";
+import { signAdminToken } from "../lib/admin-token";
 import { publicProcedure, router } from "../lib/trpc";
 import { adminAuthMiddleware } from "../middleware/admin-auth";
 import {
@@ -55,15 +51,11 @@ export const adminRouter = router({
 		return { success: true };
 	}),
 
-	checkAccess: publicProcedure.query(async ({ ctx }) => {
-		const secret = ctx.env?.ADMIN_TOKEN_SECRET;
-		if (!secret) return { authenticated: false };
-
-		const token = parseAdminToken(ctx.req.headers.get("Cookie"));
-		if (!token) return { authenticated: false };
-
-		const payload = await verifyAdminToken(secret, token);
-		return { authenticated: payload !== null };
+	// UI ヒント用の IP 判定。実際の認可は Cookie トークンで adminProcedure が行う。
+	checkAccess: publicProcedure.query(({ ctx }) => {
+		const ip = getClientIP(ctx.req);
+		const allowed = isIPAllowed(ip, getAllowedIPs(ctx.env?.ADMIN_ALLOWED_IPS));
+		return { allowed };
 	}),
 
 	getAllPosts: adminProcedure
