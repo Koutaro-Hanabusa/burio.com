@@ -2,10 +2,10 @@ pre-commit:
   parallel: true
   commands:
     oxlint:
-      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx}"
-      run: bunx oxlint --fix {staged_files}
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,d.ts,jsx,tsx}"
+      run: '[ -z "{staged_files}" ] || bunx oxlint --fix {staged_files}'
       stage_fixed: true
     oxfmt:
-      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,css}"
-      run: bunx oxfmt {staged_files}
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,d.ts,jsx,tsx,json,jsonc,css}"
+      run: '[ -z "{staged_files}" ] || bunx oxfmt {staged_files}'
       stage_fixed: true
