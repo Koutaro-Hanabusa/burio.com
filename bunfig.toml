@@ -1,2 +1,5 @@
 [install]
 linker = "isolated"
+# サプライチェーン攻撃対策: リリース後 7 日経過していないバージョンはインストールしない
+# https://bun.com/docs/runtime/bunfig#install-minimumreleaseage
+minimumReleaseAge = 604800
