@@ -27,17 +27,20 @@ bun run blog:create
 新しいブログ記事を作成するためのインタラクティブなスクリプトです。
 
 **機能:**
+
 - Markdownテンプレート生成
 - DBへのメタデータ挿入
 - R2への自動アップロード
 - スラッグの自動生成
 
 **使用方法:**
+
 ```bash
 bun run blog:create
 ```
 
 **フロー:**
+
 1. タイトル、概要、タグなどを入力
 2. Markdownテンプレートが生成される
 3. エディタで内容を編集
@@ -48,6 +51,7 @@ bun run blog:create
 S3 APIを使用してCloudflare R2ストレージを直接操作するスクリプトです。
 
 **使用方法:**
+
 ```bash
 # ファイルをアップロード
 bun run r2:upload <filePath> <slug> [env]
@@ -60,6 +64,7 @@ bun run r2:delete <slug> [env]
 ```
 
 **例:**
+
 ```bash
 # 開発環境にアップロード
 bun run r2:upload ./my-post.md my-post-slug dev
@@ -76,6 +81,7 @@ bun run r2:delete my-post-slug dev
 wranglerコマンドを使用したシンプルなアップロードスクリプトです。
 
 **使用方法:**
+
 ```bash
 bun run scripts/upload-to-r2.js <filePath> <slug> [env]
 ```

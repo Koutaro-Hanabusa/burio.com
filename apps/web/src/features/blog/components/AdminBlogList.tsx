@@ -102,6 +102,11 @@ export const AdminBlogList = () => {
 										<Button
 											variant="ghost"
 											size="sm"
+											aria-label={
+												post.published === 1
+													? "記事を非公開にする"
+													: "記事を公開する"
+											}
 											onClick={() =>
 												handleTogglePublish(post.id, post.published === 1)
 											}
@@ -123,6 +128,7 @@ export const AdminBlogList = () => {
 												<Link
 													to="/admin/blog/$id/edit"
 													params={{ id: post.id }}
+													aria-label={`「${post.title}」を編集`}
 												>
 													<RiEditLine className="h-4 w-4" />
 												</Link>
@@ -130,6 +136,7 @@ export const AdminBlogList = () => {
 											<Button
 												variant="ghost"
 												size="sm"
+												aria-label={`「${post.title}」を削除`}
 												onClick={() => handleDelete(post.id, post.title)}
 												className="text-destructive hover:text-destructive"
 											>

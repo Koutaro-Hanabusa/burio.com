@@ -4,9 +4,9 @@ on:
   push:
     branches: [staging]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.vscode/**'
+      - "**.md"
+      - "docs/**"
+      - ".vscode/**"
   workflow_dispatch:
 
 concurrency:

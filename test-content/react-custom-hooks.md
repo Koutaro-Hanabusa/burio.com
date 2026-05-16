@@ -11,16 +11,16 @@ Reactのカスタムフックは、ロジックを再利用可能な形で抽出
 ### useCounterフック
 
 ```javascript
-import { useState } from 'react';
+import { useState } from "react";
 
 function useCounter(initialValue = 0) {
-  const [count, setCount] = useState(initialValue);
+	const [count, setCount] = useState(initialValue);
 
-  const increment = () => setCount(count + 1);
-  const decrement = () => setCount(count - 1);
-  const reset = () => setCount(initialValue);
+	const increment = () => setCount(count + 1);
+	const decrement = () => setCount(count - 1);
+	const reset = () => setCount(initialValue);
 
-  return { count, increment, decrement, reset };
+	return { count, increment, decrement, reset };
 }
 ```
 
@@ -28,16 +28,16 @@ function useCounter(initialValue = 0) {
 
 ```javascript
 function Counter() {
-  const { count, increment, decrement, reset } = useCounter(0);
+	const { count, increment, decrement, reset } = useCounter(0);
 
-  return (
-    <div>
-      <p>カウント: {count}</p>
-      <button onClick={increment}>+</button>
-      <button onClick={decrement}>-</button>
-      <button onClick={reset}>リセット</button>
-    </div>
-  );
+	return (
+		<div>
+			<p>カウント: {count}</p>
+			<button onClick={increment}>+</button>
+			<button onClick={decrement}>-</button>
+			<button onClick={reset}>リセット</button>
+		</div>
+	);
 }
 ```
 
@@ -46,31 +46,31 @@ function Counter() {
 ### useApiフック
 
 ```javascript
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 function useApi(url) {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+	const [data, setData] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(url);
-        const result = await response.json();
-        setData(result);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				setLoading(true);
+				const response = await fetch(url);
+				const result = await response.json();
+				setData(result);
+			} catch (err) {
+				setError(err);
+			} finally {
+				setLoading(false);
+			}
+		};
 
-    fetchData();
-  }, [url]);
+		fetchData();
+	}, [url]);
 
-  return { data, loading, error };
+	return { data, loading, error };
 }
 ```
 
