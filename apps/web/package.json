@@ -14,9 +14,7 @@
 		"test:watch": "vitest",
 		"test:ui": "vitest --ui",
 		"test:coverage": "vitest --coverage",
-		"cf-typegen": "wrangler types",
-		"deploy": "bun run build && wrangler deploy",
-		"deploy:preview": "bun run build && wrangler versions upload"
+		"cf-typegen": "wrangler types"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.1.1",
