@@ -45,7 +45,7 @@ export const BlogPostView = ({ id }: BlogPostViewProps) => {
 		setPageUrl(window.location.href);
 	}, []);
 
-	const ogImageUrl = `https://burio16.com/blog/${id}/og.png`;
+	const ogImageUrl = `https://burio16.com/api/og/blog/${id}`;
 
 	const postTags = useMemo(() => parseTagsFromJson(post.tags), [post.tags]);
 

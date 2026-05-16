@@ -15,7 +15,7 @@
 			"@/*": ["./src/*"]
 		}
 	},
-	"exclude": ["vitest.config.ts", "functions"],
+	"exclude": ["vitest.config.ts"],
 	"references": [
 		{
 			"path": "../server"
