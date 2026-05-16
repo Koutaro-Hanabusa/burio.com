@@ -6,16 +6,15 @@ import {
 import { getQueryKey } from "@trpc/react-query";
 import { trpc, trpcClient } from "@/utils/trpc";
 
-type UpdateBlogPostInput = Parameters<typeof trpcClient.blog.update.mutate>[0];
+type UpdateBlogPostInput = Parameters<
+	typeof trpcClient.admin.updatePost.mutate
+>[0];
 type UpdateBlogPostResult = Awaited<
-	ReturnType<typeof trpcClient.blog.update.mutate>
+	ReturnType<typeof trpcClient.admin.updatePost.mutate>
 >;
 
-/**
- * ブログ記事を更新する純関数。
- */
 export const updateBlogPost = (data: UpdateBlogPostInput) =>
-	trpcClient.blog.update.mutate(data);
+	trpcClient.admin.updatePost.mutate(data);
 
 type UseUpdateBlogPostOptions = {
 	mutationConfig?: Omit<
@@ -24,10 +23,6 @@ type UseUpdateBlogPostOptions = {
 	>;
 };
 
-/**
- * ブログ記事更新 mutation hook。
- * 成功時に `blog.getAll` および `blog.getById` のキャッシュを invalidate する。
- */
 export const useUpdateBlogPost = ({
 	mutationConfig,
 }: UseUpdateBlogPostOptions = {}) => {
@@ -40,6 +35,9 @@ export const useUpdateBlogPost = ({
 		onSuccess: (data, variables, onMutateResult, context) => {
 			queryClient.invalidateQueries({
 				queryKey: getQueryKey(trpc.blog.getAll),
+			});
+			queryClient.invalidateQueries({
+				queryKey: getQueryKey(trpc.admin.getAllPosts),
 			});
 			queryClient.invalidateQueries({
 				queryKey: getQueryKey(trpc.blog.getById, { id: variables.id }, "query"),

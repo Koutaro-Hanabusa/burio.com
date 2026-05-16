@@ -12,18 +12,14 @@ type TogglePublishBlogPostInput = {
 };
 
 type TogglePublishBlogPostResult = Awaited<
-	ReturnType<typeof trpcClient.blog.update.mutate>
+	ReturnType<typeof trpcClient.admin.updatePost.mutate>
 >;
 
-/**
- * ブログ記事の公開状態をトグルする純関数。
- * 現在の公開状態を反転して update mutation を呼び出す。
- */
 export const togglePublishBlogPost = ({
 	id,
 	currentPublished,
 }: TogglePublishBlogPostInput) =>
-	trpcClient.blog.update.mutate({
+	trpcClient.admin.updatePost.mutate({
 		id,
 		published: !currentPublished,
 	});
@@ -39,10 +35,6 @@ type UseTogglePublishBlogPostOptions = {
 	>;
 };
 
-/**
- * ブログ記事の公開状態切替 mutation hook。
- * 成功時に `blog.getAll` のキャッシュを invalidate する。
- */
 export const useTogglePublishBlogPost = ({
 	mutationConfig,
 }: UseTogglePublishBlogPostOptions = {}) => {
@@ -55,6 +47,9 @@ export const useTogglePublishBlogPost = ({
 		onSuccess: (data, variables, onMutateResult, context) => {
 			queryClient.invalidateQueries({
 				queryKey: getQueryKey(trpc.blog.getAll),
+			});
+			queryClient.invalidateQueries({
+				queryKey: getQueryKey(trpc.admin.getAllPosts),
 			});
 			onSuccess?.(data, variables, onMutateResult, context);
 		},
