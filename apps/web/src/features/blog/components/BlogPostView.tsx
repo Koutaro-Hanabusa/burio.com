@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import {
 	RiArrowLeftLine,
@@ -35,10 +35,16 @@ export const BlogPostView = ({ id }: BlogPostViewProps) => {
 		trackView.mutate({ id: post.id });
 	}, [post.id]);
 
-	const pageUrl =
-		typeof window !== "undefined"
-			? window.location.href
-			: `https://burio16.com/blog/${id}`;
+	// SSR では window が無いため、初期値はサーバー想定の固定 URL とし、
+	// クライアントマウント後に実際の URL へ差し替える。
+	const [pageUrl, setPageUrl] = useState<string>(
+		`https://burio16.com/blog/${id}`,
+	);
+
+	useEffect(() => {
+		setPageUrl(window.location.href);
+	}, []);
+
 	const ogImageUrl = `https://burio16.com/blog/${id}/og.png`;
 
 	const postTags = useMemo(() => parseTagsFromJson(post.tags), [post.tags]);

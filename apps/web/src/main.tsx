@@ -4,7 +4,9 @@ import ReactDOM from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import Loader from "./components/loader";
 import { routeTree } from "./routeTree.gen";
-import { queryClient, trpc, trpcClient } from "./utils/trpc";
+import { createQueryClient, trpc, trpcClient } from "./utils/trpc";
+
+const queryClient = createQueryClient();
 
 const router = createRouter({
 	routeTree,
