@@ -163,6 +163,7 @@ export const AdminBlogForm = ({
 								<input
 									id={publishedId}
 									type="checkbox"
+									aria-label="公開する"
 									checked={field.state.value}
 									onChange={(e) => field.handleChange(e.target.checked)}
 									onBlur={field.handleBlur}

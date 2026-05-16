@@ -1,7 +1,7 @@
 {
 	"name": "server",
-	"main": "src/index.ts",
 	"type": "module",
+	"main": "src/index.ts",
 	"scripts": {
 		"build": "echo 'Server build completed'",
 		"check-types": "tsc -b",
@@ -32,12 +32,12 @@
 		"zod": "^4.0.2"
 	},
 	"devDependencies": {
+		"@types/node": "^22.13.11",
+		"@vitest/coverage-v8": "^3.2.4",
+		"drizzle-kit": "^0.31.2",
 		"tsdown": "^0.15.1",
 		"typescript": "^5.8.2",
-		"drizzle-kit": "^0.31.2",
-		"wrangler": "^4.40.3",
-		"@types/node": "^22.13.11",
 		"vitest": "^3.2.4",
-		"@vitest/coverage-v8": "^3.2.4"
+		"wrangler": "^4.40.3"
 	}
 }
