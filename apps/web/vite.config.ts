@@ -27,6 +27,20 @@ export default defineConfig({
 		cssCodeSplit: true,
 		rollupOptions: {
 			output: {
+				manualChunks: (id) => {
+					if (!id.includes("node_modules")) return;
+					if (/\/(react|react-dom|scheduler)\//.test(id)) return "react";
+					if (
+						/\/(@tanstack\/(react-router|react-start|react-query|router-core|start))/.test(
+							id,
+						)
+					)
+						return "router";
+					if (
+						/\/(framer-motion|motion|lucide-react|radix-ui|@radix-ui)/.test(id)
+					)
+						return "ui";
+				},
 				chunkFileNames: "assets/[name]-[hash].js",
 				entryFileNames: "assets/[name]-[hash].js",
 				assetFileNames: "assets/[name]-[hash].[ext]",
