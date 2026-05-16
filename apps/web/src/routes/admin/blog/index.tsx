@@ -5,6 +5,7 @@ import { AdminBlogListError } from "./-components/fallbacks/AdminBlogListError";
 import { AdminBlogListPending } from "./-components/fallbacks/AdminBlogListPending";
 
 export const Route = createFileRoute("/admin/blog/")({
+	ssr: false,
 	loader: ({ context }) =>
 		context.queryClient.ensureQueryData(getAdminBlogPostsQueryOptions()),
 	pendingComponent: AdminBlogListPending,
