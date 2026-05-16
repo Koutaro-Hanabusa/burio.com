@@ -11,7 +11,7 @@ import type {
 } from "@/features/blog/hooks/use-blog-form";
 import { stringifyTagsForm } from "@/features/blog/utils/parse-tags";
 
-const route = getRouteApi("/admin/blog/$id/edit");
+const route = getRouteApi("/admin/blog/$id/edit/");
 
 export const UpdateBlogPostPage = () => {
 	const { id } = route.useParams();
