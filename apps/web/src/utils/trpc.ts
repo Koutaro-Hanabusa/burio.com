@@ -24,6 +24,8 @@ export const trpcClient = trpc.createClient({
 	links: [
 		httpBatchLink({
 			url: `${import.meta.env.VITE_SERVER_URL}/trpc`,
+			fetch: (url, options) =>
+				fetch(url, { ...options, credentials: "include" }),
 		}),
 	],
 });
