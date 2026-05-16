@@ -8,7 +8,6 @@ import {
 	useRouterState,
 } from "@tanstack/react-router";
 import { Suspense, lazy } from "react";
-import { HelmetProvider } from "react-helmet-async";
 
 import Header from "@/components/layouts/header";
 import Loader from "@/components/loader";
@@ -172,34 +171,32 @@ function RootComponent() {
 	});
 
 	return (
-		<HelmetProvider>
-			<trpc.Provider client={trpcClient} queryClient={queryClient}>
-				<QueryClientProvider client={queryClient}>
-					<ThemeProvider
-						attribute="class"
-						defaultTheme="dark"
-						disableTransitionOnChange
-						storageKey="vite-ui-theme"
-					>
-						<div className="min-h-screen bg-transparent">
-							<Header />
-							<main className="relative pt-16">
-								{isFetching ? <Loader /> : <Outlet />}
-							</main>
-						</div>
-						<Toaster richColors />
-					</ThemeProvider>
-					{import.meta.env.MODE === "development" && (
-						<Suspense fallback={null}>
-							<TanStackRouterDevtools position="bottom-left" />
-							<ReactQueryDevtools
-								position="bottom"
-								buttonPosition="bottom-right"
-							/>
-						</Suspense>
-					)}
-				</QueryClientProvider>
-			</trpc.Provider>
-		</HelmetProvider>
+		<trpc.Provider client={trpcClient} queryClient={queryClient}>
+			<QueryClientProvider client={queryClient}>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="dark"
+					disableTransitionOnChange
+					storageKey="vite-ui-theme"
+				>
+					<div className="min-h-screen bg-transparent">
+						<Header />
+						<main className="relative pt-16">
+							{isFetching ? <Loader /> : <Outlet />}
+						</main>
+					</div>
+					<Toaster richColors />
+				</ThemeProvider>
+				{import.meta.env.MODE === "development" && (
+					<Suspense fallback={null}>
+						<TanStackRouterDevtools position="bottom-left" />
+						<ReactQueryDevtools
+							position="bottom"
+							buttonPosition="bottom-right"
+						/>
+					</Suspense>
+				)}
+			</QueryClientProvider>
+		</trpc.Provider>
 	);
 }

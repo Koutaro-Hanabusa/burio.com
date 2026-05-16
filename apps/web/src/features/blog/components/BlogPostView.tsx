@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
-import { Helmet } from "react-helmet-async";
+import { useEffect, useMemo } from "react";
 import {
 	RiArrowLeftLine,
 	RiCalendarLine,
@@ -35,42 +34,10 @@ export const BlogPostView = ({ id }: BlogPostViewProps) => {
 		trackView.mutate({ id: post.id });
 	}, [post.id]);
 
-	// SSR では window が無いため、初期値はサーバー想定の固定 URL とし、
-	// クライアントマウント後に実際の URL へ差し替える。
-	const [pageUrl, setPageUrl] = useState<string>(
-		`https://burio16.com/blog/${id}`,
-	);
-
-	useEffect(() => {
-		setPageUrl(window.location.href);
-	}, []);
-
-	const ogImageUrl = `https://burio16.com/api/og/blog/${id}`;
-
 	const postTags = useMemo(() => parseTagsFromJson(post.tags), [post.tags]);
 
 	return (
 		<>
-			<Helmet>
-				<title>{post.title}</title>
-				<meta name="description" content={post.excerpt || ""} />
-				<link rel="canonical" href={pageUrl} />
-
-				<meta property="og:type" content="article" />
-				<meta property="og:title" content={post.title} />
-				<meta property="og:description" content={post.excerpt || ""} />
-				<meta property="og:image" content={ogImageUrl} />
-				<meta property="og:url" content={pageUrl} />
-				<meta property="og:image:width" content="1200" />
-				<meta property="og:image:height" content="630" />
-				<meta property="og:site_name" content="burio16.com" />
-
-				<meta name="twitter:card" content="summary_large_image" />
-				<meta name="twitter:title" content={post.title} />
-				<meta name="twitter:description" content={post.excerpt || ""} />
-				<meta name="twitter:image" content={ogImageUrl} />
-			</Helmet>
-
 			<motion.article
 				initial={{ opacity: 0, y: 30 }}
 				animate={{ opacity: 1, y: 0 }}

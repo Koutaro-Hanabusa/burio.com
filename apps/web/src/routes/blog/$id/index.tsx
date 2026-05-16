@@ -1,6 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { z } from "zod";
 import { getBlogPostQueryOptions } from "@/features/blog/api/get-blog-post";
+import { buildBlogPostHead } from "@/features/blog/utils/build-blog-post-head";
 import { BlogPostPage } from "./-components/BlogPostPage";
 import { BlogPostError } from "./-components/fallbacks/BlogPostError";
 import { BlogPostNotFound } from "./-components/fallbacks/BlogPostNotFound";
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/blog/$id/")({
 			throw error;
 		}
 	},
+	head: ({ loaderData }) => (loaderData ? buildBlogPostHead(loaderData) : {}),
 	pendingComponent: BlogPostPending,
 	errorComponent: BlogPostError,
 	notFoundComponent: BlogPostNotFound,
