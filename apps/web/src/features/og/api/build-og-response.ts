@@ -74,12 +74,8 @@ export async function buildOgResponse({
 			],
 		});
 
-		return new Response(imageResponse.body, {
-			headers: {
-				"Content-Type": "image/png",
-				"Cache-Control": OG_CACHE_CONTROL,
-			},
-		});
+		imageResponse.headers.set("Cache-Control", OG_CACHE_CONTROL);
+		return imageResponse;
 	} catch (error) {
 		console.error("OG image generation error:", error);
 		return new Response("Internal Server Error", { status: 500 });

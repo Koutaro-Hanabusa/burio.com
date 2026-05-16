@@ -131,8 +131,10 @@ app.get("/api/ogp", async (c) => {
 
 		const response = await fetch(url, {
 			headers: {
-				"User-Agent": "bot",
-				Accept: "text/html",
+				"User-Agent":
+					"Mozilla/5.0 (compatible; burio16-bot/1.0; +https://burio16.com)",
+				Accept: "text/html,application/xhtml+xml",
+				"Accept-Language": "ja,en;q=0.8",
 			},
 			redirect: "follow",
 			signal: AbortSignal.timeout(5000),
