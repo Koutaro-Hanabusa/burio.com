@@ -17,38 +17,12 @@
 			"service": "burio-com-server",
 		},
 	],
-	"d1_databases": [
-		{
-			"binding": "DB",
-			"database_name": "burio-com-db",
-			"database_id": "7390edad-195a-4da4-80a8-90209083afcc",
-		},
-	],
-	"r2_buckets": [
-		{
-			"binding": "R2_BUCKET",
-			"bucket_name": "burio-com-blog",
-		},
-	],
 	"env": {
 		"dev": {
 			"services": [
 				{
 					"binding": "API",
 					"service": "burio-com-server",
-				},
-			],
-			"d1_databases": [
-				{
-					"binding": "DB",
-					"database_name": "burio-com-dev",
-					"database_id": "02de547d-2aa5-4183-933a-25503971e540",
-				},
-			],
-			"r2_buckets": [
-				{
-					"binding": "R2_BUCKET",
-					"bucket_name": "burio-com-blog-dev",
 				},
 			],
 		},
