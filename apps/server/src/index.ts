@@ -3,6 +3,7 @@ import { trpcServer } from "@hono/trpc-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { buildOgResponse } from "./features/og/build-og-response";
 import { createContext } from "./lib/context";
 import { appRouter } from "./routers/index";
 
@@ -114,6 +115,20 @@ app.get("/r2/images/:filename", async (c) => {
 	headers.set("Cache-Control", "public, max-age=31536000, immutable");
 
 	return new Response(object.body, { headers });
+});
+
+app.get("/og/blog/:id", async (c) => {
+	const r2 = c.env.R2_BUCKET;
+	if (!r2) {
+		return c.text("Storage not available", 500);
+	}
+
+	const id = Number(c.req.param("id"));
+	if (!Number.isInteger(id) || id <= 0) {
+		return c.text("Not Found", 404);
+	}
+
+	return buildOgResponse({ r2, id });
 });
 
 app.get("/api/ogp", async (c) => {
