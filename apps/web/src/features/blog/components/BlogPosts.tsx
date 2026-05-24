@@ -9,27 +9,29 @@ import {
 } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useBlogPosts } from "@/features/blog/api/get-blog-posts";
 import { useBlogSearch } from "@/features/blog/hooks/use-blog-search";
-import type { BlogPostListItem } from "@/features/blog/types";
 import { parseTagsFromJson } from "@/features/blog/utils/parse-tags";
 import { calculateReadTime } from "@/utils/calculate-read-time";
 import { formatDate } from "@/utils/date";
 
-type BlogPostsProps = {
-	posts: BlogPostListItem[];
-};
-
-export const BlogPosts = ({ posts }: BlogPostsProps) => {
+export const BlogPosts = () => {
+	const posts = useBlogPosts();
 	const { searchQuery, setSearchQuery, clearSearch, filteredPosts } =
 		useBlogSearch(posts);
 
 	return (
-		<motion.div initial={false} animate={{ opacity: 1, y: 0 }}>
+		<motion.div
+			initial={{ opacity: 0, y: 30 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ duration: 0.8 }}
+		>
 			<div className="mx-auto max-w-4xl">
 				<motion.div
 					className="mb-12 space-y-6"
-					initial={false}
+					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
+					transition={{ delay: 0.2, duration: 0.8 }}
 				>
 					<h1 className="font-bold text-5xl md:text-6xl">ぶりおの部屋</h1>
 					<p className="text-medium text-muted-foreground">
@@ -55,8 +57,9 @@ export const BlogPosts = ({ posts }: BlogPostsProps) => {
 				{filteredPosts.length === 0 ? (
 					<motion.div
 						className="space-y-6 py-16 text-center"
-						initial={false}
+						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
+						transition={{ duration: 0.5 }}
 					>
 						<div className="text-6xl">📝</div>
 						{searchQuery ? (
@@ -95,14 +98,15 @@ export const BlogPosts = ({ posts }: BlogPostsProps) => {
 					</motion.div>
 				) : (
 					<div className="space-y-6">
-						{filteredPosts.map((post) => {
+						{filteredPosts.map((post, index) => {
 							const postTags = parseTagsFromJson(post.tags);
 							return (
 								<motion.article
 									key={post.id}
 									className="group rounded-lg border border-border bg-card p-6 transition-all hover:border-primary/50"
-									initial={false}
+									initial={{ opacity: 0, y: 20 }}
 									animate={{ opacity: 1, y: 0 }}
+									transition={{ delay: index * 0.1, duration: 0.6 }}
 									whileHover={{
 										y: -4,
 										boxShadow: "0 10px 25px rgba(0,0,0,0.1)",

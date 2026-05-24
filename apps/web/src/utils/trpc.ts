@@ -3,25 +3,20 @@ import { createTRPCReact, httpBatchLink } from "@trpc/react-query";
 import { toast } from "sonner";
 import type { AppRouter } from "../../../server/src/routers";
 
-// SSR 安全性のため module singleton ではなく factory として提供する。
-// onError 内では同一インスタンスを closure 経由で参照する。
-export function createQueryClient(): QueryClient {
-	const client: QueryClient = new QueryClient({
-		queryCache: new QueryCache({
-			onError: (error) => {
-				toast.error(error.message, {
-					action: {
-						label: "retry",
-						onClick: () => {
-							client.invalidateQueries();
-						},
+export const queryClient = new QueryClient({
+	queryCache: new QueryCache({
+		onError: (error) => {
+			toast.error(error.message, {
+				action: {
+					label: "retry",
+					onClick: () => {
+						queryClient.invalidateQueries();
 					},
-				});
-			},
-		}),
-	});
-	return client;
-}
+				},
+			});
+		},
+	}),
+});
 
 export const trpc = createTRPCReact<AppRouter>();
 
@@ -29,8 +24,6 @@ export const trpcClient = trpc.createClient({
 	links: [
 		httpBatchLink({
 			url: `${import.meta.env.VITE_SERVER_URL}/trpc`,
-			fetch: (url, options) =>
-				fetch(url, { ...options, credentials: "include" }),
 		}),
 	],
 });

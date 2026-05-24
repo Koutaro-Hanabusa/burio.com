@@ -1,12 +1,31 @@
-import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
-import { createServerTrpcClient } from "@/utils/trpc.server";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
+import { trpc, trpcClient } from "@/utils/trpc";
 
-const inputSchema = z.object({ id: z.number().int().positive() });
+type GetBlogPostInput = {
+	id: number;
+};
 
-export const getBlogPost = createServerFn({ method: "GET" })
-	.inputValidator((input: unknown) => inputSchema.parse(input))
-	.handler(async ({ data }) => {
-		const trpc = createServerTrpcClient();
-		return trpc.blog.getById.query({ id: data.id });
+/**
+ * 公開ブログ詳細を取得する純関数。
+ */
+export const getBlogPost = ({ id }: GetBlogPostInput) =>
+	trpcClient.blog.getById.query({ id });
+
+/**
+ * 公開ブログ詳細の queryOptions factory。
+ * loader と hook の双方から参照する単一ソース。
+ */
+export const getBlogPostQueryOptions = (id: number) =>
+	queryOptions({
+		queryKey: getQueryKey(trpc.blog.getById, { id }, "query"),
+		queryFn: () => getBlogPost({ id }),
 	});
+
+/**
+ * 公開ブログ詳細を Suspense 経由で取得するフック。
+ */
+export const useBlogPost = (id: number) => {
+	const { data } = useSuspenseQuery(getBlogPostQueryOptions(id));
+	return data;
+};

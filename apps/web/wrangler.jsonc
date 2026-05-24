@@ -1,44 +1,11 @@
 {
 	"$schema": "./node_modules/wrangler/config-schema.json",
 	"name": "burio-com",
-	"main": "./src/server.ts",
-	"compatibility_date": "2026-05-14",
+	"compatibility_date": "2025-04-03",
 	"compatibility_flags": ["nodejs_compat"],
-	"observability": {
-		"enabled": true,
-	},
+	"pages_build_output_dir": "dist",
 	"vars": {
 		"SERVER_URL": "https://api.burio16.com",
 		"R2_PUBLIC_URL": "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev",
-	},
-	"d1_databases": [
-		{
-			"binding": "DB",
-			"database_name": "burio-com-db",
-			"database_id": "7390edad-195a-4da4-80a8-90209083afcc",
-		},
-	],
-	"r2_buckets": [
-		{
-			"binding": "R2_BUCKET",
-			"bucket_name": "burio-com-blog",
-		},
-	],
-	"env": {
-		"dev": {
-			"d1_databases": [
-				{
-					"binding": "DB",
-					"database_name": "burio-com-dev",
-					"database_id": "02de547d-2aa5-4183-933a-25503971e540",
-				},
-			],
-			"r2_buckets": [
-				{
-					"binding": "R2_BUCKET",
-					"bucket_name": "burio-com-blog-dev",
-				},
-			],
-		},
 	},
 }

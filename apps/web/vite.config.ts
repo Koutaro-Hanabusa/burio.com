@@ -1,57 +1,52 @@
 import path from "node:path";
-import { cloudflare } from "@cloudflare/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-	plugins: [
-		tailwindcss(),
-		tanstackStart(),
-		cloudflare({
-			viteEnvironment: { name: "ssr" },
-		}),
-		react(),
-	],
+	plugins: [tailwindcss(), tanstackRouter({}), react()],
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "./src"),
 		},
 	},
-	server: {
-		port: 3001,
-		preTransformRequests: true,
-	},
 	build: {
+		// Enable CSS code splitting for better caching
 		cssCodeSplit: true,
+
+		// Optimize chunk size for better loading performance
 		rollupOptions: {
 			output: {
-				manualChunks: (id) => {
-					if (!id.includes("node_modules")) return;
-					if (/\/(react|react-dom|scheduler)\//.test(id)) return "react";
-					if (
-						/\/(@tanstack\/(react-router|react-start|react-query|router-core|start))/.test(
-							id,
-						)
-					)
-						return "router";
-					if (
-						/\/(framer-motion|motion|lucide-react|radix-ui|@radix-ui)/.test(id)
-					)
-						return "ui";
+				manualChunks: {
+					// Separate vendor chunks for better caching
+					react: ["react", "react-dom"],
+					router: ["@tanstack/react-router", "@tanstack/react-query"],
+					three: ["three", "@react-three/fiber", "@react-three/drei"],
+					ui: ["framer-motion", "lucide-react"],
 				},
+				// Optimize chunk naming for better caching
 				chunkFileNames: "assets/[name]-[hash].js",
 				entryFileNames: "assets/[name]-[hash].js",
 				assetFileNames: "assets/[name]-[hash].[ext]",
 			},
 		},
+
+		// Enable minification for production
 		minify: "esbuild",
 		cssMinify: true,
+
+		// Target modern browsers for smaller bundle size
 		target: "es2020",
+
+		// Adjust chunk size warnings
 		chunkSizeWarningLimit: 600,
+
+		// Enable source maps for production debugging (optional, can disable for smaller size)
 		sourcemap: false,
 	},
+
+	// Optimize dependencies pre-bundling
 	optimizeDeps: {
 		include: [
 			"react",
@@ -65,5 +60,11 @@ export default defineConfig({
 			"@tanstack/react-query-devtools",
 			"@tanstack/react-router-devtools",
 		],
+	},
+
+	// Server configuration
+	server: {
+		// Enable preload for better performance
+		preTransformRequests: true,
 	},
 });

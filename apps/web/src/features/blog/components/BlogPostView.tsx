@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useMemo } from "react";
+import { Helmet } from "react-helmet-async";
 import {
 	RiArrowLeftLine,
 	RiCalendarLine,
@@ -11,19 +12,20 @@ import {
 	RiTimeLine,
 } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
+import { useBlogPost } from "@/features/blog/api/get-blog-post";
 import { useTrackBlogPostView } from "@/features/blog/api/track-blog-post-view";
 import { useRenderedMarkdown } from "@/features/blog/hooks/use-rendered-markdown";
 import { useSharePost } from "@/features/blog/hooks/use-share-post";
-import type { BlogPost } from "@/features/blog/types";
 import { parseTagsFromJson } from "@/features/blog/utils/parse-tags";
 import { calculateReadTime } from "@/utils/calculate-read-time";
 import { formatDate } from "@/utils/date";
 
 type BlogPostViewProps = {
-	post: BlogPost;
+	id: number;
 };
 
-export const BlogPostView = ({ post }: BlogPostViewProps) => {
+export const BlogPostView = ({ id }: BlogPostViewProps) => {
+	const post = useBlogPost(id);
 	const { htmlContent, contentRef } = useRenderedMarkdown(post.content);
 	const { copied, handleShare, handleCopyLink } = useSharePost(post);
 	const trackView = useTrackBlogPostView();
@@ -33,13 +35,47 @@ export const BlogPostView = ({ post }: BlogPostViewProps) => {
 		trackView.mutate({ id: post.id });
 	}, [post.id]);
 
+	const pageUrl =
+		typeof window !== "undefined"
+			? window.location.href
+			: `https://burio16.com/blog/${id}`;
+	const ogImageUrl = `https://burio16.com/blog/${id}/og.png`;
+
 	const postTags = useMemo(() => parseTagsFromJson(post.tags), [post.tags]);
 
 	return (
 		<>
-			<motion.article initial={false} animate={{ opacity: 1, y: 0 }}>
+			<Helmet>
+				<title>{post.title}</title>
+				<meta name="description" content={post.excerpt || ""} />
+				<link rel="canonical" href={pageUrl} />
+
+				<meta property="og:type" content="article" />
+				<meta property="og:title" content={post.title} />
+				<meta property="og:description" content={post.excerpt || ""} />
+				<meta property="og:image" content={ogImageUrl} />
+				<meta property="og:url" content={pageUrl} />
+				<meta property="og:image:width" content="1200" />
+				<meta property="og:image:height" content="630" />
+				<meta property="og:site_name" content="burio16.com" />
+
+				<meta name="twitter:card" content="summary_large_image" />
+				<meta name="twitter:title" content={post.title} />
+				<meta name="twitter:description" content={post.excerpt || ""} />
+				<meta name="twitter:image" content={ogImageUrl} />
+			</Helmet>
+
+			<motion.article
+				initial={{ opacity: 0, y: 30 }}
+				animate={{ opacity: 1, y: 0 }}
+				transition={{ duration: 0.8 }}
+			>
 				<div className="mx-auto max-w-4xl">
-					<motion.div initial={false} animate={{ opacity: 1, x: 0 }}>
+					<motion.div
+						initial={{ opacity: 0, x: -20 }}
+						animate={{ opacity: 1, x: 0 }}
+						transition={{ delay: 0.2, duration: 0.6 }}
+					>
 						<Button variant="ghost" className="mb-6" asChild>
 							<Link to="/blog">
 								<RiArrowLeftLine className="mr-2 h-4 w-4" />
@@ -50,8 +86,9 @@ export const BlogPostView = ({ post }: BlogPostViewProps) => {
 
 					<motion.header
 						className="mb-8"
-						initial={false}
+						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.3, duration: 0.6 }}
 					>
 						<h1 className="mb-6 font-bold text-4xl leading-tight md:text-5xl">
 							{post.title}
@@ -114,8 +151,9 @@ export const BlogPostView = ({ post }: BlogPostViewProps) => {
 					{post.coverImage && (
 						<motion.div
 							className="mb-8 overflow-hidden rounded-xl"
-							initial={false}
+							initial={{ opacity: 0, scale: 0.95 }}
 							animate={{ opacity: 1, scale: 1 }}
+							transition={{ delay: 0.4, duration: 0.6 }}
 						>
 							<img
 								src={post.coverImage}
@@ -129,8 +167,9 @@ export const BlogPostView = ({ post }: BlogPostViewProps) => {
 
 					<motion.div
 						className="prose prose-lg dark:prose-invert max-w-none"
-						initial={false}
+						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.5, duration: 0.6 }}
 					>
 						<div
 							ref={contentRef}
@@ -141,8 +180,9 @@ export const BlogPostView = ({ post }: BlogPostViewProps) => {
 
 					<motion.footer
 						className="mt-12 border-border border-t pt-8"
-						initial={false}
+						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
+						transition={{ delay: 0.6, duration: 0.6 }}
 					>
 						<div className="flex items-center justify-between">
 							<Button variant="ghost" asChild>

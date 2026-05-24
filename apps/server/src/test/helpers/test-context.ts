@@ -5,7 +5,6 @@ export interface TestEnv {
 	DB: ReturnType<typeof createMockD1Database>;
 	R2_BUCKET?: ReturnType<typeof createMockR2Bucket>;
 	ADMIN_ALLOWED_IPS?: string;
-	ADMIN_TOKEN_SECRET?: string;
 }
 
 export function createTestContext(overrides?: Partial<Context>): Context {
@@ -18,14 +17,12 @@ export function createTestContext(overrides?: Partial<Context>): Context {
 			DB: mockD1Database,
 			R2_BUCKET: mockR2Bucket,
 			ADMIN_ALLOWED_IPS: "127.0.0.1,::1",
-			ADMIN_TOKEN_SECRET: "test-secret-32-bytes-minimum-ok!!",
 		} as TestEnv,
 		req: new Request("http://localhost:3000", {
 			headers: {
 				"CF-Connecting-IP": "127.0.0.1",
 			},
 		}),
-		responseHeaders: new Headers(),
 	};
 
 	return {
@@ -34,15 +31,13 @@ export function createTestContext(overrides?: Partial<Context>): Context {
 	};
 }
 
-export function createAdminTestContext(adminToken?: string): Context {
-	const headers: Record<string, string> = {
-		"CF-Connecting-IP": "127.0.0.1",
-	};
-	if (adminToken) {
-		headers["Cookie"] = `admin_token=${adminToken}`;
-	}
+export function createAdminTestContext(): Context {
 	return createTestContext({
-		req: new Request("http://localhost:3000", { headers }),
+		req: new Request("http://localhost:3000", {
+			headers: {
+				"CF-Connecting-IP": "127.0.0.1",
+			},
+		}),
 	});
 }
 
@@ -50,7 +45,7 @@ export function createUnauthorizedTestContext(): Context {
 	return createTestContext({
 		req: new Request("http://localhost:3000", {
 			headers: {
-				"CF-Connecting-IP": "203.0.113.1",
+				"CF-Connecting-IP": "192.168.1.100", // Unauthorized IP
 			},
 		}),
 	});
