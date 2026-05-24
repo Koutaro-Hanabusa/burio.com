@@ -82,7 +82,8 @@ export const blogRouter = router({
 
 				if (ctx.env?.R2_BUCKET) {
 					try {
-						const r2Key = `blog/${postData.id}.md`;
+						// 書き込み(admin createPost/updatePost)が slug キーなので読み出しも slug で揃える
+						const r2Key = `blog/${postData.slug}.md`;
 						console.log(`📁 R2 Key: ${r2Key}`);
 
 						const object = await ctx.env.R2_BUCKET.get(r2Key);

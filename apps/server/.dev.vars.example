@@ -5,6 +5,13 @@
 # Authentication Secret (generate a random string)
 BETTER_AUTH_SECRET=your-dev-secret-here
 
+# Admin token signing key (random string, 32+ bytes recommended)
+# Production: set via dashboard or `wrangler versions secret put ADMIN_TOKEN_SECRET`
+ADMIN_TOKEN_SECRET=your-admin-token-secret-here
+
+# Comma-separated IPs allowed to access the admin panel
+ADMIN_ALLOWED_IPS=127.0.0.1,::1
+
 # Cloudflare Account ID (optional for local dev)
 # CLOUDFLARE_ACCOUNT_ID=
 
