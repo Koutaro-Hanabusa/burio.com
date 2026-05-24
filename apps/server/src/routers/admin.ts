@@ -90,16 +90,6 @@ export const adminRouter = router({
 		.mutation(async ({ input, ctx }) => {
 			const slug = createSlug(input.title);
 
-			if (ctx.env?.R2_BUCKET && input.content) {
-				try {
-					await ctx.env.R2_BUCKET.put(`blog/${slug}.md`, input.content, {
-						httpMetadata: { contentType: "text/markdown" },
-					});
-				} catch (error) {
-					console.error("Error saving content to R2:", error);
-				}
-			}
-
 			const result = await db
 				.insert(posts)
 				.values({
@@ -113,7 +103,19 @@ export const adminRouter = router({
 				})
 				.returning();
 
-			return result[0];
+			const created = result[0];
+
+			if (ctx.env?.R2_BUCKET && input.content) {
+				try {
+					await ctx.env.R2_BUCKET.put(`blog/${created.id}.md`, input.content, {
+						httpMetadata: { contentType: "text/markdown" },
+					});
+				} catch (error) {
+					console.error("Error saving content to R2:", error);
+				}
+			}
+
+			return created;
 		}),
 
 	updatePost: adminProcedure
@@ -139,6 +141,7 @@ export const adminRouter = router({
 				updateData.tags = JSON.stringify(input.tags);
 			if (input.published !== undefined)
 				updateData.published = input.published ? 1 : 0;
+			if (input.content !== undefined) updateData.content = input.content;
 
 			const currentPost = await db
 				.select()
@@ -155,9 +158,8 @@ export const adminRouter = router({
 			}
 
 			if (ctx.env?.R2_BUCKET && input.content !== undefined) {
-				const slug = (updateData.slug as string) || currentPost[0].slug;
 				try {
-					await ctx.env.R2_BUCKET.put(`blog/${slug}.md`, input.content, {
+					await ctx.env.R2_BUCKET.put(`blog/${input.id}.md`, input.content, {
 						httpMetadata: { contentType: "text/markdown" },
 					});
 				} catch (error) {
@@ -189,7 +191,10 @@ export const adminRouter = router({
 
 			if (ctx.env?.R2_BUCKET) {
 				try {
-					await ctx.env.R2_BUCKET.delete(`blog/${postToDelete[0].slug}.md`);
+					await ctx.env.R2_BUCKET.delete([
+						`blog/${postToDelete[0].id}.md`,
+						`blog/${postToDelete[0].slug}.md`,
+					]);
 				} catch (error) {
 					console.error("Error deleting content from R2:", error);
 				}
@@ -201,11 +206,13 @@ export const adminRouter = router({
 		}),
 });
 
-function createSlug(title: string): string {
-	return title
+export function createSlug(title: string): string {
+	const base = title
 		.toLowerCase()
 		.replace(/[^a-z0-9\s-]/g, "")
 		.replace(/\s+/g, "-")
 		.replace(/-+/g, "-")
-		.trim();
+		.replace(/^-+|-+$/g, "");
+	const suffix = crypto.randomUUID().slice(0, 8);
+	return base ? `${base}-${suffix}` : suffix;
 }

@@ -82,28 +82,16 @@ export const blogRouter = router({
 
 				if (ctx.env?.R2_BUCKET) {
 					try {
-						// 書き込み(admin createPost/updatePost)が slug キーなので読み出しも slug で揃える
-						const r2Key = `blog/${postData.slug}.md`;
-						console.log(`📁 R2 Key: ${r2Key}`);
-
-						const object = await ctx.env.R2_BUCKET.get(r2Key);
-						console.log(`📄 R2 Object exists: ${!!object}`);
-
+						let object = await ctx.env.R2_BUCKET.get(`blog/${postData.id}.md`);
+						if (!object && postData.slug) {
+							object = await ctx.env.R2_BUCKET.get(`blog/${postData.slug}.md`);
+						}
 						if (object) {
-							const content = await object.text();
-							console.log(`📝 Content length: ${content.length} characters`);
-							console.log(
-								`🔤 Content preview: ${content.substring(0, 100)}...`,
-							);
-							postData.content = content;
-						} else {
-							console.log(`❌ No object found for key: ${r2Key}`);
+							postData.content = await object.text();
 						}
 					} catch (error) {
-						console.error("❌ Error fetching content from R2:", error);
+						console.error("Error fetching content from R2:", error);
 					}
-				} else {
-					console.log("⚠️ R2_BUCKET not available in context");
 				}
 
 				return postData;
