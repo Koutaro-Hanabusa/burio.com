@@ -17,13 +17,11 @@ async function uploadImage(file: File): Promise<string> {
 	});
 
 	if (!res.ok) {
-		const err = (await res
-			.json()
-			.catch(() => ({ error: "Upload failed" }))) as { error?: string };
+		const err = await res.json().catch(() => ({ error: "Upload failed" }));
 		throw new Error(err.error || "Upload failed");
 	}
 
-	const data = (await res.json()) as { url: string };
+	const data = await res.json();
 	// URLがR2の相対パスの場合、サーバーURLを付与
 	const url = data.url.startsWith("/") ? `${SERVER_URL}${data.url}` : data.url;
 	return url;

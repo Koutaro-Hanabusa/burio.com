@@ -1,7 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { z } from "zod";
-import { getBlogPost } from "@/features/blog/api/get-blog-post";
-import { buildBlogPostHead } from "@/features/blog/utils/build-blog-post-head";
+import { getBlogPostQueryOptions } from "@/features/blog/api/get-blog-post";
 import { BlogPostPage } from "./-components/BlogPostPage";
 import { BlogPostError } from "./-components/fallbacks/BlogPostError";
 import { BlogPostNotFound } from "./-components/fallbacks/BlogPostNotFound";
@@ -12,14 +11,15 @@ const paramsSchema = z.object({
 });
 
 export const Route = createFileRoute("/blog/$id/")({
-	ssr: true,
 	params: {
 		parse: paramsSchema.parse,
 		stringify: ({ id }) => ({ id: String(id) }),
 	},
-	loader: async ({ params }) => {
+	loader: async ({ params, context }) => {
 		try {
-			return await getBlogPost({ data: { id: params.id } });
+			return await context.queryClient.ensureQueryData(
+				getBlogPostQueryOptions(params.id),
+			);
 		} catch (error) {
 			if (error instanceof Error && /not found/i.test(error.message)) {
 				throw notFound();
@@ -27,7 +27,6 @@ export const Route = createFileRoute("/blog/$id/")({
 			throw error;
 		}
 	},
-	head: ({ loaderData }) => (loaderData ? buildBlogPostHead(loaderData) : {}),
 	pendingComponent: BlogPostPending,
 	errorComponent: BlogPostError,
 	notFoundComponent: BlogPostNotFound,

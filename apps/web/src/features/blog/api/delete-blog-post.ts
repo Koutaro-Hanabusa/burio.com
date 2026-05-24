@@ -11,11 +11,14 @@ type DeleteBlogPostInput = {
 };
 
 type DeleteBlogPostResult = Awaited<
-	ReturnType<typeof trpcClient.admin.deletePost.mutate>
+	ReturnType<typeof trpcClient.blog.delete.mutate>
 >;
 
+/**
+ * ブログ記事を削除する純関数。
+ */
 export const deleteBlogPost = ({ id }: DeleteBlogPostInput) =>
-	trpcClient.admin.deletePost.mutate({ id });
+	trpcClient.blog.delete.mutate({ id });
 
 type UseDeleteBlogPostOptions = {
 	mutationConfig?: Omit<
@@ -24,6 +27,10 @@ type UseDeleteBlogPostOptions = {
 	>;
 };
 
+/**
+ * ブログ記事削除 mutation hook。
+ * 成功時に `blog.getAll` のキャッシュを invalidate する。
+ */
 export const useDeleteBlogPost = ({
 	mutationConfig,
 }: UseDeleteBlogPostOptions = {}) => {
@@ -36,9 +43,6 @@ export const useDeleteBlogPost = ({
 		onSuccess: (data, variables, onMutateResult, context) => {
 			queryClient.invalidateQueries({
 				queryKey: getQueryKey(trpc.blog.getAll),
-			});
-			queryClient.invalidateQueries({
-				queryKey: getQueryKey(trpc.admin.getAllPosts),
 			});
 			onSuccess?.(data, variables, onMutateResult, context);
 		},
