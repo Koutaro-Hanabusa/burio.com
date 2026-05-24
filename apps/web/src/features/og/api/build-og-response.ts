@@ -1,9 +1,5 @@
-import { ImageResponse } from "@cf-wasm/og";
-import { htmlToReact } from "@cf-wasm/og/html-to-react";
-import { eq } from "drizzle-orm";
-import { db } from "../../db";
-import { posts } from "../../db/schema";
-import { buildOgImageHtml } from "./build-og-html";
+// READ ONLY: web Worker は post 取得のみ。insert/update/delete 禁止。
+import { ImageResponse } from "workers-og";
 import {
 	OG_BG_IMAGE_KEY,
 	OG_CACHE_CONTROL,
@@ -11,30 +7,35 @@ import {
 	OG_HEIGHT,
 	OG_WIDTH,
 } from "./constants";
+import { buildOgImageHtml } from "./build-og-html";
 import { arrayBufferToBase64 } from "./utils";
 
+interface PostRow {
+	title: string;
+	excerpt: string | null;
+	tags: string | null;
+	published: number;
+}
+
 interface BuildOgResponseOptions {
+	db: D1Database;
 	r2: R2Bucket;
 	id: number;
 }
 
 export async function buildOgResponse({
+	db,
 	r2,
 	id,
 }: BuildOgResponseOptions): Promise<Response> {
 	try {
-		const rows = await db
-			.select({
-				title: posts.title,
-				excerpt: posts.excerpt,
-				tags: posts.tags,
-				published: posts.published,
-			})
-			.from(posts)
-			.where(eq(posts.id, id))
-			.limit(1);
+		const row = await db
+			.prepare(
+				"SELECT title, excerpt, tags, published FROM posts WHERE id = ? LIMIT 1",
+			)
+			.bind(id)
+			.first<PostRow>();
 
-		const row = rows[0];
 		if (!row || row.published !== 1) {
 			return new Response("Not Found", { status: 404 });
 		}
@@ -60,7 +61,7 @@ export async function buildOgResponse({
 			bgImageDataUrl,
 		});
 
-		const imageResponse = new ImageResponse(htmlToReact(html), {
+		const imageResponse = new ImageResponse(html, {
 			width: OG_WIDTH,
 			height: OG_HEIGHT,
 			fonts: [
@@ -73,8 +74,12 @@ export async function buildOgResponse({
 			],
 		});
 
-		imageResponse.headers.set("Cache-Control", OG_CACHE_CONTROL);
-		return imageResponse;
+		return new Response(imageResponse.body, {
+			headers: {
+				"Content-Type": "image/png",
+				"Cache-Control": OG_CACHE_CONTROL,
+			},
+		});
 	} catch (error) {
 		console.error("OG image generation error:", error);
 		return new Response("Internal Server Error", { status: 500 });
