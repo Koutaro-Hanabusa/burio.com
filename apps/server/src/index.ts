@@ -40,6 +40,15 @@ app.use(
 		createContext: (_opts, context) => {
 			return createContext({ context });
 		},
+		responseMeta: ({ ctx }) => {
+			const headers = new Headers();
+			if (ctx?.responseHeaders) {
+				for (const [key, value] of ctx.responseHeaders.entries()) {
+					headers.append(key, value);
+				}
+			}
+			return { headers };
+		},
 	}),
 );
 
