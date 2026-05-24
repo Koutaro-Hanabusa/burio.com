@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createSlug } from "./admin";
 
 // Cloudflare Workersのモックは setup.ts で設定済み
 
@@ -9,53 +10,27 @@ describe("blogRouter", () => {
 
 	describe("createSlug function", () => {
 		it("should create slug from English title", () => {
-			const title = "Hello World Post";
-			const slug = title
-				.toLowerCase()
-				.replace(/[^\p{L}\p{N}\s-]/gu, "")
-				.replace(/\s+/g, "-")
-				.replace(/-+/g, "-")
-				.trim();
-
-			expect(slug).toMatch(/hello.*world/i);
+			const slug = createSlug("Hello World Post");
+			expect(slug).toMatch(/^[a-z0-9-]+$/);
+			expect(slug).toContain("hello");
+			expect(slug).toContain("world");
 		});
 
-		it("should handle Japanese characters", () => {
-			const title = "テストブログ記事";
-			const slug = title
-				.toLowerCase()
-				.replace(/[^\p{L}\p{N}\s-]/gu, "")
-				.replace(/\s+/g, "-")
-				.replace(/-+/g, "-")
-				.trim();
+		it("should handle Japanese title and return non-empty slug", () => {
+			const slug = createSlug("テストブログ記事");
+			expect(slug).toBeTruthy();
+			expect(slug).toMatch(/^[a-z0-9-]+$/);
+		});
 
-			// 日本語の場合、slugに変換される
-			expect(slug).toBeDefined();
+		it("should return unique slugs on each call", () => {
+			const slug1 = createSlug("Same Title");
+			const slug2 = createSlug("Same Title");
+			expect(slug1).not.toBe(slug2);
 		});
 
 		it("should handle special characters", () => {
-			const title = "Test @ Post #123!";
-			const slug = title
-				.toLowerCase()
-				.replace(/[^\p{L}\p{N}\s-]/gu, "")
-				.replace(/\s+/g, "-")
-				.replace(/-+/g, "-")
-				.trim();
-
-			expect(slug).toBe("test-post-123");
-		});
-
-		it("should handle empty title", () => {
-			const title = "";
-			const slug = title
-				.toLowerCase()
-				.replace(/[^\p{L}\p{N}\s-]/gu, "")
-				.replace(/\s+/g, "-")
-				.replace(/-+/g, "-")
-				.trim();
-
-			// 空の場合、タイムスタンプベースのslugを生成する必要がある
-			expect(slug).toBe("");
+			const slug = createSlug("Test @ Post #123!");
+			expect(slug).toMatch(/^test-post-123-/);
 		});
 	});
 
