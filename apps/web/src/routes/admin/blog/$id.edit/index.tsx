@@ -11,6 +11,7 @@ const paramsSchema = z.object({
 });
 
 export const Route = createFileRoute("/admin/blog/$id/edit/")({
+	ssr: false,
 	params: {
 		parse: paramsSchema.parse,
 		stringify: ({ id }) => ({ id: String(id) }),
