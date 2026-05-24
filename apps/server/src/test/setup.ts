@@ -14,4 +14,5 @@ beforeEach(() => {
 	vi.clearAllMocks();
 });
 
-vi.stubEnv("NODE_ENV", "test");
+// 環境変数のモック
+process.env.NODE_ENV = "test";

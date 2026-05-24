@@ -11,12 +11,6 @@
 		"SERVER_URL": "https://api.burio16.com",
 		"R2_PUBLIC_URL": "https://pub-4c323738b7af49f59082cdff9645ae29.r2.dev",
 	},
-	"services": [
-		{
-			"binding": "API",
-			"service": "burio-com-server",
-		},
-	],
 	"d1_databases": [
 		{
 			"binding": "DB",
@@ -32,12 +26,6 @@
 	],
 	"env": {
 		"dev": {
-			"services": [
-				{
-					"binding": "API",
-					"service": "burio-com-server",
-				},
-			],
 			"d1_databases": [
 				{
 					"binding": "DB",
