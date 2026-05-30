@@ -1,6 +1,7 @@
 # robots.txt for burio.com
 User-agent: *
 Allow: /
+Allow: /api/og/
 Disallow: /admin/
 Disallow: /api/
 
