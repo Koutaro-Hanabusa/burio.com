@@ -5,12 +5,10 @@ import {
 	Outlet,
 	Scripts,
 	createRootRouteWithContext,
-	useRouterState,
 } from "@tanstack/react-router";
 import { Suspense, lazy } from "react";
 
 import Header from "@/components/layouts/header";
-import Loader from "@/components/loader";
 import NotFound from "@/components/not-found";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -166,9 +164,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
 	const { queryClient } = Route.useRouteContext();
-	const isFetching = useRouterState({
-		select: (s) => s.isLoading,
-	});
 
 	return (
 		<trpc.Provider client={trpcClient} queryClient={queryClient}>
@@ -182,7 +177,7 @@ function RootComponent() {
 					<div className="min-h-screen bg-transparent">
 						<Header />
 						<main className="relative pt-16">
-							{isFetching ? <Loader /> : <Outlet />}
+							<Outlet />
 						</main>
 					</div>
 					<Toaster richColors />
