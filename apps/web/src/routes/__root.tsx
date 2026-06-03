@@ -70,6 +70,7 @@ if ("requestIdleCallback" in window) {
 const gtmNoscriptHtml = `<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NSXW6XSJ" height="0" width="0" style="display:none;visibility:hidden"></iframe>`;
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
+	ssr: true,
 	head: () => ({
 		meta: [
 			{ charSet: "UTF-8" },
