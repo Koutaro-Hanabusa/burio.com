@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vite-plus/test";
 import { FAVORITES } from "@/constants/favorites";
 import type { FavoriteCategory } from "./favorites";
 

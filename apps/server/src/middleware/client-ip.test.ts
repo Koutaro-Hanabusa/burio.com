@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 import { getAllowedIPs, getClientIP, isIPAllowed } from "./client-ip";
 
 function makeRequest(headers: Record<string, string>): Request {
