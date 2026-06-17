@@ -106,7 +106,7 @@ export function useBlogForm({ initialData, onSubmit }: UseBlogFormParams) {
 
 	useEffect(() => {
 		if (preview && htmlContent && previewRef.current) {
-			hydrateLinkPreviews(previewRef.current);
+			void hydrateLinkPreviews(previewRef.current);
 		}
 	}, [preview, htmlContent]);
 

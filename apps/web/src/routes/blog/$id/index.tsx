@@ -14,7 +14,7 @@ const paramsSchema = z.object({
 export const Route = createFileRoute("/blog/$id/")({
 	ssr: true,
 	params: {
-		parse: paramsSchema.parse,
+		parse: (raw) => paramsSchema.parse(raw),
 		stringify: ({ id }) => ({ id: String(id) }),
 	},
 	loader: async ({ params }) => {

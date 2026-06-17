@@ -34,10 +34,10 @@ export const useDeleteBlogPost = ({
 		...restConfig,
 		mutationFn: deleteBlogPost,
 		onSuccess: (data, variables, onMutateResult, context) => {
-			queryClient.invalidateQueries({
+			void queryClient.invalidateQueries({
 				queryKey: getQueryKey(trpc.blog.getAll),
 			});
-			queryClient.invalidateQueries({
+			void queryClient.invalidateQueries({
 				queryKey: getQueryKey(trpc.admin.getAllPosts),
 			});
 			onSuccess?.(data, variables, onMutateResult, context);

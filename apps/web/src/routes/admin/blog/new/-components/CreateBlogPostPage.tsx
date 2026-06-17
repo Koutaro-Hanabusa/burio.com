@@ -12,7 +12,7 @@ export const CreateBlogPostPage = () => {
 		mutationConfig: {
 			onSuccess: (data) => {
 				toast.success("記事を作成しました");
-				navigate({ to: `/blog/${data.id}` });
+				void navigate({ to: `/blog/${data.id}` });
 			},
 			onError: (error) => {
 				toast.error(`エラー: ${error.message}`);

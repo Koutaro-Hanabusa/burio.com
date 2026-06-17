@@ -33,13 +33,13 @@ export const useUpdateBlogPost = ({
 		...restConfig,
 		mutationFn: updateBlogPost,
 		onSuccess: (data, variables, onMutateResult, context) => {
-			queryClient.invalidateQueries({
+			void queryClient.invalidateQueries({
 				queryKey: getQueryKey(trpc.blog.getAll),
 			});
-			queryClient.invalidateQueries({
+			void queryClient.invalidateQueries({
 				queryKey: getQueryKey(trpc.admin.getAllPosts),
 			});
-			queryClient.invalidateQueries({
+			void queryClient.invalidateQueries({
 				queryKey: getQueryKey(trpc.blog.getById, { id: variables.id }, "query"),
 			});
 			onSuccess?.(data, variables, onMutateResult, context);

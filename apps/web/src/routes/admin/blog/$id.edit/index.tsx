@@ -13,7 +13,7 @@ const paramsSchema = z.object({
 export const Route = createFileRoute("/admin/blog/$id/edit/")({
 	ssr: false,
 	params: {
-		parse: paramsSchema.parse,
+		parse: (raw) => paramsSchema.parse(raw),
 		stringify: ({ id }) => ({ id: String(id) }),
 	},
 	loader: async ({ params, context }) => {
