@@ -1,4 +1,4 @@
-import { beforeEach, vi } from "vitest";
+import { beforeEach, vi } from "vite-plus/test";
 
 // Cloudflare Workersのモック
 vi.mock("cloudflare:workers", () => ({

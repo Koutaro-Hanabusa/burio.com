@@ -1,4 +1,4 @@
-import { vi } from "vitest";
+import { type Mock, vi } from "vite-plus/test";
 
 export interface MockPost {
 	id: number;
@@ -33,8 +33,23 @@ export function getMockPosts(): MockPost[] {
 	return [...mockPosts];
 }
 
+type MockQueryBuilder = {
+	select: Mock;
+	from: Mock;
+	where: Mock;
+	orderBy: Mock;
+	limit: Mock;
+	offset: Mock;
+	insert: Mock;
+	values: Mock;
+	returning: Mock;
+	update: Mock;
+	set: Mock;
+	delete: Mock;
+};
+
 // drizzle-ormのクエリビルダーのモック
-export const createMockDbQuery = () => {
+export const createMockDbQuery = (): MockQueryBuilder => {
 	const queryBuilder = {
 		select: vi.fn().mockReturnThis(),
 		from: vi.fn().mockReturnThis(),
@@ -68,8 +83,15 @@ export const createMockDbQuery = () => {
 	return queryBuilder;
 };
 
+type MockDb = {
+	select: Mock;
+	insert: Mock;
+	update: Mock;
+	delete: Mock;
+};
+
 // dbモックの作成
-export const createMockDb = () => {
+export const createMockDb = (): MockDb => {
 	return {
 		select: vi.fn(() => {
 			const builder = createMockDbQuery();
@@ -252,7 +274,7 @@ export const createMockR2Bucket = () => {
 };
 
 // D1データベースのモック
-export const createMockD1Database = () => {
+export const createMockD1Database = (): { prepare: Mock } => {
 	return {
 		prepare: vi.fn((_query: string) => {
 			return {

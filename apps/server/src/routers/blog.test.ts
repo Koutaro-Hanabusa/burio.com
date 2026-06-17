@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { createSlug } from "./admin";
 
 // Cloudflare Workersのモックは setup.ts で設定済み

@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
 import { buildAdminCookie } from "../lib/admin-cookie";
 import { signAdminToken } from "../lib/admin-token";
 import type { Context } from "../lib/context";
