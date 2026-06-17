@@ -97,7 +97,7 @@ export function useImageUpload(setContent: SetContent) {
 				.filter((f): f is File => f !== null);
 
 			if (files.length > 0) {
-				handleFiles(files, e.currentTarget);
+				void handleFiles(files, e.currentTarget);
 			}
 		},
 		[handleFiles],
@@ -118,7 +118,7 @@ export function useImageUpload(setContent: SetContent) {
 
 			const files = e.dataTransfer?.files;
 			if (files && files.length > 0) {
-				handleFiles(files, e.currentTarget);
+				void handleFiles(files, e.currentTarget);
 			}
 		},
 		[handleFiles],

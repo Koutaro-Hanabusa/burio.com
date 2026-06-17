@@ -13,7 +13,7 @@ export function createQueryClient(): QueryClient {
 					action: {
 						label: "retry",
 						onClick: () => {
-							client.invalidateQueries();
+							void client.invalidateQueries();
 						},
 					},
 				});

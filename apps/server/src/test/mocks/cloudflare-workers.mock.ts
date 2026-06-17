@@ -1,4 +1,4 @@
-import { vi } from "vitest";
+import { vi } from "vite-plus/test";
 
 // Cloudflare Workers環境変数のモック
 export const mockEnv = {

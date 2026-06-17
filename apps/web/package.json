@@ -4,16 +4,16 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev --port=3001",
-		"build": "vite build",
-		"start": "vite dev --port=3001",
-		"serve": "vite preview",
-		"preview": "vite preview",
+		"dev": "vp dev --port=3001",
+		"build": "vp build",
+		"start": "vp dev --port=3001",
+		"serve": "vp preview",
+		"preview": "vp preview",
 		"check-types": "tsc --noEmit",
-		"test": "vitest run",
-		"test:watch": "vitest",
-		"test:ui": "vitest --ui",
-		"test:coverage": "vitest --coverage",
+		"test": "vp test run",
+		"test:watch": "vp test",
+		"test:ui": "vp test --ui",
+		"test:coverage": "vp test --coverage",
 		"cf-typegen": "wrangler types"
 	},
 	"dependencies": {
@@ -71,8 +71,9 @@
 		"postcss": "^8.5.3",
 		"tailwindcss": "^4.3.0",
 		"typescript": "^5.8.3",
-		"vite": "^7.3.3",
-		"vitest": "4.1.5",
+		"vite": "catalog:",
+		"vite-plus": "catalog:",
+		"vitest": "catalog:",
 		"wrangler": "^4.90.0"
 	}
 }

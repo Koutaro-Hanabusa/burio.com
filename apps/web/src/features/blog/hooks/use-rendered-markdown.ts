@@ -22,7 +22,7 @@ export const useRenderedMarkdown = (content: string | null | undefined) => {
 
 	useEffect(() => {
 		if (htmlContent && contentRef.current) {
-			hydrateLinkPreviews(contentRef.current);
+			void hydrateLinkPreviews(contentRef.current);
 		}
 	}, [htmlContent]);
 

@@ -35,10 +35,10 @@ export const useCreateBlogPost = ({
 		onSuccess: (data, variables, onMutateResult, context) => {
 			// public 側の一覧 (blog.getAll) と admin 側 (admin.getAllPosts) の
 			// 双方を最新化する必要がある。
-			queryClient.invalidateQueries({
+			void queryClient.invalidateQueries({
 				queryKey: getQueryKey(trpc.blog.getAll),
 			});
-			queryClient.invalidateQueries({
+			void queryClient.invalidateQueries({
 				queryKey: getQueryKey(trpc.admin.getAllPosts),
 			});
 			onSuccess?.(data, variables, onMutateResult, context);

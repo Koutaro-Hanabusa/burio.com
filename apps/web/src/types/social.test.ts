@@ -1,4 +1,4 @@
-import { describe, expect, expectTypeOf, it } from "vitest";
+import { describe, expect, expectTypeOf, it } from "vite-plus/test";
 import { GithubIcon } from "@/components/icons/github";
 import { InstagramIcon } from "@/components/icons/instagram";
 import { TwitterIcon } from "@/components/icons/twitter";

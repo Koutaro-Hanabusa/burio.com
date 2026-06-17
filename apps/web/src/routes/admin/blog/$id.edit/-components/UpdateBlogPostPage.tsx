@@ -22,7 +22,7 @@ export const UpdateBlogPostPage = () => {
 		mutationConfig: {
 			onSuccess: (data) => {
 				toast.success("記事を更新しました");
-				navigate({ to: `/blog/${data.id}` });
+				void navigate({ to: `/blog/${data.id}` });
 			},
 			onError: (error) => {
 				toast.error(`エラー: ${error.message}`);
