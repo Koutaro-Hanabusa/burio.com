@@ -11,9 +11,10 @@
  */
 
 import { execSync } from "node:child_process";
-import { existsSync, writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { createId } from "@paralleldrive/cuid2";
+import { countContentChars } from "./lib/count-content-chars.js";
 
 // slug生成関数
 function createSlug(title) {
@@ -74,10 +75,10 @@ function generateMarkdownTemplate(title, tags = []) {
 
 // DBにメタデータを挿入
 function insertToDatabase(postData, env = "dev") {
-	const { id, title, slug, excerpt, authorId, published } = postData;
+	const { id, title, slug, excerpt, authorId, published, charCount } = postData;
 	const dbName = env === "dev" ? "burio-com-dev" : "burio-com-db";
 
-	const sql = `INSERT INTO posts (id, title, slug, excerpt, author_id, published, views, created_at, updated_at) VALUES ('${id}', '${title}', '${slug}', '${excerpt}', '${authorId}', ${published ? 1 : 0}, 0, strftime('%s', 'now'), strftime('%s', 'now'));`;
+	const sql = `INSERT INTO posts (id, title, slug, excerpt, author_id, published, char_count, views, created_at, updated_at) VALUES ('${id}', '${title}', '${slug}', '${excerpt}', '${authorId}', ${published ? 1 : 0}, ${charCount}, 0, strftime('%s', 'now'), strftime('%s', 'now'));`;
 
 	const command = `bunx wrangler d1 execute ${dbName} --remote --command="${sql}"`;
 
@@ -136,7 +137,8 @@ async function main() {
 			process.exit(1);
 		}
 
-		// 記事データの作成
+		const content = readFileSync(filePath, "utf-8");
+
 		const postData = {
 			id: createId(),
 			title,
@@ -145,6 +147,7 @@ async function main() {
 			authorId: "test-user-1", // TODO: 実際の認証システムと連携
 			published,
 			tags,
+			charCount: countContentChars(content),
 		};
 
 		console.log("\\n🚀 記事を作成中...");

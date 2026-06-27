@@ -5,6 +5,7 @@ import { db } from "../db";
 import { posts } from "../db/schema";
 import { buildAdminCookie, buildClearAdminCookie } from "../lib/admin-cookie";
 import { signAdminToken } from "../lib/admin-token";
+import { countContentChars } from "../lib/count-content-chars";
 import { publicProcedure, router } from "../lib/trpc";
 import { adminAuthMiddleware } from "../middleware/admin-auth";
 import {
@@ -100,6 +101,7 @@ export const adminRouter = router({
 					coverImage: input.coverImage,
 					tags: input.tags ? JSON.stringify(input.tags) : null,
 					published: input.published ? 1 : 0,
+					charCount: countContentChars(input.content),
 				})
 				.returning();
 
@@ -141,7 +143,10 @@ export const adminRouter = router({
 				updateData.tags = JSON.stringify(input.tags);
 			if (input.published !== undefined)
 				updateData.published = input.published ? 1 : 0;
-			if (input.content !== undefined) updateData.content = input.content;
+			if (input.content !== undefined) {
+				updateData.content = input.content;
+				updateData.charCount = countContentChars(input.content);
+			}
 
 			const currentPost = await db
 				.select()

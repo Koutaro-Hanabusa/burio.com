@@ -1,0 +1,1 @@
+ALTER TABLE `posts` ADD `char_count` integer DEFAULT 0;
