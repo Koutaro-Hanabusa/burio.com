@@ -9,16 +9,15 @@
 	"scripts": {
 		"check": "vp lint --fix && vp fmt",
 		"prepare": "vp config",
-		"dev": "turbo dev",
-		"build": "turbo build",
-		"check-types": "turbo check-types",
-		"dev:native": "turbo -F native dev",
-		"dev:web": "turbo -F web dev",
-		"dev:server": "turbo -F server dev",
-		"db:push": "turbo -F server db:push",
-		"db:studio": "turbo -F server db:studio",
-		"db:generate": "turbo -F server db:generate",
-		"db:migrate": "turbo -F server db:migrate",
+		"dev": "vp run -r --parallel dev",
+		"build": "vp run -r build",
+		"check-types": "vp run --filter server check-types && vp run --filter web check-types",
+		"dev:web": "vp run --filter web dev",
+		"dev:server": "vp run --filter server dev",
+		"db:push": "vp run --filter server db:push",
+		"db:studio": "vp run --filter server db:studio",
+		"db:generate": "vp run --filter server db:generate",
+		"db:migrate": "vp run --filter server db:migrate",
 		"db:dev:tables": "cd apps/server && bunx wrangler d1 execute burio-com-dev --remote --command=\"SELECT name FROM sqlite_master WHERE type='table';\"",
 		"db:dev:users": "cd apps/server && bunx wrangler d1 execute burio-com-dev --remote --command=\"SELECT * FROM users LIMIT 10;\"",
 		"db:dev:posts": "cd apps/server && bunx wrangler d1 execute burio-com-dev --remote --command=\"SELECT * FROM posts LIMIT 10;\"",
@@ -41,7 +40,6 @@
 		"@types/three": "^0.180.0"
 	},
 	"devDependencies": {
-		"turbo": "^2.9.16",
 		"vite-plus": "^0.1.24"
 	},
 	"overrides": {
