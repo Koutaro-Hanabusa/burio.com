@@ -16,7 +16,6 @@ export default defineConfig({
 		ignorePatterns: [
 			"**/.next",
 			"**/dist",
-			"**/.turbo",
 			"**/dev-dist",
 			"**/.zed",
 			"**/.vscode",
@@ -81,7 +80,6 @@ export default defineConfig({
 		ignorePatterns: [
 			"**/.next",
 			"**/dist",
-			"**/.turbo",
 			"**/dev-dist",
 			"**/.zed",
 			"**/.vscode",

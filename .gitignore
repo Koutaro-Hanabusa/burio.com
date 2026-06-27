@@ -1,6 +1,6 @@
 node_modules
-.turbo
 .alchemy
+.DS_Store
 .env
 temp/
 .playwright-mcp/
