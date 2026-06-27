@@ -7,8 +7,8 @@ import {
 	RiCheckLine,
 	RiEyeLine,
 	RiFileCopyLine,
+	RiFileTextLine,
 	RiShareLine,
-	RiTimeLine,
 } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
 import { useTrackBlogPostView } from "@/features/blog/api/track-blog-post-view";
@@ -16,7 +16,7 @@ import { useRenderedMarkdown } from "@/features/blog/hooks/use-rendered-markdown
 import { useSharePost } from "@/features/blog/hooks/use-share-post";
 import type { BlogPost } from "@/features/blog/types";
 import { parseTagsFromJson } from "@/features/blog/utils/parse-tags";
-import { calculateReadTime } from "@/utils/calculate-read-time";
+import { countContentChars } from "@/utils/count-content-chars";
 import { formatDate } from "@/utils/date";
 
 type BlogPostViewProps = {
@@ -71,8 +71,8 @@ export const BlogPostView = ({ post }: BlogPostViewProps) => {
 								</time>
 							</div>
 							<div className="flex items-center gap-1">
-								<RiTimeLine className="h-4 w-4" />
-								<span>{calculateReadTime(post.content)}</span>
+								<RiFileTextLine className="h-4 w-4" />
+								<span>{countContentChars(post.content)} 文字</span>
 							</div>
 							{post.views != null && post.views > 0 && (
 								<div className="flex items-center gap-1">
