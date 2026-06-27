@@ -22,6 +22,7 @@ export const posts = sqliteTable("posts", {
 	excerpt: text("excerpt"),
 	coverImage: text("cover_image"),
 	tags: text("tags"),
+	charCount: integer("char_count").default(0),
 	views: integer("views").default(0),
 	authorId: integer("author_id").references(() => users.id),
 	published: integer("published").default(0),
