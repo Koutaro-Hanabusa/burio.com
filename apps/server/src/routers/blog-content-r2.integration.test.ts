@@ -69,6 +69,7 @@ async function resetPostsTable() {
 			excerpt text,
 			cover_image text,
 			tags text,
+			char_count integer DEFAULT 0,
 			views integer DEFAULT 0,
 			author_id integer,
 			published integer DEFAULT 0,
