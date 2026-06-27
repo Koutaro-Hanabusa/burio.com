@@ -12,7 +12,6 @@ import { Input } from "@/components/ui/input";
 import { useBlogSearch } from "@/features/blog/hooks/use-blog-search";
 import type { BlogPostListItem } from "@/features/blog/types";
 import { parseTagsFromJson } from "@/features/blog/utils/parse-tags";
-import { countContentChars } from "@/utils/count-content-chars";
 import { formatDate } from "@/utils/date";
 
 type BlogPostsProps = {
@@ -144,7 +143,7 @@ export const BlogPosts = ({ posts }: BlogPostsProps) => {
 											</div>
 											<div className="flex items-center gap-1">
 												<RiFileTextLine className="h-3.5 w-3.5" />
-												<span>{countContentChars(post.content)} 文字</span>
+												<span>{post.charCount ?? 0} 文字</span>
 											</div>
 											{post.views != null && post.views > 0 && (
 												<div className="flex items-center gap-1">
