@@ -1,4 +1,15 @@
-# robots.txt for burio.com
+# robots.txt for burio16.com
+
+# Social media crawlers fetch Open Graph / Twitter card images from /api/og/.
+# Twitterbot (and some others) do NOT honor the "Allow" directive, so a broad
+# "Disallow: /api/" would block the card image even with an "Allow: /api/og/".
+# Give these crawlers a dedicated group that does not disallow the OG path.
+User-agent: Twitterbot
+Disallow: /admin/
+
+User-agent: facebookexternalhit
+Disallow: /admin/
+
 User-agent: *
 Allow: /
 Allow: /api/og/
@@ -6,4 +17,4 @@ Disallow: /admin/
 Disallow: /api/
 
 # Sitemap location
-Sitemap: https://burio.com/sitemap.xml
+Sitemap: https://burio16.com/sitemap.xml
