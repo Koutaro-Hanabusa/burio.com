@@ -5,13 +5,18 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { fadeInVariants, smoothTransition } from "@/constants/animations";
 
+const links = [
+	{ to: "/", label: "Home" },
+	{ to: "/blog", label: "Blog" },
+] as const;
+
+const externalLinks = [
+	{ href: "https://slide.burio16.com/", label: "Slide" },
+	{ href: "https://history.burio16.com/", label: "History" },
+] as const;
+
 export default function Header() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-	const links = [
-		{ to: "/", label: "Home" },
-		{ to: "/blog", label: "Blog" },
-	] as const;
 
 	return (
 		<motion.header
@@ -54,6 +59,15 @@ export default function Header() {
 							{label}
 						</Link>
 					))}
+					{externalLinks.map(({ href, label }) => (
+						<a
+							key={href}
+							href={href}
+							className="font-medium text-sm text-white/80 transition-colors hover:text-white dark:text-black/80 dark:hover:text-black"
+						>
+							{label}
+						</a>
+					))}
 				</nav>
 
 				{/* Mobile Menu Button */}
@@ -95,6 +109,16 @@ export default function Header() {
 							>
 								{label}
 							</Link>
+						))}
+						{externalLinks.map(({ href, label }) => (
+							<a
+								key={href}
+								href={href}
+								className="font-medium text-base text-white/80 transition-colors hover:text-white dark:text-black/80 dark:hover:text-black"
+								onClick={() => setMobileMenuOpen(false)}
+							>
+								{label}
+							</a>
 						))}
 					</nav>
 				</motion.div>
