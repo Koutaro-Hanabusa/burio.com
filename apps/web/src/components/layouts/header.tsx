@@ -13,6 +13,7 @@ const links = [
 const externalLinks = [
 	{ href: "https://slide.burio16.com/", label: "Slide" },
 	{ href: "https://history.burio16.com/", label: "History" },
+	{ href: "https://tacos.burio16.com/", label: "Tacos" },
 ] as const;
 
 export default function Header() {
