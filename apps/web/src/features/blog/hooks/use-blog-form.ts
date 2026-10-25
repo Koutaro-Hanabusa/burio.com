@@ -1,8 +1,14 @@
 import { useForm } from "@tanstack/react-form";
 import type React from "react";
-import { useCallback, useEffect, useId, useRef, useState } from "react";
+import {
+	useCallback,
+	useEffect,
+	useId,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import { renderMarkdownPreview } from "@/features/blog/utils/markdown-preview";
-import { parseTagsInput } from "@/features/blog/utils/parse-tags";
 import { useImageUpload } from "@/hooks/use-image-upload";
 import { hydrateLinkPreviews } from "@/utils/link-preview";
 
@@ -15,25 +21,9 @@ export type BlogFormInitialData = {
 	published: boolean;
 };
 
-export type BlogFormValues = {
-	title: string;
-	content: string;
-	excerpt: string;
-	coverImage: string;
-	tags: string[];
-	published: boolean;
-};
+export type BlogFormValues = BlogFormInitialData;
 
-type BlogFormFields = {
-	title: string;
-	content: string;
-	excerpt: string;
-	coverImage: string;
-	tags: string;
-	published: boolean;
-};
-
-const EMPTY_FIELDS: BlogFormFields = {
+const EMPTY_FIELDS: BlogFormValues = {
 	title: "",
 	content: "",
 	excerpt: "",
@@ -44,7 +34,7 @@ const EMPTY_FIELDS: BlogFormFields = {
 
 type UseBlogFormParams = {
 	initialData?: BlogFormInitialData;
-	onSubmit: (values: BlogFormValues) => void;
+	onSubmit: (values: BlogFormValues) => Promise<void>;
 };
 
 /**
@@ -54,16 +44,7 @@ type UseBlogFormParams = {
 export function useBlogForm({ initialData, onSubmit }: UseBlogFormParams) {
 	const form = useForm({
 		defaultValues: initialData ?? EMPTY_FIELDS,
-		onSubmit: ({ value }) => {
-			onSubmit({
-				title: value.title,
-				content: value.content,
-				excerpt: value.excerpt,
-				coverImage: value.coverImage,
-				tags: parseTagsInput(value.tags),
-				published: value.published,
-			});
-		},
+		onSubmit: async ({ value }) => onSubmit(value),
 	});
 
 	const [preview, setPreview] = useState(false);
@@ -73,10 +54,7 @@ export function useBlogForm({ initialData, onSubmit }: UseBlogFormParams) {
 	const setContent = useCallback<React.Dispatch<React.SetStateAction<string>>>(
 		(value) => {
 			const current = form.getFieldValue("content");
-			const next =
-				typeof value === "function"
-					? (value as (prev: string) => string)(current)
-					: value;
+			const next = typeof value === "function" ? value(current) : value;
 			form.setFieldValue("content", next);
 		},
 		[form],
@@ -91,10 +69,38 @@ export function useBlogForm({ initialData, onSubmit }: UseBlogFormParams) {
 	const tagsId = useId();
 	const publishedId = useId();
 
+	const initialTitle = initialData?.title;
+	const initialContent = initialData?.content;
+	const initialExcerpt = initialData?.excerpt;
+	const initialCoverImage = initialData?.coverImage;
+	const initialTags = initialData?.tags;
+	const initialPublished = initialData?.published;
+	const hasInitialData = initialData !== undefined;
+	const resetValues = useMemo(
+		() =>
+			hasInitialData
+				? {
+						title: initialTitle ?? "",
+						content: initialContent ?? "",
+						excerpt: initialExcerpt ?? "",
+						coverImage: initialCoverImage ?? "",
+						tags: initialTags ?? "",
+						published: initialPublished ?? false,
+					}
+				: null,
+		[
+			hasInitialData,
+			initialTitle,
+			initialContent,
+			initialExcerpt,
+			initialCoverImage,
+			initialTags,
+			initialPublished,
+		],
+	);
 	useEffect(() => {
-		if (!initialData) return;
-		form.reset(initialData);
-	}, [initialData, form]);
+		if (resetValues) form.reset(resetValues);
+	}, [form, resetValues]);
 
 	const handlePreview = () => {
 		const content = form.getFieldValue("content");
