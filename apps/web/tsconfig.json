@@ -1,4 +1,5 @@
 {
+	"extends": "./.void/tsconfig.json",
 	"compilerOptions": {
 		"strict": true,
 		"esModuleInterop": true,
@@ -8,16 +9,16 @@
 		"moduleResolution": "Bundler",
 		"verbatimModuleSyntax": true,
 		"skipLibCheck": true,
-		"types": ["vite/client"],
-		"rootDirs": ["."],
-		"paths": {
-			"@/*": ["./src/*"]
-		}
+		"types": ["void/env", "vite/client", "node"],
+		"paths": { "@/*": ["./src/*"] }
 	},
-	"exclude": ["vitest.config.ts"],
-	"references": [
-		{
-			"path": "../server"
-		}
-	]
+	"include": [
+		"src/pages",
+		"src/server",
+		"src/env.ts",
+		"src/bindings.d.ts",
+		"vite.config.ts",
+		"void.config.ts"
+	],
+	"exclude": ["vitest.config.ts"]
 }
