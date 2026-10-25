@@ -20,6 +20,7 @@
 		"src/routes/api/ogp.ts",
 		"src/routes/og/blog/[id].ts",
 		"src/routes/r2/images/[filename].ts",
+		"src/routes/upload/image.ts",
 		"src/env.ts",
 		"src/bindings.d.ts",
 		"vite.config.ts",
