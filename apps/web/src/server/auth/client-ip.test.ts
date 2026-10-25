@@ -62,18 +62,21 @@ describe("isIPAllowed", () => {
 });
 
 describe("getAllowedIPs", () => {
-	it("envValue が未設定なら BASE_ALLOWED_IPS のみ返す", () => {
-		const ips = getAllowedIPs(undefined);
-		expect(ips).toContain("127.0.0.1");
-		expect(ips).toContain("::1");
+	it("未設定または空なら private IP も許可しない", () => {
+		for (const value of [undefined, "", " , "]) {
+			const ips = getAllowedIPs(value);
+			expect(ips).toEqual([]);
+			expect(isIPAllowed("127.0.0.1", ips)).toBe(false);
+			expect(isIPAllowed("192.168.1.10", ips)).toBe(false);
+		}
 	});
 
-	it("envValue のカンマ区切りエントリが BASE に追加される", () => {
-		const ips = getAllowedIPs("203.0.113.1, 198.51.100.0/24");
-		expect(ips).toContain("203.0.113.1");
-		expect(ips).toContain("198.51.100.0/24");
-		// BASE も含まれる
-		expect(ips).toContain("127.0.0.1");
+	it("envValue のカンマ区切りエントリだけを許可する", () => {
+		const ips = getAllowedIPs("203.0.113.1, 198.51.100.");
+		expect(ips).toEqual(["203.0.113.1", "198.51.100."]);
+		expect(isIPAllowed("203.0.113.1", ips)).toBe(true);
+		expect(isIPAllowed("198.51.100.42", ips)).toBe(true);
+		expect(isIPAllowed("127.0.0.1", ips)).toBe(false);
 	});
 
 	it("空白のみのエントリはフィルタされる", () => {
