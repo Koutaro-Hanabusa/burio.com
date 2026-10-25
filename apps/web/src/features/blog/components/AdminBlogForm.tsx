@@ -58,12 +58,14 @@ class ActionFailureBoundary extends Component<{
 
 export function AdminBlogForm(props: Props) {
 	const draftRef = useRef(props.initialData ?? empty);
+	const [recoveryData, setRecoveryData] = useState(props.initialData ?? empty);
 	const [attempt, setAttempt] = useState(0);
 	const [failure, setFailure] = useState<string | null>(null);
 	const rememberDraft = useCallback((values: typeof empty) => {
 		draftRef.current = values;
 	}, []);
 	const recover = useCallback((error: VoidActionError) => {
+		setRecoveryData(draftRef.current);
 		setFailure(
 			`記事の保存に失敗しました (${error.status})。入力内容は保持しています。`,
 		);
@@ -81,13 +83,13 @@ export function AdminBlogForm(props: Props) {
 				{props.mode === "new" ? (
 					<NewBlogForm
 						{...props}
-						initialData={draftRef.current}
+						initialData={recoveryData}
 						onDraft={rememberDraft}
 					/>
 				) : (
 					<EditBlogForm
 						{...props}
-						initialData={draftRef.current}
+						initialData={recoveryData}
 						onDraft={rememberDraft}
 					/>
 				)}
