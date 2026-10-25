@@ -1,5 +1,4 @@
-import type { getBlogPost } from "./api/get-blog-post";
-import type { getBlogPosts } from "./api/get-blog-posts";
+import type { Post } from "@/server/posts";
 
-export type BlogPost = Awaited<ReturnType<typeof getBlogPost>>;
-export type BlogPostListItem = Awaited<ReturnType<typeof getBlogPosts>>[number];
+export type BlogPost = Post;
+export type BlogPostListItem = Post;
