@@ -14,6 +14,7 @@
 ### `apps/web`（Void アプリ）
 
 - [Void Pages](https://void.cloud/guide/pages-routing/overview) + [React 19](https://react.dev)
+- [TanStack Form](https://tanstack.com/form)（記事編集のField・Subscribe。保存先はVoid Action）
 - [Tailwind CSS v4](https://tailwindcss.com) + [Radix UI](https://www.radix-ui.com)
 - [Framer Motion](https://www.framer.com/motion/) / [React Three Fiber](https://r3f.docs.pmnd.rs)
 - [Drizzle ORM](https://orm.drizzle.team) + [Cloudflare D1](https://developers.cloudflare.com/d1/)
