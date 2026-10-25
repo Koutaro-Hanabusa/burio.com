@@ -1,8 +1,23 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { auth } from "void/client";
+import { Button } from "@/components/ui/button";
 import { AdminNavCards } from "@/features/admin/components/AdminNavCards";
 import { AdminQuickActions } from "@/features/admin/components/AdminQuickActions";
 
 export const AdminDashboard = () => {
+	const [signOutError, setSignOutError] = useState(false);
+
+	async function signOut() {
+		try {
+			const result = await auth.signOut();
+			if (result.error) throw result.error;
+			window.location.assign("/admin/login");
+		} catch {
+			setSignOutError(true);
+		}
+	}
+
 	return (
 		<main className="min-h-screen bg-background">
 			<motion.div
@@ -22,6 +37,14 @@ export const AdminDashboard = () => {
 						<p className="text-muted-foreground text-xl">
 							ブログとサイトの管理を行います
 						</p>
+						<Button className="mt-6" variant="outline" onClick={signOut}>
+							ログアウト
+						</Button>
+						{signOutError && (
+							<p role="alert" className="mt-2 text-destructive text-sm">
+								ログアウトできませんでした。もう一度お試しください。
+							</p>
+						)}
 					</motion.div>
 
 					<AdminNavCards />

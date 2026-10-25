@@ -15,24 +15,3 @@ export function getClientIP(request: Request): string {
 
 	return "unknown";
 }
-
-// allowedIPs の各エントリは完全一致、もしくは "." / ":" 末尾のプレフィックス一致
-export function isIPAllowed(ip: string, allowedIPs: string[]): boolean {
-	if (allowedIPs.includes(ip)) return true;
-
-	for (const entry of allowedIPs) {
-		if (entry.endsWith(".") && ip.startsWith(entry)) return true;
-		if (entry.endsWith(":") && ip.startsWith(entry)) return true;
-	}
-
-	return false;
-}
-
-export function getAllowedIPs(envValue: string | undefined): string[] {
-	if (!envValue) return [];
-
-	return envValue
-		.split(",")
-		.map((ip) => ip.trim())
-		.filter((ip) => ip.length > 0);
-}

@@ -24,14 +24,14 @@ export const editorSchema = z.object({
 });
 
 export const loader = defineHandler(async (c) => {
-	const denied = await requireAdmin(c, true);
+	const denied = requireAdmin(c, true);
 	if (denied) return denied;
 	return {};
 });
 
 export const action = defineHandler.withValidator({ body: editorSchema })(
 	async (c, { body }) => {
-		const denied = await requireAdmin(c);
+		const denied = requireAdmin(c);
 		if (denied) return denied;
 		await createPost(c.env, { ...body, tags: parseTagsInput(body.tags) });
 		return c.redirect("/admin/blog");

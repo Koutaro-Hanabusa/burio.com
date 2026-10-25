@@ -10,7 +10,7 @@ const imageTypes = new Set([
 ]);
 
 export const POST = defineHandler(async (c) => {
-	const denied = await requireAdmin(c);
+	const denied = requireAdmin(c);
 	if (denied) return denied;
 	const file = (await c.req.formData()).get("file");
 	if (!(file instanceof File))

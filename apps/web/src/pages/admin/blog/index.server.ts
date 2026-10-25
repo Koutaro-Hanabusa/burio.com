@@ -14,7 +14,7 @@ export const head = defineHead(() =>
 );
 
 export const loader = defineHandler(async (c) => {
-	const denied = await requireAdmin(c, true);
+	const denied = requireAdmin(c, true);
 	if (denied) return denied;
 	return { posts: await listPosts(c.env, false) };
 });
@@ -28,7 +28,7 @@ export const actions = {
 			published: z.boolean(),
 		}),
 	})(async (c, { body }) => {
-		const denied = await requireAdmin(c);
+		const denied = requireAdmin(c);
 		if (denied) return denied;
 		if (!(await setPostPublished(c.env, body.id, body.published)))
 			return c.text("Not Found", 404);
@@ -36,7 +36,7 @@ export const actions = {
 	delete: defineHandler.withValidator({
 		body: z.object({ id: z.coerce.number().int().positive() }),
 	})(async (c, { body }) => {
-		const denied = await requireAdmin(c);
+		const denied = requireAdmin(c);
 		if (denied) return denied;
 		if (!(await deletePost(c.env, body.id))) return c.text("Not Found", 404);
 	}),

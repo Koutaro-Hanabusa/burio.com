@@ -29,8 +29,8 @@
 - `/blog`、数値 ID の記事 URL、既存の管理画面 URL を維持する。タイトル、canonical、OGP は Void の head 管理へ移す。
 - 記事作成・編集・公開切替・削除・プレビューを維持する。Markdown のサニタイズとリンクプレビューを引き継ぐ。保存失敗時は入力を保持し、D1／R2 の失敗を成功扱いしない。
 - 画像ペースト・ドロップを既存フックから移植する。アップロードは管理者認証付きにし、形式・10MB 制限を維持する。
-- 閲覧数は `POST /api/blog/:id/views` に移す。過去の値、同一 IP の1時間重複排除、管理者 IP の除外を引き継ぐ。
-- IP 制限と署名 Cookie による管理認証を再利用する。各管理 loader・action・アップロードで認可し、公開側は公開済み記事だけを返す。
+- 閲覧数は `POST /api/blog/:id/views` に移す。過去の値、同一 IP の1時間重複排除を引き継ぎ、ログイン中の管理者を集計から除外する。
+- 管理認証は [Void 標準認証](https://void.cloud/guide/auth)を使い、サーバー側の Secret `ADMIN_GITHUB_ID` に設定した GitHub アカウントだけログインを許可する。許可する ID は公開ソースへ記録しない。各管理 loader・action・アップロードでセッションを認可し、公開側は公開済み記事だけを返す。
 
 ## データ・配信の切替
 
@@ -42,7 +42,9 @@
 
 Workers Builds のルートは `apps/web`、ビルドは `bun install --frozen-lockfile && bun run build`、本番デプロイは `npx wrangler deploy --config dist/ssr/wrangler.json`、非本番のバージョンアップロードは `npx wrangler versions upload --config dist/ssr/wrangler.json` を使う。旧 server 用の Git 接続は解除済み。
 
-`ADMIN_TOKEN_SECRET` はランタイムとビルドの両方へ Secret として設定する。`ADMIN_ALLOWED_IPS` はランタイムに明示した値だけを許可し、未設定なら管理操作を拒否する。ローカル用の IP も開発環境で明示する。秘密値はリポジトリへ保存しない。
+`ADMIN_GITHUB_ID`、`AUTH_GITHUB_CLIENT_ID`、`AUTH_GITHUB_CLIENT_SECRET`、`BETTER_AUTH_SECRET` を本番 Worker の Secret に設定する。GitHub OAuth App の callback URL は `https://burio16.com/api/auth/callback/github` とする。ローカル用には callback URL が `http://localhost:3001/api/auth/callback/github` の別の OAuth App を使う。許可する ID と秘密値はリポジトリへ保存しない。
+
+認証用テーブルは `apps/web/src/db/migrations` に追加し、D1 binding の `migrations_dir` もここだけを指す。配信前に `apps/web` で `./node_modules/.bin/void db migrate --remote` を実行する。既存の `users`・`posts`・`view_logs` と旧 migration は保持し、再適用しない。
 
 ## 検証・完了条件
 

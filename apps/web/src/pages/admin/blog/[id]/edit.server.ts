@@ -6,7 +6,7 @@ import { parseTagsInput } from "@/features/blog/utils/parse-tags";
 import { sitePageHead } from "@/server/site-head";
 
 export const loader = defineHandler(async (c) => {
-	const denied = await requireAdmin(c, true);
+	const denied = requireAdmin(c, true);
 	if (denied) return denied;
 	const id = Number(c.req.param("id"));
 	if (!Number.isSafeInteger(id) || id < 1) return c.text("Not Found", 404);
@@ -28,7 +28,7 @@ export const head = defineHead<Props>((_c, { post }) =>
 
 export const action = defineHandler.withValidator({ body: editorSchema })(
 	async (c, { body }) => {
-		const denied = await requireAdmin(c);
+		const denied = requireAdmin(c);
 		if (denied) return denied;
 		const id = Number(c.req.param("id"));
 		if (!Number.isSafeInteger(id) || id < 1) return c.text("Not Found", 404);

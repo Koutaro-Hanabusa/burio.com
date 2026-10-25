@@ -1,13 +1,13 @@
 import { and, desc, eq, gt, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
+import { getSession } from "void/auth";
 import { posts, viewLogs } from "./schema";
 import { countContentChars } from "./auth/count-content-chars";
-import { getAllowedIPs, getClientIP, isIPAllowed } from "./auth/client-ip";
+import { getClientIP } from "./auth/client-ip";
 
 export type BlogEnv = {
 	DB: D1Database;
 	R2_BUCKET: R2Bucket;
-	ADMIN_ALLOWED_IPS?: string;
 };
 
 export type Post = typeof posts.$inferSelect;
@@ -170,7 +170,7 @@ export async function trackPostView(
 	id: number,
 ) {
 	const ip = getClientIP(request);
-	if (isIPAllowed(ip, getAllowedIPs(env.ADMIN_ALLOWED_IPS))) return false;
+	if (getSession()) return false;
 	const db = database(env);
 	const existing = await db
 		.select({ id: viewLogs.id })
