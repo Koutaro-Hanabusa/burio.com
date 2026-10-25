@@ -3,14 +3,6 @@
 //   AWS ALB / API Gateway: X-Forwarded-For の左端
 //   Express + proxy: req.ip + app.set('trust proxy', true)
 
-const BASE_ALLOWED_IPS: string[] = [
-	"127.0.0.1",
-	"::1",
-	"192.168.",
-	"10.",
-	"172.16.",
-];
-
 export function getClientIP(request: Request): string {
 	const cfConnectingIP = request.headers.get("CF-Connecting-IP");
 	if (cfConnectingIP) return cfConnectingIP;
@@ -37,12 +29,10 @@ export function isIPAllowed(ip: string, allowedIPs: string[]): boolean {
 }
 
 export function getAllowedIPs(envValue: string | undefined): string[] {
-	if (!envValue) return [...BASE_ALLOWED_IPS];
+	if (!envValue) return [];
 
-	const additional = envValue
+	return envValue
 		.split(",")
 		.map((ip) => ip.trim())
 		.filter((ip) => ip.length > 0);
-
-	return [...BASE_ALLOWED_IPS, ...additional];
 }
