@@ -1,28 +1,30 @@
 import { Center, Text3D } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import type { Mesh } from "three";
 
 const TEXTS = ["Burio", "Frontend", "Spurs", "Tacos"];
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
+
+function subscribeReducedMotion(onChange: () => void) {
+	const mediaQuery = window.matchMedia(REDUCED_MOTION_QUERY);
+	mediaQuery.addEventListener("change", onChange);
+	return () => mediaQuery.removeEventListener("change", onChange);
+}
+
+function getReducedMotion() {
+	return window.matchMedia(REDUCED_MOTION_QUERY).matches;
+}
 
 function RotatingText({ position }: { position: [number, number, number] }) {
 	const groupRef = useRef<Mesh>(null);
-	const [shouldAnimate, setShouldAnimate] = useState(true);
+	const shouldAnimate = !useSyncExternalStore(
+		subscribeReducedMotion,
+		getReducedMotion,
+		() => false,
+	);
 	const [currentTextIndex, setCurrentTextIndex] = useState(0);
 	const [totalRotation, setTotalRotation] = useState(0);
-
-	// Check for prefers-reduced-motion
-	useEffect(() => {
-		const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-		setShouldAnimate(!mediaQuery.matches);
-
-		const handleChange = (event: MediaQueryListEvent) => {
-			setShouldAnimate(!event.matches);
-		};
-
-		mediaQuery.addEventListener("change", handleChange);
-		return () => mediaQuery.removeEventListener("change", handleChange);
-	}, []);
 
 	useFrame((_state, delta) => {
 		if (groupRef.current && shouldAnimate) {
