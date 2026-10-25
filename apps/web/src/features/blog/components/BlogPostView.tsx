@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "@void/react";
 import { motion } from "framer-motion";
 import { useEffect, useMemo } from "react";
 import {
@@ -11,7 +11,6 @@ import {
 	RiShareLine,
 } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
-import { useTrackBlogPostView } from "@/features/blog/api/track-blog-post-view";
 import { useRenderedMarkdown } from "@/features/blog/hooks/use-rendered-markdown";
 import { useSharePost } from "@/features/blog/hooks/use-share-post";
 import type { BlogPost } from "@/features/blog/types";
@@ -25,11 +24,9 @@ type BlogPostViewProps = {
 export const BlogPostView = ({ post }: BlogPostViewProps) => {
 	const { htmlContent, contentRef } = useRenderedMarkdown(post.content);
 	const { copied, handleShare, handleCopyLink } = useSharePost(post);
-	const trackView = useTrackBlogPostView();
-
 	// biome-ignore lint/correctness/useExhaustiveDependencies: track once per post id
 	useEffect(() => {
-		trackView.mutate({ id: post.id });
+		void fetch(`/api/blog/${post.id}/views`, { method: "POST" });
 	}, [post.id]);
 
 	const postTags = useMemo(() => parseTagsFromJson(post.tags), [post.tags]);
@@ -40,7 +37,7 @@ export const BlogPostView = ({ post }: BlogPostViewProps) => {
 				<div className="mx-auto max-w-4xl">
 					<motion.div initial={false} animate={{ opacity: 1, x: 0 }}>
 						<Button variant="ghost" className="mb-6" asChild>
-							<Link to="/blog">
+							<Link href="/blog">
 								<RiArrowLeftLine className="mr-2 h-4 w-4" />
 								ブログ一覧
 							</Link>
@@ -145,7 +142,7 @@ export const BlogPostView = ({ post }: BlogPostViewProps) => {
 					>
 						<div className="flex items-center justify-between">
 							<Button variant="ghost" asChild>
-								<Link to="/blog">
+								<Link href="/blog">
 									<RiArrowLeftLine className="mr-2 h-4 w-4" />
 									ブログ一覧に戻る
 								</Link>

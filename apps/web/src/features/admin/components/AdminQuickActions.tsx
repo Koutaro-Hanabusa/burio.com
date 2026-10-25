@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "@void/react";
 import { motion } from "framer-motion";
 import { RiAddLine, RiArticleLine, RiDashboardLine } from "react-icons/ri";
 import { Button } from "@/components/ui/button";
@@ -14,19 +14,19 @@ export const AdminQuickActions = () => {
 			<h2 className="mb-4 font-semibold text-2xl">クイックアクション</h2>
 			<div className="flex flex-wrap gap-4">
 				<Button asChild>
-					<Link to="/admin/blog/new">
+					<Link href="/admin/blog/new">
 						<RiAddLine className="mr-2 h-4 w-4" />
 						新規記事作成
 					</Link>
 				</Button>
 				<Button variant="outline" asChild>
-					<Link to="/admin/blog">
+					<Link href="/admin/blog">
 						<RiArticleLine className="mr-2 h-4 w-4" />
 						記事一覧
 					</Link>
 				</Button>
 				<Button variant="outline" asChild>
-					<Link to="/blog">
+					<Link href="/blog">
 						<RiDashboardLine className="mr-2 h-4 w-4" />
 						ブログを表示
 					</Link>
