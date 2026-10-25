@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "@void/react";
 import { motion } from "framer-motion";
 import { RiArrowLeftLine, RiHome2Line } from "react-icons/ri";
 import { Button } from "./ui/button";
@@ -33,7 +33,7 @@ export default function NotFound() {
 						戻る
 					</Button>
 					<Button asChild>
-						<Link to="/">
+						<Link href="/">
 							<RiHome2Line className="mr-2 h-4 w-4" />
 							ホームへ
 						</Link>

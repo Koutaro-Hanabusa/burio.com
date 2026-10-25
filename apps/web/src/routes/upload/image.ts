@@ -30,5 +30,5 @@ export const POST = defineHandler(async (c) => {
 	await c.env.R2_BUCKET.put(key, file.stream(), {
 		httpMetadata: { contentType: file.type },
 	});
-	return c.json({ url: `https://api.burio16.com/r2/${key}`, key });
+	return c.json({ url: `/r2/${key}`, key });
 });

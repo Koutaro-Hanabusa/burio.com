@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "@void/react";
 import { motion } from "framer-motion";
 import {
 	cardHoverVariants,
@@ -7,8 +7,7 @@ import {
 	getStaggerDelay,
 	smoothTransition,
 } from "@/constants/animations";
-import { useRecentBlogPosts } from "@/features/blog/api/get-recent-blog-posts";
-import { useAdminAccess } from "@/hooks/use-admin-access";
+import type { BlogPostListItem } from "@/features/blog/types";
 import { formatDate } from "@/utils/date";
 
 interface BlogPostProps {
@@ -29,7 +28,7 @@ const BlogPost = ({
 	index,
 }: BlogPostProps) => {
 	return (
-		<Link to="/blog/$id" params={{ id }} className="block">
+		<Link href={`/blog/${id}`} className="block">
 			<motion.article
 				className="group cursor-pointer rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/50"
 				initial="hidden"
@@ -85,14 +84,14 @@ const BlogHeader = ({ isAdmin }: { isAdmin: boolean }) => {
 				viewport={{ once: true }}
 			>
 				<Link
-					to="/blog"
+					href="/blog"
 					className="font-medium text-primary transition-colors hover:text-primary/80"
 				>
 					すべて見る →
 				</Link>
 				{isAdmin && (
 					<Link
-						to="/admin"
+						href="/admin"
 						className="font-medium text-primary transition-colors hover:text-primary/80"
 					>
 						管理画面
@@ -103,33 +102,13 @@ const BlogHeader = ({ isAdmin }: { isAdmin: boolean }) => {
 	);
 };
 
-const BlogLoading = () => {
-	return (
-		<motion.section
-			className="bg-muted/30 px-6 py-20 md:px-12 lg:px-24"
-			initial="hidden"
-			animate="visible"
-			variants={fadeInVariants}
-		>
-			<div className="mx-auto max-w-4xl">
-				<h2 className="mb-12 font-bold text-3xl md:text-4xl">
-					最新のブログ記事
-				</h2>
-				<div className="text-center text-muted-foreground">読み込み中...</div>
-			</div>
-		</motion.section>
-	);
-};
-
-export const BlogSection = () => {
-	const { data: posts, isLoading, error } = useRecentBlogPosts();
-
-	const { isAdmin } = useAdminAccess();
-
-	if (isLoading) {
-		return <BlogLoading />;
-	}
-
+export const BlogSection = ({
+	posts,
+	isAdmin,
+}: {
+	posts: BlogPostListItem[];
+	isAdmin: boolean;
+}) => {
 	return (
 		<motion.section
 			className="bg-muted/30 px-6 py-20 md:px-12 lg:px-24"
@@ -141,11 +120,7 @@ export const BlogSection = () => {
 		>
 			<div className="mx-auto max-w-4xl">
 				<BlogHeader isAdmin={isAdmin} />
-				{error ? (
-					<div className="rounded-lg border border-destructive/50 bg-destructive/10 p-6 text-center text-destructive">
-						ブログ記事の読み込みに失敗しました
-					</div>
-				) : !posts || posts.length === 0 ? (
+				{posts.length === 0 ? (
 					<div className="rounded-lg border border-border bg-card p-6 text-center text-muted-foreground">
 						まだブログ記事がありません
 					</div>

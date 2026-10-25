@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "@void/react";
 import { motion } from "framer-motion";
 import {
 	RiAddLine,
@@ -50,7 +50,7 @@ export const AdminNavCards = () => {
 					transition={{ delay: index * 0.1 + 0.3, duration: 0.6 }}
 					whileHover={{ y: -4 }}
 				>
-					<Link to={card.href}>
+					<Link href={card.href}>
 						<Card className="group h-full cursor-pointer transition-all hover:shadow-lg">
 							<CardHeader className="pb-3">
 								<div className="flex items-center gap-3">

@@ -3,6 +3,7 @@ import { BlogSection } from "@/features/home/components/BlogSection";
 import { Favorites } from "@/features/home/components/Favorites";
 import { Hero } from "@/features/home/components/Hero";
 import { Lt } from "@/features/home/components/Lt";
+import type { BlogPostListItem } from "@/features/blog/types";
 
 const ThreeBackground = lazy(() =>
 	import("@/components/backgrounds/ThreeBackground").then((module) => ({
@@ -10,7 +11,13 @@ const ThreeBackground = lazy(() =>
 	})),
 );
 
-export const Home = () => {
+export const Home = ({
+	posts,
+	isAdmin,
+}: {
+	posts: BlogPostListItem[];
+	isAdmin: boolean;
+}) => {
 	const [shouldLoadBackground, setShouldLoadBackground] = useState(false);
 
 	useEffect(() => {
@@ -41,7 +48,7 @@ export const Home = () => {
 				<Hero />
 				<Favorites />
 				<Lt />
-				<BlogSection />
+				<BlogSection posts={posts} isAdmin={isAdmin} />
 			</main>
 		</>
 	);
