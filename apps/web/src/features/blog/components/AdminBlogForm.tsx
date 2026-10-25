@@ -1,8 +1,16 @@
 import { Form, Link, useForm } from "@void/react";
 import { motion } from "framer-motion";
 import type React from "react";
-import { useEffect, useId, useRef, useState } from "react";
+import {
+	Component,
+	useCallback,
+	useEffect,
+	useId,
+	useRef,
+	useState,
+} from "react";
 import { RiArrowLeftLine, RiEyeLine, RiSaveLine } from "react-icons/ri";
+import { VoidActionError } from "void/pages-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,20 +35,75 @@ type Props = {
 	headingText: string;
 };
 
+class ActionFailureBoundary extends Component<{
+	children: React.ReactNode;
+	onActionFailure: (error: VoidActionError) => void;
+}> {
+	state: { error: Error | null } = { error: null };
+
+	static getDerivedStateFromError(error: Error) {
+		return { error };
+	}
+
+	componentDidCatch(error: Error) {
+		if (error instanceof VoidActionError) this.props.onActionFailure(error);
+	}
+
+	render() {
+		if (this.state.error)
+			return <p role="alert">フォームを復元しています...</p>;
+		return this.props.children;
+	}
+}
+
 export function AdminBlogForm(props: Props) {
-	return props.mode === "new" ? (
-		<NewBlogForm {...props} />
-	) : (
-		<EditBlogForm {...props} />
+	const draftRef = useRef(props.initialData ?? empty);
+	const [attempt, setAttempt] = useState(0);
+	const [failure, setFailure] = useState<string | null>(null);
+	const rememberDraft = useCallback((values: typeof empty) => {
+		draftRef.current = values;
+	}, []);
+	const recover = useCallback((error: VoidActionError) => {
+		setFailure(
+			`記事の保存に失敗しました (${error.status})。入力内容は保持しています。`,
+		);
+		setAttempt((current) => current + 1);
+	}, []);
+
+	return (
+		<>
+			{failure && (
+				<p role="alert" className="text-destructive">
+					{failure}
+				</p>
+			)}
+			<ActionFailureBoundary key={attempt} onActionFailure={recover}>
+				{props.mode === "new" ? (
+					<NewBlogForm
+						{...props}
+						initialData={draftRef.current}
+						onDraft={rememberDraft}
+					/>
+				) : (
+					<EditBlogForm
+						{...props}
+						initialData={draftRef.current}
+						onDraft={rememberDraft}
+					/>
+				)}
+			</ActionFailureBoundary>
+		</>
 	);
 }
 
-function NewBlogForm({ initialData = empty, ...props }: Props) {
+type DraftProps = Props & { onDraft: (values: typeof empty) => void };
+
+function NewBlogForm({ initialData = empty, ...props }: DraftProps) {
 	const form = useForm("/admin/blog/new", initialData);
 	return <BlogFormFields {...props} initialData={initialData} form={form} />;
 }
 
-function EditBlogForm({ initialData = empty, id, ...props }: Props) {
+function EditBlogForm({ initialData = empty, id, ...props }: DraftProps) {
 	const form = useForm("/admin/blog/:id/edit", initialData, {
 		params: { id: String(id ?? "") },
 	});
@@ -55,10 +118,12 @@ function BlogFormFields({
 	initialData,
 	headingText,
 	form,
-}: Props & {
+	onDraft,
+}: DraftProps & {
 	initialData: typeof empty;
 	form: ReturnType<typeof useForm<"/admin/blog/new">>;
 }) {
+	useEffect(() => onDraft(form.data), [form.data, onDraft]);
 	const contentRef = useRef(initialData.content);
 	useEffect(() => {
 		contentRef.current = initialData.content;
