@@ -126,3 +126,10 @@
 - 検証: cf `1.0.0-beta.21` を一時領域で実行し、`cf cli search`、`cf schema builds triggers update`、コマンドのヘルプを確認した。JSON ファイルの `root_directory`・`build_command`・`deploy_command` を `cf builds triggers update <trigger-uuid> --body @<file.json> --dry-run` で読み込めた。検証用 ID だけを使い、期待する PATCH リクエストの生成と終了コード0を確認した。
 - 結果: 設定 JSON を Git 管理して cf CLI から適用できる。CLI による API 更新であり、`cloudflare.config.ts` による Builds 設定の自動同期ではない。今回の復旧はダッシュボードの設定変更でも対応できる。
 - 未実施: 本番 API への設定変更、旧バックエンドのビルド接続解除、再デプロイ、シークレット設定の確認は行っていない。調査のためにアプリの依存関係やデプロイ方式は変更していない。
+
+### Chrome DevTools によるダッシュボード操作の接続確認
+
+- 依頼: Cloudflare ダッシュボードで Web の Builds 設定、旧バックエンドのビルド接続などを変更する。
+- 確認: Chrome DevTools の `list_pages` は `DevToolsActivePort` の読み取りで EPERM となった。昇格した読み取りでも同じエラーで、Chrome のポート9222は待ち受けているが HTTP の接続情報は404だった。
+- 調査: [Chrome DevTools の公式トラブルシューティング](https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/docs/troubleshooting.md)に同じ macOS のアクセス制限と対処手順が記載されている。システム設定の「プライバシーとセキュリティ → ファイルとフォルダ」で、起動元アプリの「Google Chrome」を許可する必要がある。
+- 状態: ユーザーにアクセス許可を依頼した。接続が復旧するまでは Cloudflare の設定は変更していない。
