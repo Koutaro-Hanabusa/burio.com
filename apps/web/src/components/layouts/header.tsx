@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "@void/react";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
@@ -30,7 +30,7 @@ export default function Header() {
 			<div className="container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 				{/* Logo */}
 				<Link
-					to="/"
+					href="/"
 					className="flex items-center gap-2 transition-opacity hover:opacity-80"
 					aria-label="Home"
 				>
@@ -51,11 +51,8 @@ export default function Header() {
 					{links.map(({ to, label }) => (
 						<Link
 							key={to}
-							to={to}
+							href={to}
 							className="font-medium text-sm text-white/80 transition-colors hover:text-white dark:text-black/80 dark:hover:text-black [&.active]:font-semibold [&.active]:text-white dark:[&.active]:text-black"
-							activeProps={{
-								className: "active font-semibold",
-							}}
 						>
 							{label}
 						</Link>
@@ -101,11 +98,8 @@ export default function Header() {
 						{links.map(({ to, label }) => (
 							<Link
 								key={to}
-								to={to}
+								href={to}
 								className="font-medium text-base text-white/80 transition-colors hover:text-white dark:text-black/80 dark:hover:text-black [&.active]:font-semibold [&.active]:text-white dark:[&.active]:text-black"
-								activeProps={{
-									className: "active font-semibold",
-								}}
 								onClick={() => setMobileMenuOpen(false)}
 							>
 								{label}

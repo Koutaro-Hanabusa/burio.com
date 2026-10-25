@@ -9,30 +9,16 @@
 	"scripts": {
 		"check": "vp lint --fix && vp fmt",
 		"prepare": "vp config",
-		"dev": "vp run -r --parallel dev",
-		"build": "vp run -r build",
-		"check-types": "vp run --filter server check-types && vp run --filter web check-types",
+		"dev": "vp run --filter web dev",
+		"build": "vp run --filter web build",
+		"test": "vp run --filter web test",
+		"check-types": "vp run --filter web check-types",
 		"dev:web": "vp run --filter web dev",
-		"dev:server": "vp run --filter server dev",
-		"db:push": "vp run --filter server db:push",
-		"db:studio": "vp run --filter server db:studio",
-		"db:generate": "vp run --filter server db:generate",
-		"db:migrate": "vp run --filter server db:migrate",
-		"db:dev:tables": "cd apps/server && bunx wrangler d1 execute burio-com-dev --remote --command=\"SELECT name FROM sqlite_master WHERE type='table';\"",
-		"db:dev:users": "cd apps/server && bunx wrangler d1 execute burio-com-dev --remote --command=\"SELECT * FROM users LIMIT 10;\"",
-		"db:dev:posts": "cd apps/server && bunx wrangler d1 execute burio-com-dev --remote --command=\"SELECT * FROM posts LIMIT 10;\"",
-		"db:dev:local:tables": "cd apps/server && bunx wrangler d1 execute burio-com-dev --local --env dev --command=\"SELECT name FROM sqlite_master WHERE type='table';\"",
-		"db:dev:local:users": "cd apps/server && bunx wrangler d1 execute burio-com-dev --local --env dev --command=\"SELECT * FROM users LIMIT 10;\"",
-		"db:dev:local:posts": "cd apps/server && bunx wrangler d1 execute burio-com-dev --local --env dev --command=\"SELECT * FROM posts LIMIT 10;\"",
-		"db:prod:tables": "cd apps/server && bunx wrangler d1 execute burio-com-db --remote --command=\"SELECT name FROM sqlite_master WHERE type='table';\"",
-		"db:prod:users": "cd apps/server && bunx wrangler d1 execute burio-com-db --remote --command=\"SELECT * FROM users LIMIT 10;\"",
-		"db:prod:posts": "cd apps/server && bunx wrangler d1 execute burio-com-db --remote --command=\"SELECT * FROM posts LIMIT 10;\"",
-		"db:dev:setup": "cd apps/server && bunx wrangler d1 execute burio-com-dev --remote --file=\"src/db/migrations/0000_clumsy_the_call.sql\"",
-		"db:prod:setup": "cd apps/server && bunx wrangler d1 execute burio-com-db --remote --file=\"src/db/migrations/0000_clumsy_the_call.sql\"",
+		"db:studio": "vp run --filter web db:studio",
+		"db:generate": "vp run --filter web db:generate",
 		"r2:upload": "bun run scripts/r2-uploader.js upload",
 		"r2:list": "bun run scripts/r2-uploader.js list",
-		"r2:delete": "bun run scripts/r2-uploader.js delete",
-		"blog:create": "bun run scripts/create-post.js"
+		"r2:delete": "bun run scripts/r2-uploader.js delete"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.1064.0",
@@ -40,16 +26,14 @@
 		"@types/three": "^0.180.0"
 	},
 	"devDependencies": {
-		"vite-plus": "^0.1.24"
+		"vite-plus": "1.3.0"
 	},
 	"overrides": {
-		"vite": "catalog:",
-		"vitest": "catalog:"
+		"vite": "catalog:"
 	},
 	"packageManager": "bun@1.3.14",
 	"catalog": {
-		"vite": "npm:@voidzero-dev/vite-plus-core@latest",
-		"vitest": "npm:@voidzero-dev/vite-plus-test@latest",
-		"vite-plus": "latest"
+		"vite": "npm:@voidzero-dev/vite-plus-core@1.3.0",
+		"vite-plus": "1.3.0"
 	}
 }

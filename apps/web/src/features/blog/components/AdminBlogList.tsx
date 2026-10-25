@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, action } from "@void/react";
 import { motion } from "framer-motion";
 import {
 	RiAddLine,
@@ -9,42 +9,36 @@ import {
 } from "react-icons/ri";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { useDeleteBlogPost } from "@/features/blog/api/delete-blog-post";
-import { useAdminBlogPosts } from "@/features/blog/api/get-admin-blog-posts";
-import { useTogglePublishBlogPost } from "@/features/blog/api/toggle-publish-blog-post";
+import type { BlogPostListItem } from "@/features/blog/types";
 import { formatDateShort } from "@/utils/format-date-short";
 
-export const AdminBlogList = () => {
-	const posts = useAdminBlogPosts();
-	const deletePost = useDeleteBlogPost({
-		mutationConfig: {
-			onSuccess: () => {
-				toast.success("記事を削除しました");
-			},
-			onError: (error) => {
-				toast.error(`エラー: ${error.message}`);
-			},
-		},
-	});
-	const togglePublish = useTogglePublishBlogPost({
-		mutationConfig: {
-			onSuccess: () => {
-				toast.success("公開状態を更新しました");
-			},
-			onError: (error) => {
-				toast.error(`エラー: ${error.message}`);
-			},
-		},
-	});
-
-	const handleDelete = (id: number, title: string) => {
+export const AdminBlogList = ({ posts }: { posts: BlogPostListItem[] }) => {
+	const handleDelete = async (id: number, title: string) => {
 		if (confirm(`「${title}」を削除してよろしいですか？`)) {
-			deletePost.mutate({ id });
+			try {
+				const result = await action("/admin/blog?delete", { data: { id } });
+				if (!result.ok) throw new Error(result.error.message);
+				toast.success("記事を削除しました");
+			} catch (error) {
+				toast.error(
+					`エラー: ${error instanceof Error ? error.message : "削除に失敗しました"}`,
+				);
+			}
 		}
 	};
 
-	const handleTogglePublish = (id: number, currentStatus: boolean) => {
-		togglePublish.mutate({ id, currentPublished: currentStatus });
+	const handleTogglePublish = async (id: number, currentStatus: boolean) => {
+		try {
+			const result = await action("/admin/blog?publish", {
+				data: { id, published: !currentStatus },
+			});
+			if (!result.ok) throw new Error(result.error.message);
+			toast.success("公開状態を更新しました");
+		} catch (error) {
+			toast.error(
+				`エラー: ${error instanceof Error ? error.message : "更新に失敗しました"}`,
+			);
+		}
 	};
 
 	return (
@@ -57,7 +51,7 @@ export const AdminBlogList = () => {
 			<div className="mb-8 flex items-center justify-between">
 				<h1 className="font-bold text-3xl">ブログ管理</h1>
 				<Button asChild>
-					<Link to="/admin/blog/new">
+					<Link href="/admin/blog/new">
 						<RiAddLine className="mr-2 h-4 w-4" />
 						新しい記事
 					</Link>
@@ -88,8 +82,7 @@ export const AdminBlogList = () => {
 								>
 									<td className="p-4">
 										<Link
-											to="/blog/$id"
-											params={{ id: post.id }}
+											href={`/blog/${post.id}`}
 											className="font-medium hover:text-primary"
 										>
 											{post.title}
@@ -126,8 +119,7 @@ export const AdminBlogList = () => {
 										<div className="flex justify-center gap-2">
 											<Button variant="ghost" size="sm" asChild>
 												<Link
-													to="/admin/blog/$id/edit"
-													params={{ id: post.id }}
+													href={`/admin/blog/${post.id}/edit`}
 													aria-label={`「${post.title}」を編集`}
 												>
 													<RiEditLine className="h-4 w-4" />
@@ -153,7 +145,7 @@ export const AdminBlogList = () => {
 				<div className="py-12 text-center">
 					<p className="mb-4 text-muted-foreground">まだ記事がありません</p>
 					<Button asChild>
-						<Link to="/admin/blog/new">
+						<Link href="/admin/blog/new">
 							<RiAddLine className="mr-2 h-4 w-4" />
 							最初の記事を作成
 						</Link>

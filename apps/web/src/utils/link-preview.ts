@@ -17,10 +17,7 @@ export async function fetchOgpData(url: string): Promise<OgpData | null> {
 	}
 
 	try {
-		const apiBase = import.meta.env.VITE_SERVER_URL;
-		const res = await fetch(
-			`${apiBase}/api/ogp?url=${encodeURIComponent(url)}`,
-		);
+		const res = await fetch(`/api/ogp?url=${encodeURIComponent(url)}`);
 		if (!res.ok) return null;
 		const data: OgpData = await res.json();
 		ogpCache.set(url, data);
