@@ -6,6 +6,21 @@
 
 本文は引き続き R2 の Markdown、記事情報と閲覧数は D1 に保存する。画面・取得・更新には [Void Pages／loaders／Actions](https://void.cloud/guide/pages-routing/overview) を使う。
 
+## 構成と PR の取り込み順
+
+移行後は `burio-com` の1 Worker が画面、API、管理認証、画像アップロードを担当する。`apps/server` と別 Worker の `burio-com-server` は移行後のアプリでは使わない。旧 Worker 本体は本番切替の確認まで保持する。
+
+画面と、その画面に必要な loader・API・テストを同じ PR に含める。後続 PR は直前のブランチに依存し、各段階で動く画面を増やす。
+
+1. [#259 ホームと共通レイアウト](https://github.com/Koutaro-Hanabusa/burio.com/pull/259)
+2. [#260 ブログ一覧](https://github.com/Koutaro-Hanabusa/burio.com/pull/260)
+3. [#261 記事詳細・OG 画像・閲覧数](https://github.com/Koutaro-Hanabusa/burio.com/pull/261)
+4. [#262 管理画面・一覧・認証](https://github.com/Koutaro-Hanabusa/burio.com/pull/262)
+5. [#263 新規作成・編集・画像ペースト](https://github.com/Koutaro-Hanabusa/burio.com/pull/263)
+6. [#264 旧 Worker・保留コード・自動生成型の撤去](https://github.com/Koutaro-Hanabusa/burio.com/pull/264)
+
+前段を `staging` に取り込んだら、次の PR の base も `staging` に進める。全画面と撤去を `staging` に揃えた後、`staging` → `main` で本番へ反映する。途中の段階は未移行の画面をまだ提供しない。
+
 ## 実装内容
 
 - `apps/web` を移行先とし、既存 React コンポーネントとデザインを再利用する。ホーム、ブログ一覧・詳細、管理画面を Void Pages に移す。
@@ -19,11 +34,15 @@
 
 ## データ・配信の切替
 
-- 既存 Cloudflare アカウントへ Void CLI で配信する。D1／R2 は既存リソースを明示的に接続し、スキーマ、記事 ID、オブジェクトキーを保持する。既存マイグレーションの再適用を防ぐ。
-- 設定上の `burio16.com` と `api.burio16.com` を維持する。旧 API ドメインの画像 URL、OG 画像、リンクプレビュー用 URL を新 Worker でも提供する。
+- Cloudflare Workers Builds から Void の生成済み `dist/ssr/wrangler.json` を指定して配信する。D1／R2 は既存リソースを明示的に接続し、スキーマ、記事 ID、オブジェクトキーを保持する。既存マイグレーションの再適用を防ぐ。
+- `void.config.ts` に `burio16.com`、`api.burio16.com/*`、`blog.burio16.com` を宣言し、旧 API ドメインの画像 URL、OG 画像、リンクプレビュー用 URL を新 Worker でも提供する。
 - OG 画像は既存の GET／HEAD、画像形式、キャッシュ設定を引き継ぐ。
 - Vite+ の開発・型検査・ビルド、記事作成スクリプト、CI を単一アプリに合わせる。型検査前に `void prepare` を実行する。
 - 別 Worker と検証用データで確認し、バックアップ後に本番を切り替える。旧 Worker は切替確認まで保持する。
+
+Workers Builds のルートは `apps/web`、ビルドは `bun install --frozen-lockfile && bun run build`、本番デプロイは `npx wrangler deploy --config dist/ssr/wrangler.json`、非本番のバージョンアップロードは `npx wrangler versions upload --config dist/ssr/wrangler.json` を使う。旧 server 用の Git 接続は解除済み。
+
+`ADMIN_TOKEN_SECRET` はランタイムとビルドの両方へ Secret として設定する。`ADMIN_ALLOWED_IPS` はランタイムに明示した値だけを許可し、未設定なら管理操作を拒否する。ローカル用の IP も開発環境で明示する。秘密値はリポジトリへ保存しない。
 
 ## 検証・完了条件
 
