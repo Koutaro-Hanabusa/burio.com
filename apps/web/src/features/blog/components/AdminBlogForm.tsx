@@ -11,16 +11,7 @@ import { hydrateLinkPreviews } from "@/utils/link-preview";
 import { renderMarkdownPreview } from "../utils/markdown-preview";
 import { AdminBlogPreview } from "./AdminBlogPreview";
 
-type Fields = {
-	title: string;
-	content: string;
-	excerpt: string;
-	coverImage: string;
-	tags: string;
-	published: boolean;
-};
-
-const empty: Fields = {
+const empty = {
 	title: "",
 	content: "",
 	excerpt: "",
@@ -29,22 +20,45 @@ const empty: Fields = {
 	published: false,
 };
 
-export function AdminBlogForm({
-	mode,
-	id,
-	initialData = empty,
-	headingText,
-}: {
+type Props = {
 	mode: "new" | "edit";
 	id?: number;
-	initialData?: Fields;
+	initialData?: typeof empty;
 	headingText: string;
-}) {
-	const newForm = useForm("/admin/blog/new", initialData);
-	const editForm = useForm("/admin/blog/:id/edit", initialData, {
+};
+
+export function AdminBlogForm(props: Props) {
+	return props.mode === "new" ? (
+		<NewBlogForm {...props} />
+	) : (
+		<EditBlogForm {...props} />
+	);
+}
+
+function NewBlogForm({ initialData = empty, ...props }: Props) {
+	const form = useForm("/admin/blog/new", initialData);
+	return <BlogFormFields {...props} initialData={initialData} form={form} />;
+}
+
+function EditBlogForm({ initialData = empty, id, ...props }: Props) {
+	const form = useForm("/admin/blog/:id/edit", initialData, {
 		params: { id: String(id ?? "") },
 	});
-	const form = mode === "new" ? newForm : editForm;
+	return (
+		<BlogFormFields {...props} id={id} initialData={initialData} form={form} />
+	);
+}
+
+function BlogFormFields({
+	mode,
+	id,
+	initialData,
+	headingText,
+	form,
+}: Props & {
+	initialData: typeof empty;
+	form: ReturnType<typeof useForm<"/admin/blog/new">>;
+}) {
 	const contentRef = useRef(initialData.content);
 	useEffect(() => {
 		contentRef.current = initialData.content;
