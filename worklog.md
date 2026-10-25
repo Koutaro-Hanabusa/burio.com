@@ -118,3 +118,11 @@
 - 確認: ローカルの lint は同じ指摘を再現できていなかった。明示指定したグローバル Vite+ は0.1.18、プロジェクトの CLI は1.3.0であり、ローカル結果だけで CI 成功とは判断しない。
 - 状態: 本番デプロイ・ドメイン切替は今回も行っていない。
 - 追記: CI #427 は追記した作業ログの表の整形で失敗したため、`vp fmt worklog.md` で修正した。更新後の最新結果は [PR #258 のチェック](https://github.com/Koutaro-Hanabusa/burio.com/pull/258/checks)で確認する。
+
+### Cloudflare Builds と cf CLI の設定方法を確認
+
+- 確認: 提示された Web のログではビルドは成功し、`npx wrangler versions upload` が生成済みの `dist/ssr/wrangler.json` を参照できず失敗していた。デプロイコマンドへの `--config dist/ssr/wrangler.json` の指定が必要。旧バックエンドのビルドは、削除済みの `apps/server` をルートにしているため開始前に失敗している。
+- 調査: [cf の設定仕様](https://developers.cloudflare.com/cf/projects/cloudflare-config/)と [Builds API](https://developers.cloudflare.com/workers/ci-cd/builds/api-reference/)を確認した。現行の `cloudflare.config.ts` には Builds のルート・実行コマンドを定義する項目はない。Builds の設定は API で更新でき、Terraform への移行は不要。
+- 検証: cf `1.0.0-beta.21` を一時領域で実行し、`cf cli search`、`cf schema builds triggers update`、コマンドのヘルプを確認した。JSON ファイルの `root_directory`・`build_command`・`deploy_command` を `cf builds triggers update <trigger-uuid> --body @<file.json> --dry-run` で読み込めた。検証用 ID だけを使い、期待する PATCH リクエストの生成と終了コード0を確認した。
+- 結果: 設定 JSON を Git 管理して cf CLI から適用できる。CLI による API 更新であり、`cloudflare.config.ts` による Builds 設定の自動同期ではない。今回の復旧はダッシュボードの設定変更でも対応できる。
+- 未実施: 本番 API への設定変更、旧バックエンドのビルド接続解除、再デプロイ、シークレット設定の確認は行っていない。調査のためにアプリの依存関係やデプロイ方式は変更していない。
