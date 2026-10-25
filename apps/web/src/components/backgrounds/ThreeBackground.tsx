@@ -72,11 +72,6 @@ function RotatingText({ position }: { position: [number, number, number] }) {
 export function ThreeBackground() {
 	const [hasError, setHasError] = useState(false);
 
-	useEffect(() => {
-		// Reset error state on mount
-		setHasError(false);
-	}, []);
-
 	if (hasError) {
 		return null; // Don't render if WebGL context is lost
 	}
