@@ -133,3 +133,27 @@
 - 確認: Chrome DevTools の `list_pages` は `DevToolsActivePort` の読み取りで EPERM となった。昇格した読み取りでも同じエラーで、Chrome のポート9222は待ち受けているが HTTP の接続情報は404だった。
 - 調査: [Chrome DevTools の公式トラブルシューティング](https://github.com/ChromeDevTools/chrome-devtools-mcp/blob/main/docs/troubleshooting.md)に同じ macOS のアクセス制限と対処手順が記載されている。システム設定の「プライバシーとセキュリティ → ファイルとフォルダ」で、起動元アプリの「Google Chrome」を許可する必要がある。
 - 状態: ユーザーにアクセス許可を依頼した。接続が復旧するまでは Cloudflare の設定は変更していない。
+
+### Cloudflare の設定を実際に変更
+
+- 復旧: 起動元アプリに Chrome のアクセス許可を付与した後、Chrome DevTools の接続に成功した。
+- 変更: `burio-com` の Builds をルート `apps/web`、ビルド `bun install --frozen-lockfile && bun run build` に設定。本番デプロイと非本番のバージョンアップロードに `--config dist/ssr/wrangler.json` を指定し、再読み込み後も保存済みであることを確認した。
+- 変更: 旧 `burio-com-server` の Git 接続を解除した。Worker 本体と既存の本番向け割り当ては切替確認まで保持している。
+- 変更: 既存の管理設定を Web のランタイム／プレビューとビルド用 Secret へ設定した。秘密値と許可 IP の実値は記録・コミットしていない。
+- 検証: Build `dfad94fb-a0b7-4ed4-bc05-11ab6308ede9` でアップロードが成功し、完成版プレビューの `/`・`/blog`・`/admin` が HTTP 200 を返した。本番切替は未実施。
+
+### 画面単位の PR に分割
+
+- 実施: 分割元を `feat/void-migration-complete` に保全し、新しい worktree は作らず、[#259](https://github.com/Koutaro-Hanabusa/burio.com/pull/259) ホーム、[#260](https://github.com/Koutaro-Hanabusa/burio.com/pull/260) ブログ一覧、[#261](https://github.com/Koutaro-Hanabusa/burio.com/pull/261) 記事詳細、[#262](https://github.com/Koutaro-Hanabusa/burio.com/pull/262) 管理一覧・認証、[#263](https://github.com/Koutaro-Hanabusa/burio.com/pull/263) 新規・編集、[#264](https://github.com/Koutaro-Hanabusa/burio.com/pull/264) 旧構成撤去に分けた。必要な loader・API・テストを各画面と同じ PR に含め、巨大な自動生成型の削除は最後へ分離した。元の #258 は分割先を示して閉じた。
+- 修正: 分割時に後段へ回した React lint 修正が CI で再発したため、ホームへ戻して後続へ継承した。ローカル結果だけでは完了とせず、各公開コミットの GitHub CI と Cloudflare Builds の成功を確認した。
+- 修正: 管理 IP の暗黙のローカル／プライベート範囲許可を撤去し、`ADMIN_ALLOWED_IPS` 未設定・空の場合は拒否する。ローカル開発も許可 IP を明示する。
+- 修正: `vitest` の直接依存・override・catalog と別の `vitest.config.ts` を撤去し、`vite-plus/test` と `vite.config.ts` の test 設定へ統一した。
+- 修正: フォームは公式の `Form + useForm` に統一。型・送信状態・項目別エラーは Void に任せ、独自エラー整形は使わない。新規・編集の保存後遷移、空白タイトルの項目別エラーと原稿保持を実ブラウザで確認した。
+- 修正: 500 エラー注入で標準フォームが unmount することを確認し、上位のメモリ内原稿と error boundary で復元する補助を追加。原稿保持・エラー表示・送信ボタン復帰を確認した。復旧用 ref を描画中に読んでいた CI エラーは、復旧時に state へ移す `05ddbdc` で修正した。
+- 統合: ユーザーによる前段 PR のマージとブランチ更新を取り込み、`7c2b091` で後段 #264 の4ファイルの競合を解消して push。GitHub API でも `mergeable: true` を確認した。
+- 検証: 統合後に `vp install`、`vp check`（132ファイルの整形・112ファイルの lint／型で警告・エラー0）、79テスト、型検査が成功。最新のリモート実行結果は各 PR の Checks に分けて記載する。
+
+### KB への保存
+
+- 保存: home の `knowledge/` に `void-1-1-11-cloudflare-workers-builds.md`、`void-migration-screen-pr-stack.md`、`chrome-devtools-macos-files-folders-permission.md` を作成。今回の本文ファイルだけを commit／push し、リモートの内容 hash とローカルの一致を確認した。KB の検索でも取得できた。
+- 確認: 親スレッドの今回の自動保存・Clef 判定結果は確認できなかったため、手動で保存した。既存の別ノートと `.index` の未コミット変更は保持した。

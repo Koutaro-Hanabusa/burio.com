@@ -38,7 +38,7 @@
 - `void.config.ts` に `burio16.com`、`api.burio16.com/*`、`blog.burio16.com` を宣言し、旧 API ドメインの画像 URL、OG 画像、リンクプレビュー用 URL を新 Worker でも提供する。
 - OG 画像は既存の GET／HEAD、画像形式、キャッシュ設定を引き継ぐ。
 - Vite+ の開発・型検査・ビルド、記事作成スクリプト、CI を単一アプリに合わせる。型検査前に `void prepare` を実行する。
-- 別 Worker と検証用データで確認し、バックアップ後に本番を切り替える。旧 Worker は切替確認まで保持する。
+- 非本番バージョンと検証用 D1 で確認し、バックアップ後に本番を切り替える。R2 は既存バケットを共用する。旧 Worker は切替確認まで保持する。
 
 Workers Builds のルートは `apps/web`、ビルドは `bun install --frozen-lockfile && bun run build`、本番デプロイは `npx wrangler deploy --config dist/ssr/wrangler.json`、非本番のバージョンアップロードは `npx wrangler versions upload --config dist/ssr/wrangler.json` を使う。旧 server 用の Git 接続は解除済み。
 
