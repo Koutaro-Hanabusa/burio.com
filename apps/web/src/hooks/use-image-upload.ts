@@ -4,13 +4,11 @@ import { toast } from "sonner";
 
 type SetContent = React.Dispatch<React.SetStateAction<string>>;
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-
 async function uploadImage(file: File): Promise<string> {
 	const formData = new FormData();
 	formData.append("file", file);
 
-	const res = await fetch(`${SERVER_URL}/upload/image`, {
+	const res = await fetch("/upload/image", {
 		method: "POST",
 		body: formData,
 		credentials: "include",
@@ -24,9 +22,7 @@ async function uploadImage(file: File): Promise<string> {
 	}
 
 	const data = (await res.json()) as { url: string };
-	// URLがR2の相対パスの場合、サーバーURLを付与
-	const url = data.url.startsWith("/") ? `${SERVER_URL}${data.url}` : data.url;
-	return url;
+	return data.url;
 }
 
 function insertTextAtCursor(

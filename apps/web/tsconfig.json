@@ -12,18 +12,6 @@
 		"types": ["void/env", "vite/client", "node"],
 		"paths": { "@/*": ["./src/*"] }
 	},
-	"include": [
-		"src/pages",
-		"src/server",
-		"src/routes/api/blog/[id]/views.ts",
-		"src/routes/api/og/blog/[id].ts",
-		"src/routes/api/ogp.ts",
-		"src/routes/og/blog/[id].ts",
-		"src/routes/r2/images/[filename].ts",
-		"src/env.ts",
-		"src/bindings.d.ts",
-		"vite.config.ts",
-		"void.config.ts"
-	],
+	"include": ["src", "vite.config.ts", "void.config.ts", "drizzle.config.ts"],
 	"exclude": ["vitest.config.ts"]
 }
