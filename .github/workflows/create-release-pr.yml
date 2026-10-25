@@ -75,12 +75,12 @@ jobs:
 
           ### デプロイフロー
 
-          このPRをマージすると、以下のアクションが自動実行されます：
+          このPRのマージ前に確認する項目：
 
-          1. ✅ CI/CDパイプライン実行
-          2. 🚀 本番環境へ自動デプロイ
-             - Server: https://api.burio16.com
-             - Frontend: https://burio16.com
+          1. Void アプリの CI が通過していること
+          2. 単一の Void Worker が両ドメインを受ける設定になっていること
+             - https://api.burio16.com
+             - https://burio16.com
 
           ### チェックリスト
 
