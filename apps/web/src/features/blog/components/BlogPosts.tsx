@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link } from "@void/react";
 import { motion } from "framer-motion";
 import {
 	RiArrowRightLine,
@@ -86,7 +86,7 @@ export const BlogPosts = ({ posts }: BlogPostsProps) => {
 								</p>
 								<div className="mt-6 flex justify-center gap-4">
 									<Button asChild variant="outline">
-										<Link to="/">ホームに戻る</Link>
+										<Link href="/">ホームに戻る</Link>
 									</Button>
 								</div>
 							</>
@@ -107,11 +107,7 @@ export const BlogPosts = ({ posts }: BlogPostsProps) => {
 										boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
 									}}
 								>
-									<Link
-										to="/blog/$id"
-										params={{ id: post.id }}
-										className="block"
-									>
+									<Link href={`/blog/${post.id}`} className="block">
 										{post.coverImage && (
 											<div className="mb-4 overflow-hidden rounded-lg">
 												<img
