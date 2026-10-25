@@ -116,8 +116,8 @@ export default defineConfig({
 			"**/migrations",
 		],
 		options: {
-			typeAware: false,
-			typeCheck: false,
+			typeAware: true,
+			typeCheck: true,
 		},
 	},
 	staged: {
