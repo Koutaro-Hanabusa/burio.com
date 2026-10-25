@@ -1,9 +1,5 @@
 import { defineHandler, defineHead, type InferProps } from "void";
-import {
-	getAllowedIPs,
-	getClientIP,
-	isIPAllowed,
-} from "@/server/auth/client-ip";
+import { getSession } from "void/auth";
 import { listPosts } from "@/server/posts";
 import { sitePageHead } from "@/server/site-head";
 
@@ -18,10 +14,7 @@ export const head = defineHead(() =>
 
 export const loader = defineHandler(async (c) => ({
 	posts: await listPosts(c.env, true, 3),
-	isAdmin: isIPAllowed(
-		getClientIP(c.req.raw),
-		getAllowedIPs(c.env.ADMIN_ALLOWED_IPS),
-	),
+	isAdmin: getSession() !== null,
 }));
 
 export type Props = InferProps<typeof loader>;

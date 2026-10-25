@@ -23,6 +23,7 @@ if ("requestIdleCallback" in window) {
 export default defineConfig({
 	sourceDir: "src",
 	output: "server",
+	auth: { providers: ["github"] },
 	head: {
 		title: "burio16.com",
 		htmlAttrs: { lang: "ja" },
@@ -102,6 +103,7 @@ export default defineConfig({
 				database_name: "burio-com-db",
 				database_id: "7390edad-195a-4da4-80a8-90209083afcc",
 				preview_database_id: "02de547d-2aa5-4183-933a-25503971e540",
+				migrations_dir: "./src/db/migrations",
 			},
 		],
 		r2_buckets: [{ binding: "R2_BUCKET", bucket_name: "burio-com-blog" }],

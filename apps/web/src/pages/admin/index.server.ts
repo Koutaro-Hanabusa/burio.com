@@ -12,7 +12,7 @@ export const head = defineHead(() =>
 );
 
 export const loader = defineHandler(async (c) => {
-	const denied = await requireAdmin(c, true);
+	const denied = requireAdmin(c, true);
 	if (denied) return denied;
 	return {};
 });

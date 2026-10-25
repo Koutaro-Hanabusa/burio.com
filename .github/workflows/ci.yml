@@ -41,6 +41,9 @@ jobs:
         run: vp test run
       - name: Build
         env:
-          ADMIN_TOKEN_SECRET: ci-only-test-secret-at-least-32-bytes
+          ADMIN_GITHUB_ID: "123456"
+          AUTH_GITHUB_CLIENT_ID: ci-only-github-client-id
+          AUTH_GITHUB_CLIENT_SECRET: ci-only-github-client-secret
+          BETTER_AUTH_SECRET: ci-only-test-secret-at-least-32-bytes
           WRANGLER_LOG_PATH: /tmp/burio-wrangler-logs
         run: vp run build
