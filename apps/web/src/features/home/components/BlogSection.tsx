@@ -132,7 +132,7 @@ export const BlogSection = ({
 								id={post.id}
 								title={post.title}
 								excerpt={post.excerpt}
-								createdAt={post.createdAt ?? new Date()}
+								createdAt={post.createdAt}
 								views={post.views ?? 0}
 								index={index}
 							/>
