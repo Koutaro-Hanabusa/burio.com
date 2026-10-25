@@ -87,6 +87,15 @@ export default defineConfig({
 	},
 	cloudflare: {
 		name: "burio-com",
+		routes: [
+			{ pattern: "burio16.com", zone_name: "burio16.com", custom_domain: true },
+			{ pattern: "api.burio16.com/*", zone_name: "burio16.com" },
+			{
+				pattern: "blog.burio16.com",
+				zone_name: "burio16.com",
+				custom_domain: true,
+			},
+		],
 		d1_databases: [
 			{
 				binding: "DB",
