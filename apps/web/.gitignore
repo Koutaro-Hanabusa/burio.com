@@ -56,5 +56,8 @@ dev-dist
 
 .wrangler
 .dev.vars*
+.void-legacy-env/
+.void/
+.void-wrangler.jsonc
 
 .open-next

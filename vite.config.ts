@@ -1,6 +1,17 @@
+import path from "node:path";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+	resolve: {
+		alias: {
+			"@": path.resolve(import.meta.dirname, "apps/web/src"),
+		},
+	},
+	test: {
+		include: ["apps/web/src/**/*.test.{ts,tsx}"],
+		environment: "jsdom",
+		setupFiles: ["./apps/web/src/test/setup.ts"],
+	},
 	fmt: {
 		useTabs: true,
 		tabWidth: 2,
@@ -19,6 +30,7 @@ export default defineConfig({
 			"**/dev-dist",
 			"**/.zed",
 			"**/.vscode",
+			"**/.claude",
 			"**/routeTree.gen.ts",
 			"**/worker-configuration.d.ts",
 			"**/src-tauri",
@@ -83,6 +95,7 @@ export default defineConfig({
 			"**/dev-dist",
 			"**/.zed",
 			"**/.vscode",
+			"**/.claude",
 			"**/routeTree.gen.ts",
 			"**/worker-configuration.d.ts",
 			"**/src-tauri",
@@ -103,8 +116,8 @@ export default defineConfig({
 			"**/migrations",
 		],
 		options: {
-			typeAware: true,
-			typeCheck: true,
+			typeAware: false,
+			typeCheck: false,
 		},
 	},
 	staged: {

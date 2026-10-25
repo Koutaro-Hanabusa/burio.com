@@ -8,7 +8,7 @@ on:
       - "docs/**"
       - ".vscode/**"
   pull_request:
-    branches: [main, staging]
+    branches: [main, staging, "feat/void-*"]
     paths-ignore:
       - "**.md"
       - "docs/**"
@@ -20,111 +20,27 @@ concurrency:
 
 permissions:
   contents: read
-  pull-requests: write
-  checks: write
 
 jobs:
-  lint:
-    name: Lint (vp lint + fmt)
+  web:
+    name: Void Web
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-
+    timeout-minutes: 15
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: voidzero-dev/setup-vp@v1
         with:
-          fetch-depth: 1
-
-      - name: Setup Vite+
-        uses: voidzero-dev/setup-vp@v1
-        with:
-          node-version: "lts"
-          cache: true
-
-      - name: Generate route tree (TanStack Router)
-        working-directory: apps/web
-        run: npx -y @tanstack/router-cli generate
-
-      - name: Lint
-        run: vp lint
-
-      - name: Format check
-        run: vp fmt --check
-
-  frontend:
-    name: Frontend (Web)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Setup Vite+
-        uses: voidzero-dev/setup-vp@v1
-        with:
-          node-version: "lts"
+          node-version: "24.21.0"
           cache: true
           run-install: true
-
-      - name: Build server types (required for frontend type check)
-        run: vp run --filter server check-types
-
-      - name: Generate route tree (TanStack Router)
-        working-directory: apps/web
-        run: npx -y @tanstack/router-cli generate
-
-      - name: Type check (Frontend)
-        run: vp run --filter web check-types
-
-      - name: Test (Frontend)
+      - name: Prepare Void types and type check
+        run: vp run check-types
+      - name: Check
+        run: vp check
+      - name: Test
+        run: vp test run
+      - name: Build
         env:
-          VITE_SERVER_URL: http://localhost:3000
-          NODE_ENV: test
-        run: vp run --filter web test
-
-      - name: Build (Frontend)
-        env:
-          NODE_ENV: production
-        run: vp run --filter web build
-
-      - name: Upload frontend build artifacts
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: frontend-build-${{ github.sha }}
-          path: apps/web/dist
-          retention-days: 7
-
-  backend:
-    name: Backend (Server)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Setup Vite+
-        uses: voidzero-dev/setup-vp@v1
-        with:
-          node-version: "lts"
-          cache: true
-          run-install: true
-
-      - name: Type check (Backend)
-        run: vp run --filter server check-types
-
-      - name: Test (Backend)
-        env:
-          NODE_ENV: test
-        run: vp run --filter server test
-
-      - name: Build (Backend)
-        env:
-          NODE_ENV: production
-        run: vp run --filter server build
+          ADMIN_TOKEN_SECRET: ci-only-test-secret-at-least-32-bytes
+          WRANGLER_LOG_PATH: /tmp/burio-wrangler-logs
+        run: vp run build

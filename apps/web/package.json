@@ -9,14 +9,16 @@
 		"start": "vp dev --port=3001",
 		"serve": "vp preview",
 		"preview": "vp preview",
-		"check-types": "tsc --noEmit",
+		"check-types": "void prepare && tsc --noEmit",
 		"test": "vp test run",
 		"test:watch": "vp test",
 		"test:ui": "vp test --ui",
-		"test:coverage": "vp test --coverage",
-		"cf-typegen": "wrangler types"
+		"test:coverage": "vp test run --coverage",
+		"db:studio": "drizzle-kit studio --config=drizzle.config.ts",
+		"db:generate": "drizzle-kit generate --config=drizzle.config.ts"
 	},
 	"dependencies": {
+		"@cf-wasm/og": "0.3.8",
 		"@hookform/resolvers": "^5.1.1",
 		"@paper-design/shaders-react": "^0.0.72",
 		"@radix-ui/react-switch": "^1.2.6",
@@ -28,11 +30,11 @@
 		"@tanstack/react-form": "^1.12.3",
 		"@tanstack/react-query": "^5.85.5",
 		"@tanstack/react-router": "1.154.14",
-		"@tanstack/react-start": "1.154.14",
 		"@trpc/client": "^11.5.0",
 		"@trpc/react-query": "^11.6.0",
 		"@trpc/server": "^11.5.0",
 		"@trpc/tanstack-react-query": "^11.5.0",
+		"@void/react": "1.1.11",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"dompurify": "^3.2.7",
@@ -50,6 +52,7 @@
 		"tailwind-merge": "^3.3.1",
 		"three": "^0.180.0",
 		"tw-animate-css": "^1.2.5",
+		"void": "1.1.11",
 		"zod": "^4.1.12"
 	},
 	"devDependencies": {
@@ -66,6 +69,7 @@
 		"@types/react-dom": "^19.0.4",
 		"@types/three": "^0.180.0",
 		"@vitejs/plugin-react": "^5.2.0",
+		"drizzle-kit": "^0.31.2",
 		"happy-dom": "^20.0.5",
 		"jsdom": "^27.0.1",
 		"postcss": "^8.5.3",
@@ -73,7 +77,6 @@
 		"typescript": "^5.8.3",
 		"vite": "catalog:",
 		"vite-plus": "catalog:",
-		"vitest": "catalog:",
 		"wrangler": "^4.90.0"
 	}
 }
