@@ -7,6 +7,7 @@ export default function EditBlogPage({ post }: Props) {
 	return (
 		<ContentLayout>
 			<AdminBlogForm
+				key={post.id}
 				mode="edit"
 				id={post.id}
 				headingText="記事を編集"

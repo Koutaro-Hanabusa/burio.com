@@ -24,7 +24,7 @@
 ## 実装内容
 
 - `apps/web` を移行先とし、既存 React コンポーネントとデザインを再利用する。ホーム、ブログ一覧・詳細、管理画面を Void Pages に移す。
-- TanStack Start／Router／Query、tRPC、Hono の直接依存を取り除く。記事編集では TanStack Form の `Field`／`Subscribe` を維持し、保存は Void Action に接続する。Hono は [Void の内部依存](https://void.cloud/integrations/hono)として残る。
+- TanStack Start／Router／Query／Form、tRPC、Hono の直接依存を取り除く。フォームは Void の `Form`／`useForm`、操作は Actions に置き換える。Hono は [Void の内部依存](https://void.cloud/integrations/hono)として残る。
 - サーバー処理と回帰テストを統合し、移植後に `apps/server` を廃止する。記事処理は共通化し、loader・action・API から再利用する。
 - `/blog`、数値 ID の記事 URL、既存の管理画面 URL を維持する。タイトル、canonical、OGP は Void の head 管理へ移す。
 - 記事作成・編集・公開切替・削除・プレビューを維持する。Markdown のサニタイズとリンクプレビューを引き継ぐ。保存失敗時は入力を保持し、D1／R2 の失敗を成功扱いしない。
